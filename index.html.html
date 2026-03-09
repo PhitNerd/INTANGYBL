@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intangybl — Train What You Can't Patch</title>
+<meta name="description" content="AI-powered security awareness training built from your behavioral profile. The human layer of security.">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,600&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════════ */
+:root {
+  --ink:         #07090F;
+  --ink-1:       #0D1220;
+  --ink-2:       #151E30;
+  --ink-3:       #1E2B40;
+  --ink-4:       #2A3A54;
+  --amber:       #F5A623;
+  --amber-d:     #C4801A;
+  --amber-pale:  rgba(245,166,35,0.08);
+  --amber-glow:  rgba(245,166,35,0.18);
+  --bone:        #EDE8DE;
+  --bone-2:      #C8C0AE;
+  --muted:       #7A8BA8;
+  --rule:        rgba(245,166,35,0.10);
+  --rule-bone:   rgba(237,232,222,0.08);
+
+  --ff-display: 'Bebas Neue', sans-serif;
+  --ff-serif:   'Fraunces', Georgia, serif;
+  --ff-mono:    'IBM Plex Mono', monospace;
+  --ff-body:    'IBM Plex Sans', system-ui, sans-serif;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ══════════════════════════════════════════════
+   RESET
+══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--ff-body);
+  font-weight: 300;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  cursor: none;
+}
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ══════════════════════════════════════════════
+   CURSOR
+══════════════════════════════════════════════ */
+.cursor {
+  position: fixed;
+  width: 8px; height: 8px;
+  background: var(--amber);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.1s, width 0.3s var(--ease-out), height 0.3s var(--ease-out), background 0.3s;
+  mix-blend-mode: normal;
+}
+.cursor-ring {
+  position: fixed;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(245,166,35,0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.15s var(--ease-out), width 0.4s var(--ease-out), height 0.4s var(--ease-out), opacity 0.3s;
+}
+body:hover .cursor-ring { opacity: 1; }
+
+/* ══════════════════════════════════════════════
+   GRAIN
+══════════════════════════════════════════════ */
+.grain {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 500;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  animation: grain-shift 0.5s steps(2) infinite;
+}
+@keyframes grain-shift {
+  0%   { transform: translate(0,0); }
+  25%  { transform: translate(-2%,-1%); }
+  50%  { transform: translate(1%,2%); }
+  75%  { transform: translate(2%,-1%); }
+  100% { transform: translate(-1%,1%); }
+}
+
+/* ══════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 200;
+  padding: 0 60px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  transition: background 0.4s, border-color 0.4s;
+}
+nav.scrolled {
+  background: rgba(7,9,15,0.92);
+  border-color: var(--rule);
+  backdrop-filter: blur(12px);
+}
+.nav-wordmark {
+  font-family: var(--ff-display);
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  color: var(--bone);
+}
+.nav-wordmark span { color: var(--amber); }
+.nav-links {
+  display: flex; align-items: center; gap: 36px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--amber); }
+.nav-cta {
+  background: var(--amber) !important;
+  color: var(--ink) !important;
+  padding: 8px 18px !important;
+  font-weight: 500 !important;
+  transition: background 0.2s !important;
+}
+.nav-cta:hover { background: var(--amber-d) !important; }
+
+/* ══════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 60px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* animated grid bg */
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(245,166,35,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,166,35,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: grid-drift 20s linear infinite;
+}
+@keyframes grid-drift {
+  from { background-position: 0 0; }
+  to   { background-position: 60px 60px; }
+}
+
+/* radial amber glow */
+.hero-glow {
+  position: absolute;
+  top: 30%; left: 55%;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%);
+  transform: translate(-50%,-50%);
+  animation: glow-pulse 6s ease-in-out infinite;
+}
+@keyframes glow-pulse {
+  0%,100% { opacity: 0.6; transform: translate(-50%,-50%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%,-50%) scale(1.1); }
+}
+
+/* amber left stripe */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: var(--amber);
+}
+
+.hero-eyebrow {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fade-up 0.8s var(--ease-out) 0.2s both;
+}
+
+.hero-headline {
+  font-family: var(--ff-display);
+  font-size: clamp(72px, 11vw, 160px);
+  letter-spacing: 0.03em;
+  line-height: 0.88;
+  color: var(--bone);
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fade-up 0.9s var(--ease-out) 0.35s both;
+  max-width: 900px;
+}
+
+.hero-headline .amber-line { color: var(--amber); display: block; }
+
+.hero-sub {
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: clamp(17px, 2.2vw, 24px);
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 520px;
+  line-height: 1.5;
+  margin-bottom: 44px;
+  opacity: 0;
+  animation: fade-up 0.9s var(--ease-out) 0.5s both;
+}
+
+.hero-actions {
+  display: flex; align-items: center; gap: 16px;
+  opacity: 0;
+  animation: fade-up 0.9s var(--ease-out) 0.65s both;
+}
+
+.btn-primary {
+  background: var(--amber);
+  color: var(--ink);
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border: none; cursor: none;
+  transition: background 0.2s, transform 0.2s;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.btn-primary:hover { background: var(--amber-d); transform: translateY(-2px); }
+.btn-primary .arrow { transition: transform 0.2s; }
+.btn-primary:hover .arrow { transform: translateX(4px); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 14px 24px;
+  border: 1px solid var(--rule-bone);
+  cursor: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-ghost:hover { border-color: var(--amber); color: var(--amber); }
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 32px; right: 60px;
+  font-family: var(--ff-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.5;
+  display: flex; align-items: center; gap: 8px;
+  animation: fade-up 1s var(--ease-out) 1.2s both;
+}
+.scroll-line {
+  width: 40px; height: 1px;
+  background: var(--muted);
+  animation: scroll-grow 2s ease-in-out infinite;
+}
+@keyframes scroll-grow {
+  0%,100% { transform: scaleX(0.3); transform-origin: left; }
+  50%      { transform: scaleX(1);   transform-origin: left; }
+}
+
+/* ══════════════════════════════════════════════
+   STAT TICKER
+══════════════════════════════════════════════ */
+.stat-ticker {
+  background: var(--ink-1);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 0;
+  overflow: hidden;
+  height: 52px;
+  display: flex; align-items: center;
+}
+.ticker-track {
+  display: flex; gap: 0;
+  animation: ticker 25s linear infinite;
+  white-space: nowrap;
+}
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.ticker-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 40px;
+  border-right: 1px solid var(--rule);
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  height: 52px;
+  flex-shrink: 0;
+}
+.ticker-item strong {
+  color: var(--amber);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+
+/* ══════════════════════════════════════════════
+   SECTIONS — SHARED
+══════════════════════════════════════════════ */
+section { position: relative; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 60px; }
+
+.section-label {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--amber);
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: var(--ff-display);
+  font-size: clamp(40px, 6vw, 80px);
+  letter-spacing: 0.04em;
+  line-height: 0.92;
+  color: var(--bone);
+}
+.section-body {
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: 17px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 520px;
+}
+
+/* scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ══════════════════════════════════════════════
+   PROBLEM SECTION
+══════════════════════════════════════════════ */
+.problem-section {
+  padding: 120px 0;
+  background: var(--ink);
+}
+
+.problem-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+  margin-top: 64px;
+}
+
+.problem-left {}
+
+.problem-stat-large {
+  font-family: var(--ff-display);
+  font-size: 120px;
+  letter-spacing: 0.02em;
+  line-height: 0.85;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+
+.problem-stat-desc {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+
+.problem-right { padding-top: 8px; }
+
+.problem-right p {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--bone-2);
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+.problem-right p strong { color: var(--bone); font-weight: 400; }
+.problem-right p em { color: var(--amber); font-style: normal; }
+
+.pull-quote-block {
+  border-left: 3px solid var(--amber);
+  padding: 16px 0 16px 24px;
+  margin: 28px 0;
+}
+.pull-quote-block p {
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: 20px !important;
+  color: var(--bone) !important;
+  line-height: 1.45 !important;
+  margin: 0 !important;
+}
+
+/* ══════════════════════════════════════════════
+   HOW IT WORKS
+══════════════════════════════════════════════ */
+.how-section {
+  padding: 120px 0;
+  background: var(--ink-1);
+  border-top: 1px solid var(--rule);
+}
+
+.how-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: end;
+  margin-bottom: 80px;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+}
+
+.step-card {
+  background: var(--ink-2);
+  padding: 32px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+.step-card:hover { background: var(--ink-3); }
+
+.step-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--amber);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-out);
+}
+.step-card:hover::before { transform: scaleX(1); }
+
+.step-num {
+  font-family: var(--ff-display);
+  font-size: 48px;
+  letter-spacing: 0.04em;
+  color: var(--amber);
+  opacity: 0.2;
+  line-height: 1;
+  margin-bottom: 20px;
+  transition: opacity 0.3s;
+}
+.step-card:hover .step-num { opacity: 0.6; }
+
+.step-title {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 10px;
+}
+
+.step-desc {
+  font-size: 12.5px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.step-desc strong { color: var(--bone); font-weight: 400; }
+
+/* ══════════════════════════════════════════════
+   DIFFERENTIATION
+══════════════════════════════════════════════ */
+.diff-section {
+  padding: 120px 0;
+  background: var(--ink);
+  border-top: 1px solid var(--rule);
+}
+
+.diff-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 80px;
+  align-items: start;
+  margin-top: 64px;
+}
+
+.diff-table-wrap {}
+
+.diff-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.diff-table thead tr {
+  border-bottom: 1px solid var(--rule-bone);
+}
+
+.diff-table th {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0 0 14px;
+  text-align: left;
+  font-weight: 400;
+}
+.diff-table th:first-child { color: var(--muted); padding-right: 24px; }
+.diff-table th:last-child  { color: var(--amber); }
+
+.diff-table td {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 13.5px;
+  font-weight: 300;
+  line-height: 1.5;
+  vertical-align: top;
+}
+.diff-table td:first-child {
+  color: var(--muted);
+  padding-right: 24px;
+  text-decoration: line-through;
+  text-decoration-color: rgba(122,139,168,0.3);
+}
+.diff-table td:last-child { color: var(--bone); }
+.diff-table tr:last-child td { border-bottom: none; }
+
+.diff-right {}
+
+.market-card {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--amber);
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+.market-card-label {
+  font-family: var(--ff-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+.market-card p {
+  font-size: 13.5px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.market-card p strong { color: var(--bone); font-weight: 400; }
+
+.competitor-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.competitor-row:last-child { border-bottom: none; }
+.competitor-name {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--bone-2);
+  letter-spacing: 0.05em;
+}
+.competitor-note {
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--muted);
+  text-align: right;
+  max-width: 200px;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════════════════════
+   USE CASES
+══════════════════════════════════════════════ */
+.use-section {
+  padding: 120px 0;
+  background: var(--ink-1);
+  border-top: 1px solid var(--rule);
+}
+
+.use-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  margin-top: 64px;
+}
+
+.use-card {
+  background: var(--ink-2);
+  padding: 36px 28px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.use-card:hover { background: var(--ink-3); }
+
+.use-card-num {
+  font-family: var(--ff-display);
+  font-size: 64px;
+  letter-spacing: 0.04em;
+  color: var(--rule-bone);
+  line-height: 1;
+  margin-bottom: 24px;
+  transition: color 0.3s;
+}
+.use-card:hover .use-card-num { color: var(--amber-pale); }
+
+.use-card-label {
+  font-family: var(--ff-mono);
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 8px;
+}
+
+.use-card-title {
+  font-family: var(--ff-display);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--bone);
+  margin-bottom: 12px;
+}
+
+.use-card-desc {
+  font-size: 12.5px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ══════════════════════════════════════════════
+   FOUNDATION
+══════════════════════════════════════════════ */
+.foundation-section {
+  padding: 120px 0;
+  background: var(--ink);
+  border-top: 1px solid var(--rule);
+}
+
+.foundation-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  margin-top: 64px;
+}
+
+.foundation-left p {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--bone-2);
+  line-height: 1.8;
+  margin-bottom: 18px;
+}
+.foundation-left p strong { color: var(--bone); font-weight: 400; }
+.foundation-left p em { color: var(--amber); font-style: normal; }
+
+.tech-stack {
+  display: flex; flex-direction: column; gap: 2px;
+  margin-top: 36px;
+}
+.tech-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--ink-2);
+  padding: 12px 18px;
+  border-left: 2px solid transparent;
+  transition: border-color 0.2s, background 0.2s;
+}
+.tech-row:hover { border-left-color: var(--amber); background: var(--ink-3); }
+.tech-name {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--bone-2);
+  letter-spacing: 0.06em;
+}
+.tech-role {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* twin viz */
+.twin-viz {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.twin-viz::before {
+  content: '// BEHAVIORAL TWIN ACTIVE';
+  font-family: var(--ff-mono);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  color: var(--amber);
+  opacity: 0.6;
+  position: absolute;
+  top: 16px; left: 20px;
+}
+
+.twin-node {
+  width: 100%;
+  background: var(--ink-3);
+  border: 1px solid var(--rule);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color 0.3s;
+}
+.twin-node:hover { border-color: var(--amber); }
+.twin-node-label {
+  font-family: var(--ff-mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.twin-node-val {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--amber);
+}
+
+.twin-connector {
+  width: 1px; height: 12px;
+  background: var(--rule);
+  margin: 0 auto;
+}
+
+.twin-label {
+  font-family: var(--ff-mono);
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 8px;
+  opacity: 0.5;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════
+   CTA
+══════════════════════════════════════════════ */
+.cta-section {
+  padding: 140px 0;
+  background: var(--ink-1);
+  border-top: 1px solid var(--rule);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: 'INTANGYBL';
+  position: absolute;
+  font-family: var(--ff-display);
+  font-size: 280px;
+  letter-spacing: 0.06em;
+  color: rgba(245,166,35,0.025);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.cta-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(245,166,35,0.07) 0%, transparent 70%);
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+}
+
+.cta-eyebrow {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--amber);
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+
+.cta-headline {
+  font-family: var(--ff-display);
+  font-size: clamp(48px, 7vw, 96px);
+  letter-spacing: 0.04em;
+  line-height: 0.9;
+  color: var(--bone);
+  margin-bottom: 20px;
+}
+
+.cta-headline span { color: var(--amber); }
+
+.cta-sub {
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--muted);
+  margin-bottom: 48px;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+.cta-actions {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+}
+
+.early-access-note {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 20px;
+  opacity: 0.6;
+}
+
+/* ══════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════ */
+footer {
+  background: var(--ink);
+  border-top: 1px solid var(--rule);
+  padding: 48px 60px 36px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 48px;
+}
+
+.footer-brand .wordmark {
+  font-family: var(--ff-display);
+  font-size: 28px;
+  letter-spacing: 0.08em;
+  color: var(--bone);
+  margin-bottom: 10px;
+}
+.footer-brand .wordmark span { color: var(--amber); }
+.footer-brand p {
+  font-size: 12.5px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 260px;
+}
+
+.footer-col-title {
+  font-family: var(--ff-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+  opacity: 0.7;
+  margin-bottom: 16px;
+}
+.footer-links { list-style: none; }
+.footer-links li {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  margin-bottom: 10px;
+  cursor: none;
+  transition: color 0.2s;
+}
+.footer-links li:hover { color: var(--bone); }
+
+.footer-bottom {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-bottom-left {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  color: var(--muted);
+  opacity: 0.5;
+  letter-spacing: 0.1em;
+}
+.footer-tagline {
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--muted);
+  opacity: 0.5;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  nav { padding: 0 24px; }
+  .container { padding: 0 24px; }
+  .hero { padding: 0 24px 60px; }
+  .hero-headline { font-size: 60px; }
+  .problem-layout, .diff-layout, .foundation-layout, .how-header { grid-template-columns: 1fr; gap: 40px; }
+  .steps-grid, .use-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .nav-links { display: none; }
+  footer { padding: 40px 24px 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- GRAIN -->
+<div class="grain"></div>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <div class="nav-wordmark">INT<span>A</span>NGY<span>B</span>L</div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#difference">Difference</a></li>
+    <li><a href="#foundation">Foundation</a></li>
+    <li><a href="#demo" class="nav-cta">Request Demo</a></li>
+  </ul>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-eyebrow">// AI-Powered Security Awareness · Philadelphia, PA</div>
+
+  <h1 class="hero-headline">
+    TRAIN WHAT<br>
+    <span class="amber-line">YOU CAN'T</span>
+    PATCH.
+  </h1>
+
+  <p class="hero-sub">
+    Human behavior can't be measured, firewalled, or patched. The only defense is personalized — built from who you are, not who you might be.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#demo" class="btn-primary">
+      Try the Simulator <span class="arrow">→</span>
+    </a>
+    <a href="#how" class="btn-ghost">See How It Works</a>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- ══ STAT TICKER ══ -->
+<div class="stat-ticker">
+  <div class="ticker-track" id="ticker">
+    <div class="ticker-item"><strong>$6.7B</strong> Security Awareness Training Market 2026</div>
+    <div class="ticker-item"><strong>60%</strong> Of Breaches Involve Human Factors</div>
+    <div class="ticker-item"><strong>8%</strong> Of Employees Drive 80% of Incidents</div>
+    <div class="ticker-item"><strong>24%</strong> AI Attacks Outperform Human-Crafted in 2025</div>
+    <div class="ticker-item"><strong>$15M</strong> Raised by Nearest Competitor (Jericho Security)</div>
+    <div class="ticker-item"><strong>0</strong> Existing Tools Use Self-Reported Psychological Profiling</div>
+    <div class="ticker-item"><strong>5min</strong> To Complete a Personalized Simulation Session</div>
+    <!-- duplicate for seamless loop -->
+    <div class="ticker-item"><strong>$6.7B</strong> Security Awareness Training Market 2026</div>
+    <div class="ticker-item"><strong>60%</strong> Of Breaches Involve Human Factors</div>
+    <div class="ticker-item"><strong>8%</strong> Of Employees Drive 80% of Incidents</div>
+    <div class="ticker-item"><strong>24%</strong> AI Attacks Outperform Human-Crafted in 2025</div>
+    <div class="ticker-item"><strong>$15M</strong> Raised by Nearest Competitor (Jericho Security)</div>
+    <div class="ticker-item"><strong>0</strong> Existing Tools Use Self-Reported Psychological Profiling</div>
+    <div class="ticker-item"><strong>5min</strong> To Complete a Personalized Simulation Session</div>
+  </div>
+</div>
+
+<!-- ══ PROBLEM ══ -->
+<section class="problem-section" id="problem">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 01 — The Problem</div>
+      <h2 class="section-title">THE THREAT<br>EVOLVED.<br><span style="color:var(--amber)">TRAINING</span><br>DIDN'T.</h2>
+    </div>
+
+    <div class="problem-layout">
+      <div class="reveal reveal-delay-1">
+        <div class="problem-stat-large">91<span style="font-size:0.5em;color:var(--amber-d)">%</span></div>
+        <div class="problem-stat-desc">of attacks begin<br>with a human decision</div>
+
+        <div style="margin-top:40px; display:flex; flex-direction:column; gap:2px;">
+          <div style="background:var(--ink-2);padding:14px 18px;border-left:2px solid var(--rule);">
+            <div style="font-family:var(--ff-mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);margin-bottom:4px;opacity:0.8;">2020 Threat</div>
+            <div style="font-size:13px;font-weight:300;color:var(--muted);">Generic phishing. Obvious sender. Easy to spot.</div>
+          </div>
+          <div style="background:var(--ink-2);padding:14px 18px;border-left:2px solid var(--amber);">
+            <div style="font-family:var(--ff-mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);margin-bottom:4px;">2026 Threat</div>
+            <div style="font-size:13px;font-weight:300;color:var(--bone);">AI-crafted. Uses your name, your tools, your manager's tone. Designed for <em style="color:var(--amber);font-style:normal;">you specifically</em>.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <p>Today's adversaries don't broadcast — they <strong>target</strong>. They study your LinkedIn profile, your conference talks, your team's naming conventions, your email signature. Then they construct an attack that feels <em>exactly</em> like your real world.</p>
+
+        <div class="pull-quote-block">
+          <p>"The question isn't whether you'll be targeted — it's whether you'll recognize it when you are."</p>
+        </div>
+
+        <p>Meanwhile, security awareness training is still running <strong>annual modules</strong> about obvious Nigerian prince emails. The same forgettable slide deck. The same quiz where the answer is always "don't click suspicious links."</p>
+
+        <p>That model was designed for a threat landscape that no longer exists. It proves you sat through training. It doesn't build the reflexes that actually prevent incidents.</p>
+
+        <p>Intangybl was built to close that gap — with training as <em>sophisticated, personalized, and psychologically-aware</em> as the attacks themselves.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section class="how-section" id="how">
+  <div class="container">
+    <div class="how-header">
+      <div class="reveal">
+        <div class="section-label">// 02 — The Method</div>
+        <h2 class="section-title">THE AI<br>SELF<br><span style="color:var(--amber)">SIMULATOR</span></h2>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <p class="section-body">Your AI Self is a behavioral model built from your own self-reported profile — the same data an attacker would research about you. Then we use it against you. Safely.</p>
+      </div>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-num">01</div>
+        <div class="step-title">Profile</div>
+        <div class="step-desc"><strong>Build your behavioral fingerprint.</strong> Role, tools, psychological pressure points, self-identified vulnerabilities. The honest picture.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-num">02</div>
+        <div class="step-title">Twin</div>
+        <div class="step-desc"><strong>Your AI Self is generated.</strong> A behavioral model calibrated to how you communicate, what makes you act quickly, what feels routine.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-3">
+        <div class="step-num">03</div>
+        <div class="step-title">Attack</div>
+        <div class="step-desc"><strong>Receive a personalized simulation.</strong> Executive impersonation, colleague urgency, vendor fraud, credential theft, or full vibe-hack mode.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-4">
+        <div class="step-num">04</div>
+        <div class="step-title">Decide</div>
+        <div class="step-desc"><strong>Make a real call.</strong> Report, ignore, or comply. No hints. No safety net. No second chances — just like the real thing.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-5">
+        <div class="step-num">05</div>
+        <div class="step-title">Debrief</div>
+        <div class="step-desc"><strong>Get your personalized breakdown.</strong> Which red flags you missed, how the attack exploited your specific pressure points, one takeaway to carry forward.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DIFFERENTIATION ══ -->
+<section class="diff-section" id="difference">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 03 — Why It's Different</div>
+      <h2 class="section-title">A MIRROR,<br>NOT A<br><span style="color:var(--amber)">CAMERA.</span></h2>
+    </div>
+
+    <div class="diff-layout">
+      <div class="reveal reveal-delay-1">
+        <p style="font-size:15px;font-weight:300;color:var(--bone-2);line-height:1.75;margin-bottom:32px;">Every other platform in this space watches your behavior over time — logging your clicks, tracking your patterns, building a profile without telling you. It's a surveillance model. Intangybl starts with <strong style="color:var(--bone);font-weight:400;">you telling us how you work.</strong> Transparent. Immediate. Consent-driven.</p>
+
+        <table class="diff-table">
+          <thead>
+            <tr>
+              <th>Everyone Else</th>
+              <th>Intangybl</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Passive behavioral tracking over time</td>
+              <td>Self-reported psychological profiling — immediate</td>
+            </tr>
+            <tr>
+              <td>Job-title scenario targeting</td>
+              <td>Pressure-point and tool-specific attacks</td>
+            </tr>
+            <tr>
+              <td>Compliance completion metrics</td>
+              <td>Measurable resilience score per session</td>
+            </tr>
+            <tr>
+              <td>Surveillance model (observed)</td>
+              <td>Mirror model (self-awareness driven)</td>
+            </tr>
+            <tr>
+              <td>Annual cadence, stale content</td>
+              <td>On-demand, always threat-current</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <div class="market-card">
+          <div class="market-card-label">⬡ Competitive Landscape</div>
+          <p>The market is moving toward personalization — but the architecture is wrong. <strong>Behavioral data collected passively over time</strong> is slow, opaque, and requires organizational buy-in to deploy. Intangybl's self-reported model is ready in minutes, works for any employee on day one, and builds trust rather than surveillance anxiety.</p>
+        </div>
+
+        <div style="margin-top:2px;background:var(--ink-2);padding:20px 24px;">
+          <div style="font-family:var(--ff-mono);font-size:8.5px;text-transform:uppercase;letter-spacing:0.18em;color:var(--muted);margin-bottom:16px;">Known Competitors</div>
+          <div class="competitor-row">
+            <div class="competitor-name">KnowBe4 · AIDA</div>
+            <div class="competitor-note">AI-assisted, passive tracking, compliance-first</div>
+          </div>
+          <div class="competitor-row">
+            <div class="competitor-name">Jericho Security</div>
+            <div class="competitor-note">$15M raised, DOD-contracted, observed behavior model</div>
+          </div>
+          <div class="competitor-row">
+            <div class="competitor-name">Brightside AI</div>
+            <div class="competitor-note">Digital footprint scanning, external data sources</div>
+          </div>
+          <div class="competitor-row" style="border-bottom:none;">
+            <div class="competitor-name" style="color:var(--amber);">Intangybl</div>
+            <div class="competitor-note" style="color:var(--amber);"><strong style="font-weight:400;">Only self-reported psychological profiling</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ USE CASES ══ -->
+<section class="use-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 04 — Who It's For</div>
+      <h2 class="section-title">BUILT FOR<br><span style="color:var(--amber)">REAL WORK.</span></h2>
+    </div>
+
+    <div class="use-grid">
+      <div class="use-card reveal reveal-delay-1">
+        <div class="use-card-num">01</div>
+        <div>
+          <div class="use-card-label">Enterprise</div>
+          <div class="use-card-title">WORKFORCE RESILIENCE</div>
+          <div class="use-card-desc">Scalable behavioral security training across every department and role — no IT rollout required.</div>
+        </div>
+      </div>
+      <div class="use-card reveal reveal-delay-2">
+        <div class="use-card-num">02</div>
+        <div>
+          <div class="use-card-label">Municipal / Government</div>
+          <div class="use-card-title">CRITICAL INFRASTRUCTURE</div>
+          <div class="use-card-desc">Public-sector workforce protection with audit trail and compliance documentation built in.</div>
+        </div>
+      </div>
+      <div class="use-card reveal reveal-delay-3">
+        <div class="use-card-num">03</div>
+        <div>
+          <div class="use-card-label">HR & Onboarding</div>
+          <div class="use-card-title">DAY ONE DEFENSE</div>
+          <div class="use-card-desc">Security profiling and awareness baked into new employee orientation — before bad habits form.</div>
+        </div>
+      </div>
+      <div class="use-card reveal reveal-delay-4">
+        <div class="use-card-num">04</div>
+        <div>
+          <div class="use-card-label">Consulting</div>
+          <div class="use-card-title">CLIENT POSTURE</div>
+          <div class="use-card-desc">Offer clients a measurable human risk assessment and awareness uplift as part of every engagement.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOUNDATION ══ -->
+<section class="foundation-section" id="foundation">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 05 — The Technology</div>
+      <h2 class="section-title">DIGITAL TWIN<br>LOGIC FOR<br><span style="color:var(--amber)">HUMAN RISK.</span></h2>
+    </div>
+
+    <div class="foundation-layout">
+      <div class="reveal reveal-delay-1">
+        <div class="foundation-left">
+          <p>The digital twin concept isn't new — <strong>enterprise infrastructure teams use it every day</strong> to test bridges, pipelines, and power grids before committing changes to the physical world. A virtual replica runs the scenario. The real asset stays safe.</p>
+          <p>Intangybl applies the same methodology to the asset no one else is protecting: <em>human judgment under pressure.</em> Your behavioral model runs the attack. Your real-world decisions stay uncompromised.</p>
+          <p>Powered by <strong>Claude (Anthropic)</strong> — one of the most capable and safety-conscious AI systems available — every simulation is generated fresh, contextually rich, and calibrated to your specific behavioral profile.</p>
+        </div>
+
+        <div class="tech-stack reveal reveal-delay-2">
+          <div class="tech-row">
+            <div class="tech-name">Claude · Anthropic</div>
+            <div class="tech-role">Simulation Engine</div>
+          </div>
+          <div class="tech-row">
+            <div class="tech-name">Behavioral Profiling Layer</div>
+            <div class="tech-role">Self-Reported Model</div>
+          </div>
+          <div class="tech-row">
+            <div class="tech-name">Scenario Framework</div>
+            <div class="tech-role">5 Attack Vectors</div>
+          </div>
+          <div class="tech-row">
+            <div class="tech-name">Debrief Engine</div>
+            <div class="tech-role">Personalized Analysis</div>
+          </div>
+          <div class="tech-row">
+            <div class="tech-name">Resilience Scoring</div>
+            <div class="tech-role">Session Analytics</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-3">
+        <div class="twin-viz">
+          <div class="twin-node">
+            <div class="twin-node-label">ROLE</div>
+            <div class="twin-node-val">Project Engineer</div>
+          </div>
+          <div class="twin-connector"></div>
+          <div class="twin-node">
+            <div class="twin-node-label">TOOLS</div>
+            <div class="twin-node-val">Teams · SAP · SharePoint</div>
+          </div>
+          <div class="twin-connector"></div>
+          <div class="twin-node">
+            <div class="twin-node-label">PRESSURE VECTORS</div>
+            <div class="twin-node-val">Deadlines · Exec Authority</div>
+          </div>
+          <div class="twin-connector"></div>
+          <div class="twin-node" style="border-color:rgba(245,166,35,0.4);">
+            <div class="twin-node-label" style="color:var(--amber);">AI SELF — GENERATED</div>
+            <div class="twin-node-val" style="color:var(--amber);">ACTIVE ▸</div>
+          </div>
+          <div class="twin-connector"></div>
+          <div class="twin-node" style="background:var(--ink-2);border-color:rgba(245,166,35,0.2);">
+            <div class="twin-node-label">ATTACK SCENARIO</div>
+            <div class="twin-node-val" style="color:var(--amber-d);">VIBE HACK · LEVEL 5</div>
+          </div>
+          <div class="twin-label">Behavioral Twin Active · Sandbox Mode · No Real Stakes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section" id="demo">
+  <div class="cta-glow"></div>
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="reveal">
+      <div class="cta-eyebrow">// Early Access Now Open</div>
+      <h2 class="cta-headline">KNOW YOUR<br><span>BLIND SPOT</span><br>BEFORE THEY DO.</h2>
+      <p class="cta-sub">Five minutes. Your behavioral profile. A personalized attack. No second chances — just like the real thing.</p>
+
+      <div class="cta-actions">
+        <a href="ai-self-simulator.html" class="btn-primary" style="font-size:12px;padding:16px 36px;">
+          Launch Simulator <span class="arrow">→</span>
+        </a>
+        <a href="mailto:your@email.com" class="btn-ghost" style="font-size:12px;padding:16px 28px;">
+          Request Enterprise Demo
+        </a>
+      </div>
+
+      <div class="early-access-note">Working MVP · Powered by Claude · Built in Philadelphia</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="wordmark">INT<span>A</span>NGY<span>B</span>L</div>
+      <p>The human layer of security. AI-powered behavioral training that knows your name — because the threats already do.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Product</div>
+      <ul class="footer-links">
+        <li>AI Self Simulator</li>
+        <li>How It Works</li>
+        <li>Enterprise Access</li>
+        <li>Request Demo</li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li>About Intangybl</li>
+        <li>The Origin Story</li>
+        <li>Philadelphia, PA</li>
+        <li>Contact</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-bottom-left">© 2026 Intangybl · All rights reserved · Philadelphia, PA</div>
+    <div class="footer-tagline">"Train what you can't patch."</div>
+  </div>
+</footer>
+
+<!-- ══ SCRIPTS ══ -->
+<script>
+/* ── CURSOR ── */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top  = my + 'px';
+});
+
+(function animateRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(animateRing);
+})();
+
+document.querySelectorAll('a, button, .step-card, .use-card, .tech-row').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.width  = '16px';
+    cursor.style.height = '16px';
+    ring.style.width    = '48px';
+    ring.style.height   = '48px';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.width  = '8px';
+    cursor.style.height = '8px';
+    ring.style.width    = '32px';
+    ring.style.height   = '32px';
+  });
+});
+
+/* ── NAV SCROLL ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* ── SCROLL REVEAL ── */
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
