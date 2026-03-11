@@ -1089,7 +1089,7 @@ footer {
     <div class="how-header">
       <div class="reveal">
         <div class="section-label">// 02 — The Method</div>
-        <h2 class="section-title">THE AI<br>SELF<br><span style="color:var(--amber)">SIMULATOR</span></h2>
+        <h2 class="section-title">INTANGYBL<br><span style="color:var(--amber)">VEROS</span></h2>
       </div>
       <div class="reveal reveal-delay-2">
         <p class="section-body">Your AI Self is a behavioral model built from your own self-reported profile — the same data an attacker would research about you. Then we use it against you. Safely.</p>
@@ -1123,41 +1123,6 @@ footer {
         <div class="step-desc"><strong>Get your personalized breakdown.</strong> Which red flags you missed, how the attack exploited your specific pressure points, one takeaway to carry forward.</div>
       </div>
     </div>
-
-    <!-- DEPLOYMENT MODES -->
-    <div style="margin-top:40px;">
-      <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--amber);opacity:.8;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
-        // Deployment Modes
-        <div style="flex:1;height:1px;background:var(--rule);"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;">
-
-        <div style="background:var(--ink-2);border:1px solid var(--rule-bone);padding:28px 24px;border-top:2px solid var(--amber);">
-          <div style="font-family:var(--ff-mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Mode 01 · Demo</div>
-          <div style="font-family:var(--ff-display);font-size:20px;letter-spacing:.04em;color:var(--bone);margin-bottom:12px;">SELF-GUIDED</div>
-          <div style="font-size:12.5px;font-weight:300;color:var(--muted);line-height:1.65;">The user builds their own profile and runs a simulation directly. <strong style="color:var(--bone);font-weight:400;">Transparent by design.</strong> Best for individual awareness training, sales demos, and security onboarding. This is the live demo available on this site.</div>
-        </div>
-
-        <div style="background:var(--ink-2);border:1px solid var(--rule-bone);padding:28px 24px;border-top:2px solid var(--amber);">
-          <div style="font-family:var(--ff-mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Mode 02 · Assessment</div>
-          <div style="font-family:var(--ff-display);font-size:20px;letter-spacing:.04em;color:var(--bone);margin-bottom:12px;">UNANNOUNCED</div>
-          <div style="font-size:12.5px;font-weight:300;color:var(--muted);line-height:1.65;">Admin deploys a silent profiling survey — framed as a work style questionnaire. Profiles are built in the background. <strong style="color:var(--bone);font-weight:400;">Simulations arrive in real inboxes without warning.</strong> Employees never know until after they decide.</div>
-        </div>
-
-        <div style="background:var(--ink-2);border:1px solid var(--rule-bone);padding:28px 24px;border-top:2px solid var(--amber);">
-          <div style="font-family:var(--ff-mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Mode 03 · Campaign</div>
-          <div style="font-family:var(--ff-display);font-size:20px;letter-spacing:.04em;color:var(--bone);margin-bottom:12px;">RANDOMIZED</div>
-          <div style="font-size:12.5px;font-weight:300;color:var(--muted);line-height:1.65;">Ongoing simulations delivered at unpredictable intervals across the organization. <strong style="color:var(--bone);font-weight:400;">Employees can never predict when the next one arrives</strong> — which is exactly the point. Permanent vigilance, not periodic compliance.</div>
-        </div>
-
-      </div>
-      <div style="background:var(--amber-pale);border:1px solid var(--rule);border-left:3px solid var(--amber);padding:16px 20px;margin-top:2px;">
-        <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:.16em;color:var(--bone);line-height:1.6;">
-          <span style="color:var(--amber);">// Note:</span> The simulator on this site demonstrates Mode 01. Enterprise deployments operate in Mode 02 and 03 — employees receive attacks through their real work channels without prior notice. The demo shows the mechanics. The product delivers the surprise.
-        </div>
-      </div>
-    </div>
-
   </div>
 </section>
 
@@ -1366,7 +1331,7 @@ footer {
         <a href="ai-self-simulator.html" class="btn-primary" style="font-size:12px;padding:16px 36px;">
           Launch Simulator <span class="arrow">→</span>
         </a>
-        <a href="/cdn-cgi/l/email-protection#3a43554f487a5f575b535614595557" class="btn-ghost" style="font-size:12px;padding:16px 28px;">
+        <a href="/cdn-cgi/l/email-protection#bac3d5cfc8fadfd7dbd3d694d9d5d7" class="btn-ghost" style="font-size:12px;padding:16px 28px;">
           Request Enterprise Demo
         </a>
       </div>
@@ -1386,7 +1351,7 @@ footer {
     <div>
       <div class="footer-col-title">Product</div>
       <ul class="footer-links">
-        <li>AI Self Simulator</li>
+        <li>Intangybl Veros</li>
         <li>How It Works</li>
         <li>Enterprise Access</li>
         <li>Request Demo</li>
@@ -1457,4 +1422,13 @@ const observer = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('visible');
-      observer.unobserve(e.target)
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+reveals.forEach(el => observer.observe(el));
+
+</script>
+</body>
+</html>
