@@ -7,14 +7,6 @@
 <meta name="description" content="AI-powered security awareness training built from your behavioral profile. The human layer of security.">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,600&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
-/* Emergency fallbacks — text visible even if Google Fonts blocked */
-:root {
-  --ff-display: 'Bebas Neue', 'Arial Narrow', Arial, sans-serif;
-  --ff-serif:   'Fraunces', Georgia, serif;
-  --ff-mono:    'IBM Plex Mono', 'Courier New', monospace;
-  --ff-body:    'IBM Plex Sans', Arial, sans-serif;
-}
-</style>
 /* ══════════════════════════════════════════════
    TOKENS
 ══════════════════════════════════════════════ */
@@ -206,6 +198,8 @@ nav.scrolled {
   text-transform: uppercase;
   color: var(--amber);
   margin-bottom: 20px;
+  opacity: 0;
+  animation: fade-up 0.8s var(--ease-out) 0.2s both;
 }
 
 .hero-headline {
@@ -215,6 +209,8 @@ nav.scrolled {
   line-height: 0.88;
   color: var(--bone);
   margin-bottom: 28px;
+  opacity: 0;
+  animation: fade-up 0.9s var(--ease-out) 0.35s both;
   max-width: 900px;
 }
 
@@ -229,10 +225,14 @@ nav.scrolled {
   max-width: 520px;
   line-height: 1.5;
   margin-bottom: 44px;
+  opacity: 0;
+  animation: fade-up 0.9s var(--ease-out) 0.5s both;
 }
 
 .hero-actions {
   display: flex; align-items: center; gap: 16px;
+  opacity: 0;
+  animation: fade-up 0.9s var(--ease-out) 0.65s both;
 }
 
 .btn-primary {
@@ -276,6 +276,7 @@ nav.scrolled {
   color: var(--muted);
   opacity: 0.5;
   display: flex; align-items: center; gap: 8px;
+  animation: fade-up 1s var(--ease-out) 1.2s both;
 }
 .scroll-line {
   width: 40px; height: 1px;
@@ -360,8 +361,8 @@ section { position: relative; }
 
 /* scroll reveal */
 .reveal {
-  opacity: 1;
-  transform: none;
+  opacity: 0;
+  transform: translateY(28px);
   transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
 }
 .reveal.visible { opacity: 1; transform: none; }
@@ -372,7 +373,7 @@ section { position: relative; }
 .reveal-delay-5 { transition-delay: 0.5s; }
 
 @keyframes fade-up {
-  from { opacity: 0.01; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: none; }
 }
 
@@ -1008,7 +1009,7 @@ footer {
 
   <div class="hero-actions">
     <a href="#demo" class="btn-primary">
-      Try the Simulator <span class="arrow">→</span>
+      Build Your Profile <span class="arrow">→</span>
     </a>
     <a href="#how" class="btn-ghost">See How It Works</a>
   </div>
@@ -1088,38 +1089,38 @@ footer {
     <div class="how-header">
       <div class="reveal">
         <div class="section-label">// 02 — The Method</div>
-        <h2 class="section-title">INTANGYBL<br><span style="color:var(--amber)">VEROS</span></h2>
+        <h2 class="section-title">VEROS<br>+<br><span style="color:var(--amber)">[ATTACK LAYER]</span></h2>
       </div>
       <div class="reveal reveal-delay-2">
-        <p class="section-body">Your AI Self is a behavioral model built from your own self-reported profile — the same data an attacker would research about you. Then we use it against you. Safely.</p>
+        <p class="section-body">Two distinct layers. <strong>Veros</strong> builds your behavioral profile — the AI Self — from your own self-reported data. The <strong>[Attack Layer]</strong> reads that profile and independently deploys a personalized simulation through real channels. A simulator alone can&#x27;t stage an effective training scenario. The depth comes from separating profiling from delivery.</p>
       </div>
     </div>
 
     <div class="steps-grid">
-      <div class="step-card reveal reveal-delay-1">
-        <div class="step-num">01</div>
+      <div class="step-card reveal reveal-delay-1" style="border-top:2px solid var(--amber);">
+        <div class="step-num" style="color:var(--amber);">VEROS · 01</div>
         <div class="step-title">Profile</div>
-        <div class="step-desc"><strong>Build your behavioral fingerprint.</strong> Role, tools, psychological pressure points, self-identified vulnerabilities. The honest picture.</div>
+        <div class="step-desc"><strong>Build your behavioral fingerprint.</strong> Role, tools, psychological pressure points, self-identified vulnerabilities — the same data an attacker would research about you.</div>
       </div>
-      <div class="step-card reveal reveal-delay-2">
-        <div class="step-num">02</div>
-        <div class="step-title">Twin</div>
-        <div class="step-desc"><strong>Your AI Self is generated.</strong> A behavioral model calibrated to how you communicate, what makes you act quickly, what feels routine.</div>
+      <div class="step-card reveal reveal-delay-2" style="border-top:2px solid var(--amber);">
+        <div class="step-num" style="color:var(--amber);">VEROS · 02</div>
+        <div class="step-title">AI Self</div>
+        <div class="step-desc"><strong>Your behavioral model is generated.</strong> Calibrated to how you communicate, what makes you act quickly, what feels routine. Stored. Versioned. Handed off.</div>
       </div>
-      <div class="step-card reveal reveal-delay-3">
-        <div class="step-num">03</div>
-        <div class="step-title">Attack</div>
-        <div class="step-desc"><strong>Receive a personalized simulation.</strong> Executive impersonation, colleague urgency, vendor fraud, credential theft, or full vibe-hack mode.</div>
+      <div class="step-card reveal reveal-delay-3" style="border-top:2px solid #60A5FA;">
+        <div class="step-num" style="color:#60A5FA;">[ATTACK LAYER] · 03</div>
+        <div class="step-title">Construct</div>
+        <div class="step-desc"><strong>A targeted attack is independently built.</strong> The [Attack Layer] reads your profile and constructs a scenario calibrated to your specific vulnerabilities — no generic templates.</div>
       </div>
-      <div class="step-card reveal reveal-delay-4">
-        <div class="step-num">04</div>
-        <div class="step-title">Decide</div>
-        <div class="step-desc"><strong>Make a real call.</strong> Report, ignore, or comply. No hints. No safety net. No second chances — just like the real thing.</div>
+      <div class="step-card reveal reveal-delay-4" style="border-top:2px solid #60A5FA;">
+        <div class="step-num" style="color:#60A5FA;">[ATTACK LAYER] · 04</div>
+        <div class="step-title">Deploy</div>
+        <div class="step-desc"><strong>Attack delivered independently.</strong> Through real channels — email, Slack, Teams — without prior notice. You don&#x27;t know it&#x27;s coming. That&#x27;s the point.</div>
       </div>
-      <div class="step-card reveal reveal-delay-5">
-        <div class="step-num">05</div>
+      <div class="step-card reveal reveal-delay-5" style="border-top:2px solid #60A5FA;">
+        <div class="step-num" style="color:#60A5FA;">[ATTACK LAYER] · 05</div>
         <div class="step-title">Debrief</div>
-        <div class="step-desc"><strong>Get your personalized breakdown.</strong> Which red flags you missed, how the attack exploited your specific pressure points, one takeaway to carry forward.</div>
+        <div class="step-desc"><strong>Personalized breakdown.</strong> Which red flags you missed, how the attack exploited your specific pressure points, and one behavioral takeaway. Your resilience score updates.</div>
       </div>
     </div>
   </div>
@@ -1256,28 +1257,28 @@ footer {
       <div class="reveal reveal-delay-1">
         <div class="foundation-left">
           <p>The digital twin concept isn't new — <strong>enterprise infrastructure teams use it every day</strong> to test bridges, pipelines, and power grids before committing changes to the physical world. A virtual replica runs the scenario. The real asset stays safe.</p>
-          <p>Intangybl applies the same methodology to the asset no one else is protecting: <em>human judgment under pressure.</em> Your behavioral model runs the attack. Your real-world decisions stay uncompromised.</p>
-          <p>Powered by <strong>Claude (Anthropic)</strong> — one of the most capable and safety-conscious AI systems available — every simulation is generated fresh, contextually rich, and calibrated to your specific behavioral profile.</p>
+          <p>Intangybl applies the same methodology to the asset no one else is protecting: <em>human judgment under pressure.</em> <strong>Veros</strong> builds the behavioral model. The <strong>[Attack Layer]</strong> runs the attack independently — through real channels, without warning. Your real-world decisions stay uncompromised.</p>
+          <p>Powered by <strong>Claude (Anthropic)</strong> — one of the most capable and safety-conscious AI systems available — every profile and simulation is generated fresh, contextually rich, and calibrated to your specific behavioral fingerprint.</p>
         </div>
 
         <div class="tech-stack reveal reveal-delay-2">
           <div class="tech-row">
+            <div class="tech-name" style="color:var(--amber);">Veros — Profiling Engine</div>
+            <div class="tech-role">AI Self Generation · IBRI Framework</div>
+          </div>
+          <div class="tech-row" style="border-left:2px solid var(--amber);padding-left:10px;">
             <div class="tech-name">Claude · Anthropic</div>
-            <div class="tech-role">Simulation Engine</div>
+            <div class="tech-role">Behavioral Model Inference</div>
           </div>
-          <div class="tech-row">
-            <div class="tech-name">Behavioral Profiling Layer</div>
-            <div class="tech-role">Self-Reported Model</div>
+          <div class="tech-row" style="border-left:2px solid #60A5FA;padding-left:10px;">
+            <div class="tech-name" style="color:#60A5FA;">[Attack Layer] — Simulation</div>
+            <div class="tech-role">Independent Deployment Engine</div>
           </div>
-          <div class="tech-row">
-            <div class="tech-name">Scenario Framework</div>
-            <div class="tech-role">5 Attack Vectors</div>
-          </div>
-          <div class="tech-row">
+          <div class="tech-row" style="border-left:2px solid #60A5FA;padding-left:10px;">
             <div class="tech-name">Debrief Engine</div>
             <div class="tech-role">Personalized Analysis</div>
           </div>
-          <div class="tech-row">
+          <div class="tech-row" style="border-left:2px solid #60A5FA;padding-left:10px;">
             <div class="tech-name">Resilience Scoring</div>
             <div class="tech-role">Session Analytics</div>
           </div>
@@ -1306,11 +1307,11 @@ footer {
             <div class="twin-node-val" style="color:var(--amber);">ACTIVE ▸</div>
           </div>
           <div class="twin-connector"></div>
-          <div class="twin-node" style="background:var(--ink-2);border-color:rgba(245,166,35,0.2);">
-            <div class="twin-node-label">ATTACK SCENARIO</div>
-            <div class="twin-node-val" style="color:var(--amber-d);">VIBE HACK · LEVEL 5</div>
+          <div class="twin-node" style="background:rgba(96,165,250,0.05);border-color:rgba(96,165,250,0.4);">
+            <div class="twin-node-label" style="color:#60A5FA;">[ATTACK LAYER] — READS PROFILE</div>
+            <div class="twin-node-val" style="color:#60A5FA;">DEPLOYING INDEPENDENTLY ▸</div>
           </div>
-          <div class="twin-label">Behavioral Twin Active · Sandbox Mode · No Real Stakes</div>
+          <div class="twin-label">Veros Profile Complete · [Attack Layer] Handoff Active</div>
         </div>
       </div>
     </div>
@@ -1324,13 +1325,13 @@ footer {
     <div class="reveal">
       <div class="cta-eyebrow">// Early Access Now Open</div>
       <h2 class="cta-headline">KNOW YOUR<br><span>BLIND SPOT</span><br>BEFORE THEY DO.</h2>
-      <p class="cta-sub">Five minutes. Your behavioral profile. A personalized attack. No second chances — just like the real thing.</p>
+      <p class="cta-sub">Five minutes. Build your behavioral profile with Veros. Your AI Self becomes the blueprint for every personalized attack that follows.</p>
 
       <div class="cta-actions">
-        <a href="ai-self-simulator.html" class="btn-primary" style="font-size:12px;padding:16px 36px;">
-          Launch Simulator <span class="arrow">→</span>
+        <a href="veros.html" class="btn-primary" style="font-size:12px;padding:16px 36px;">
+          Build Your Profile <span class="arrow">→</span>
         </a>
-        <a href="/cdn-cgi/l/email-protection#4831273d3a082d25292124662b2725" class="btn-ghost" style="font-size:12px;padding:16px 28px;">
+        <a href="/cdn-cgi/l/email-protection#ec9583999eac89818d8580c28f8381" class="btn-ghost" style="font-size:12px;padding:16px 28px;">
           Request Enterprise Demo
         </a>
       </div>
@@ -1350,7 +1351,7 @@ footer {
     <div>
       <div class="footer-col-title">Product</div>
       <ul class="footer-links">
-        <li>Intangybl Veros</li>
+        <li>Veros — Profiling Engine</li>
         <li>How It Works</li>
         <li>Enterprise Access</li>
         <li>Request Demo</li>
@@ -1421,11 +1422,4 @@ const observer = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('visible');
-      observer.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.05 });
-reveals.forEach(el => observer.observe(el));
-</script>
-</body>
-</html>
+      observer.unobserve(e.target)
