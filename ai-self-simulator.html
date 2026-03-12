@@ -493,7 +493,7 @@
   <div class="phase active" id="phase-0">
     <div class="section-label">// Phase 01 — Build Your Profile</div>
     <h2>Tell us about your work life.</h2>
-    <p class="lead">Your AI Self uses this to generate attack scenarios that are specific to <em>you</em> — your role, your tools, your team. The more honest you are, the more useful this becomes.</p>
+    <p class="lead">Veros uses this to build your AI Self — a behavioral model calibrated to how you think, communicate, and decide under pressure. The more honest you are, the more accurate the profile. The profile is what the [Attack Layer] reads to construct your simulation.</p>
 
     <div class="card">
       <div class="card-label">Identity</div>
@@ -554,8 +554,8 @@
   <!-- ═══════════════════════════════ PHASE 1: PROFILE DISPLAY ═══════════════════════════════ -->
   <div class="phase" id="phase-1">
     <div class="section-label">// Phase 01 — Profile Confirmed</div>
-    <h2>Your AI Self is ready.</h2>
-    <p class="lead">Based on your inputs, we've built a behavioral model. This is how an attacker using AI would profile you. Now we're going to use it against you — safely.</p>
+    <h2>Your AI Self is ready. <span style="font-size:0.6em;color:#60A5FA;font-weight:400;">Profile complete.</span></h2>
+    <p class="lead">Veros has built your behavioral model. This profile is the input the <strong>[Attack Layer]</strong> reads to independently construct and deploy a personalized simulation — through your real channels, without warning. Below is a demo preview of what that attack would look like based on your profile.</p>
 
     <div class="profile-grid" id="profile-display"></div>
 
@@ -565,8 +565,8 @@
     </div>
 
     <div class="card">
-      <div class="card-label">Simulation Mode</div>
-      <label>Select attack scenario type</label>
+      <div class="card-label">Demo Preview — Attack Type</div>
+      <label>Select a scenario to preview how the [Attack Layer] would target you</label>
       <select id="sim-type">
         <option value="executive-spear">Executive Spear Phishing — Impersonating leadership</option>
         <option value="colleague-urgency">Colleague Urgency Attack — Trusted peer under pressure</option>
@@ -577,21 +577,21 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="generateSimulation()">Run Simulation →</button>
+      <button class="btn btn-primary" onclick="generateSimulation()">Preview Attack Demo →</button>
       <button class="btn btn-ghost" onclick="goToPhase(0)">← Edit Profile</button>
     </div>
   </div>
 
   <!-- ═══════════════════════════════ PHASE 2: SIMULATION ═══════════════════════════════ -->
   <div class="phase" id="phase-2">
-    <div class="section-label">// Phase 02 — Live Simulation</div>
-    <h2>You just received this.</h2>
-    <p class="lead">This message was crafted using your profile. It arrived in your inbox 3 minutes ago. What do you do?</p>
+    <div class="section-label">// Phase 02 — [Attack Layer] Demo Preview</div>
+    <h2>This is what would arrive in your inbox.</h2>
+    <p class="lead">In a live deployment, this arrives independently — through your real email, Slack, or Teams — without warning. This demo preview is generated from your Veros profile to show you the shape of your attack. What would you do?</p>
 
     <div class="sim-container" id="sim-email-container">
       <div class="loading-block">
         <div class="loader"></div>
-        <div class="loading-text">Generating personalized attack scenario...<br>Building your AI Self profile...</div>
+        <div class="loading-text">Constructing attack preview from your Veros profile...<br>Reading behavioral fingerprint...</div>
       </div>
     </div>
 
@@ -613,7 +613,7 @@
   <div class="phase" id="phase-3">
     <div class="section-label">// Phase 03 — Debrief</div>
     <h2 id="analysis-headline">Debrief: What just happened.</h2>
-    <p class="lead" id="analysis-subhead">Here's the full breakdown of the attack — what made it convincing, why it was designed for you, and what you should have noticed.</p>
+    <p class="lead" id="analysis-subhead">Here's the full breakdown — how this attack was constructed from your Veros profile, which pressure vectors it exploited, and what you should carry forward.</p>
 
     <div class="analysis-panel" id="analysis-content">
       <div class="loading-block">
@@ -734,7 +734,7 @@ async function generateSimulation() {
   goToPhase(2);
 
   const container = document.getElementById('sim-email-container');
-  container.innerHTML = `<div class="loading-block"><div class="loader"></div><div class="loading-text">Building your personalized attack scenario...<br>Calibrating to your behavioral profile...</div></div>`;
+  container.innerHTML = `<div class="loading-block"><div class="loader"></div><div class="loading-text">Constructing attack from your profile...<br>Calibrating to your pressure vectors...</div></div>`;
   document.getElementById('decision-area').classList.add('hidden');
   document.getElementById('sim-back-btn').classList.add('hidden');
 
