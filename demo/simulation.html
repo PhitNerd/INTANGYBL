@@ -176,11 +176,9 @@ Respond ONLY with valid JSON:
   "vector_label": "${vectorLabels[profile.attack_vector] || profile.attack_vector}"
 }`;
 
-fetch('https://intangyblintangybl.rvance609.workers.dev', {
+fetch('https://intangybl.rvance609.workers.dev/', {
   method: 'POST',
-  headers: {'Content-Type': 'application/json',
-            'anthropic-dangerous-direct-browser-access': 'true',
-  },
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 1000,

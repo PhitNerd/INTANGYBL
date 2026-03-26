@@ -88,11 +88,9 @@ Respond ONLY with valid JSON, no markdown:
   "simulation_recommendation": "<2-3 sentences describing the specific attack Veros would deploy against this person.>"
 }`;
 
-fetch('https://intangyblintangybl.rvance609.workers.dev', {
+fetch('https://intangybl.rvance609.workers.dev/', {
   method: 'POST',
-  headers: {'Content-Type': 'application/json',
-    'anthropic-dangerous-direct-browser-access': 'true'
-  },
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 1200,
