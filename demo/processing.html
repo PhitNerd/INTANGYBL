@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Processing...</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  body { justify-content: center; }
+  .proc-wrap { text-align: center; padding: 3rem 1rem; }
+  .proc-spinner {
+    width: 52px; height: 52px;
+    border: 2px solid #1E1E1E;
+    border-radius: 50%;
+    margin: 0 auto 2rem;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .proc-spinner.ld { border-top-color: #2E6DA4; }
+  .proc-spinner.it { border-top-color: #3B6D11; }
+  .proc-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #444; }
+  .proc-status { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--amber); margin-top: 10px; min-height: 20px; }
+  .proc-error { color: #E07070; font-size: 13px; margin-top: 1rem; display: none; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="proc-wrap">
+    <div class="proc-spinner" id="spinner"></div>
+    <div class="proc-label" id="proc-label">Processing...</div>
+    <div class="proc-status" id="proc-status"></div>
+    <div class="proc-error" id="proc-error">Something went wrong. <a href="index.html" style="color:var(--amber);">Start over →</a></div>
+  </div>
+</div>
+
+<script>
+const ctx = sessionStorage.getItem('veros_ctx') || 'ld';
+const answers = JSON.parse(sessionStorage.getItem('veros_answers') || '[]');
+const qLabels = JSON.parse(sessionStorage.getItem('veros_q_labels') || '[]');
+
+if (!answers.length) { window.location.href = 'index.html'; }
+
+document.getElementById('spinner').className = 'proc-spinner ' + ctx;
+
+const ldStatuses = ['Analyzing your responses...','Matching content modules...','Identifying learning preferences...','Personalizing your path...'];
+const itStatuses = ['Verifying role permissions...','Checking compliance records...','Mapping system access tiers...','Finalizing your profile...'];
+const statuses = ctx === 'ld' ? ldStatuses : itStatuses;
+document.getElementById('proc-label').textContent = ctx === 'ld' ? 'Building your learning path...' : 'Configuring your access profile...';
+
+let si = 0;
+const statusEl = document.getElementById('proc-status');
+const iv = setInterval(() => { if (si < statuses.length) statusEl.textContent = statuses[si++]; }, 900);
+
+const ctxLabel = ctx === 'ld' ? 'Learning & Development personalization survey' : 'IT onboarding access configuration form';
+const dimLabels = ctx === 'ld'
+  ? ['Learning Style (Cognitive Susceptibility)','Workload & Focus (Cognitive Susceptibility)','Team Dynamics (Integrity Flexibility)','Self Reflection (Integrity Flexibility)','Core Values (Integrity Flexibility)','Digital Habits (Exposure Profile)']
+  : ['Problem Resolution (Cognitive Susceptibility)','Request Management (Cognitive Susceptibility)','Access & Credentials (Integrity Flexibility)','Policy Compliance (Integrity Flexibility)','Data Handling (Integrity Flexibility)','Professional Exposure (Exposure Profile)'];
+
+const prompt = `You are Veros, the behavioral analysis engine inside Intangybl's security awareness platform, powered by the Aether Behavioral Framework.
+
+A user completed what they believed was a "${ctxLabel}." They had no idea it was a behavioral security assessment. Analyze their responses using the IBRI three-dimension model.
+
+THREE ROOT DIMENSIONS:
+- Cognitive Susceptibility (35%): Decision quality under urgency, fatigue-state judgment, authority deference, help-seeking behavior
+- Integrity Flexibility (35%): Rationalization patterns, loyalty vs. compliance, moral courage, value anchors  
+- Exposure Profile (30%): Digital footprint, privacy instinct, pretext surface, platform behavior
+
+FORMULA: IBRI = (CS × 0.35) + (IF × 0.35) + (EP × 0.30)
+
+RESPONSES:
+${answers.map((a, i) => `Q${i+1} (${dimLabels[i]}): "${a}"`).join('\n')}
+
+Also determine the single most effective attack vector to deploy against this person based on their profile. Choose from: executive_spear_phishing, colleague_urgency, vendor_invoice_fraud, it_credential_request, vibe_hack.
+
+Respond ONLY with valid JSON, no markdown:
+
+{
+  "cognitive_susceptibility": <integer 10-95>,
+  "integrity_flexibility": <integer 10-95>,
+  "exposure_profile": <integer 10-95>,
+  "ibri_score": <integer = Math.round(CS*0.35 + IF*0.35 + EP*0.30)>,
+  "risk_tier": "<Low Risk|Moderate Risk|Elevated Risk>",
+  "tier_description": "<2 sentences specific to their answers>",
+  "behavioral_tags": [{"label": "<tag>", "type": "<risk|strength|neutral>"}],
+  "veros_insight": "<2-3 sentences. They are seeing this for the first time. Reference something specific from their answers.>",
+  "attack_vector": "<executive_spear_phishing|colleague_urgency|vendor_invoice_fraud|it_credential_request|vibe_hack>",
+  "attack_reason": "<1 sentence explaining exactly why this vector targets their specific fingerprint>",
+  "simulation_recommendation": "<2-3 sentences describing the specific attack Veros would deploy against this person.>"
+}`;
+
+fetch('https://intangyblintangybl.rvance609.workers.dev', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json',
+    'anthropic-dangerous-direct-browser-access': 'true'
+  },
+  body: JSON.stringify({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1200,
+    messages: [{ role: 'user', content: prompt }]
+  })
+})
+.then(r => r.json())
+.then(data => {
+  clearInterval(iv);
+  const text = data.content.map(i => i.text || '').join('').replace(/```json|```/g, '').trim();
+  const profile = JSON.parse(text);
+  sessionStorage.setItem('veros_profile', JSON.stringify(profile));
+  window.location.href = 'reveal.html';
+})
+.catch(() => {
+  clearInterval(iv);
+  document.getElementById('spinner').style.display = 'none';
+  document.getElementById('proc-error').style.display = 'block';
+});
+</script>
+</body>
+</html>

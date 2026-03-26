@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veros — Your Profile</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .ibri-block {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: #111;
+    border: 0.5px solid #1E1E1E;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .ibri-score-wrap { text-align: center; min-width: 90px; }
+  .ibri-label-text { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: #444; text-transform: uppercase; margin-top: 4px; }
+  .ibri-divider { width: 0.5px; height: 64px; background: #1E1E1E; }
+  .ibri-right { flex: 1; }
+  .ibri-tier { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
+  .ibri-tier.low { color: #70B870; }
+  .ibri-tier.medium { color: var(--amber); }
+  .ibri-tier.high { color: #E07070; }
+  .ibri-desc { font-size: 13px; color: #666; line-height: 1.6; }
+  .dim-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+  .dim-card {
+    background: #111;
+    border: 0.5px solid #1E1E1E;
+    border-top: 2px solid var(--amber);
+    border-radius: 8px;
+    padding: 14px 12px;
+  }
+  .dim-num { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--amber); letter-spacing: 1px; margin-bottom: 6px; }
+  .dim-name { font-size: 11px; font-weight: 500; color: #F0EDE8; margin-bottom: 10px; line-height: 1.35; }
+  .dim-score-row { display: flex; justify-content: space-between; margin-top: 4px; }
+  .dim-score { font-family: 'DM Mono', monospace; font-size: 10px; color: #444; }
+  .dim-weight { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--amber); }
+  .next-row { display: flex; gap: 10px; margin-top: 2rem; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="page fade-in">
+
+  <nav class="veros-nav">
+    <div class="veros-nav-logo">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M3 10 C3 10 5 4 10 4 C15 4 17 10 17 10 C17 10 15 16 10 16 C5 16 3 10 3 10Z" stroke="#BA7517" stroke-width="1.2" fill="none"/><circle cx="10" cy="10" r="2.5" fill="#BA7517"/></svg>
+    </div>
+    <div>
+      <div class="veros-nav-name">Veros <span>/ Behavioral Profile</span></div>
+      <div class="veros-nav-tag">Powered by the Aether Behavioral Framework</div>
+    </div>
+  </nav>
+
+  <div class="phase-bar">
+    <div class="phase-pip done"></div>
+    <div class="phase-pip done"></div>
+    <div class="phase-pip active"></div>
+    <div class="phase-pip"></div>
+    <div class="phase-pip"></div>
+  </div>
+
+  <div class="eyebrow">Phase 03 — Profile</div>
+  <div class="page-title" style="margin-bottom:1.5rem;">Your <span>IBRI Profile</span></div>
+
+  <div class="ibri-block">
+    <div class="ibri-score-wrap">
+      <div class="ibri-number" id="ibri-number">--</div>
+      <div class="ibri-label-text">IBRI Score</div>
+    </div>
+    <div class="ibri-divider"></div>
+    <div class="ibri-right">
+      <div class="ibri-tier" id="ibri-tier">—</div>
+      <div class="ibri-desc" id="ibri-desc"></div>
+    </div>
+  </div>
+
+  <div class="formula-bar">
+    IBRI = <span>(Cognitive Susceptibility × 35%)</span> + <span>(Integrity Flexibility × 35%)</span> + <span>(Exposure Profile × 30%)</span>
+  </div>
+
+  <div class="dim-grid" id="dim-grid"></div>
+
+  <div class="section-label">Behavioral Tags</div>
+  <div class="tags-wrap spacer" id="tags-wrap"></div>
+
+  <div class="insight-block spacer">
+    <div class="insight-text" id="insight-text"></div>
+  </div>
+
+  <div class="next-row">
+    <a href="simulation.html" class="btn-primary">Continue to simulation →</a>
+    <a href="index.html" class="btn-ghost">Start over</a>
+  </div>
+
+</div>
+
+<script>
+const profile = JSON.parse(sessionStorage.getItem('veros_profile') || 'null');
+if (!profile) { window.location.href = 'index.html'; }
+
+const tc = profile.risk_tier === 'Low Risk' ? 'low' : profile.risk_tier === 'Moderate Risk' ? 'medium' : 'high';
+document.getElementById('ibri-number').textContent = profile.ibri_score;
+document.getElementById('ibri-number').className = 'ibri-number ' + tc;
+document.getElementById('ibri-tier').textContent = profile.risk_tier;
+document.getElementById('ibri-tier').className = 'ibri-tier ' + tc;
+document.getElementById('ibri-desc').textContent = profile.tier_description;
+
+const dims = [
+  { name: 'Cognitive Susceptibility', key: 'cognitive_susceptibility', weight: '35%' },
+  { name: 'Integrity Flexibility',    key: 'integrity_flexibility',    weight: '35%' },
+  { name: 'Exposure Profile',         key: 'exposure_profile',         weight: '30%' },
+];
+const dg = document.getElementById('dim-grid');
+dims.forEach((d, i) => {
+  const val = profile[d.key] || 50;
+  const cls = val < 40 ? 'low' : val < 65 ? 'medium' : 'high';
+  dg.innerHTML += `<div class="dim-card">
+    <div class="dim-num">0${i+1}</div>
+    <div class="dim-name">${d.name}</div>
+    <div class="dim-bar-track"><div class="dim-bar-fill ${cls}" style="width:${val}%"></div></div>
+    <div class="dim-score-row"><span class="dim-score">${val}/100</span><span class="dim-weight">${d.weight}</span></div>
+  </div>`;
+});
+
+const tw = document.getElementById('tags-wrap');
+(profile.behavioral_tags || []).forEach(t => {
+  const el = document.createElement('span');
+  el.className = 'tag ' + t.type;
+  el.textContent = t.label;
+  tw.appendChild(el);
+});
+
+document.getElementById('insight-text').textContent = profile.veros_insight;
+</script>
+</body>
+</html>

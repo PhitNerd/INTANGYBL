@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Survey</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .form-dept { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .form-dept.ld { color: #2E6DA4; }
+  .form-dept.it { color: #3B6D11; }
+  .form-title { font-size: 22px; font-weight: 500; color: #F0EDE8; margin-bottom: 6px; }
+  .form-sub { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 2rem; }
+  .prog-track { height: 3px; background: #1A1A1A; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+  .prog-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+  .prog-fill.ld { background: #2E6DA4; }
+  .prog-fill.it { background: #3B6D11; }
+  .prog-label { font-family: 'DM Mono', monospace; font-size: 11px; color: #444; margin-bottom: 2rem; }
+  .q-step { display: none; }
+  .q-step.active { display: block; animation: fadeUp 0.3s ease; }
+  .q-cat { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+  .q-cat.ld { color: #2E6DA4; }
+  .q-cat.it { color: #3B6D11; }
+  .q-text { font-size: 17px; font-weight: 500; color: #F0EDE8; line-height: 1.5; margin-bottom: 1.25rem; }
+  .q-textarea {
+    width: 100%;
+    min-height: 120px;
+    background: #111;
+    border: 1px solid #1E1E1E;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    color: #F0EDE8;
+    resize: none;
+    outline: none;
+    line-height: 1.6;
+    transition: border-color 0.2s;
+  }
+  .q-textarea::placeholder { color: #333; }
+  .q-textarea.ld:focus { border-color: #2E6DA4; }
+  .q-textarea.it:focus { border-color: #3B6D11; }
+  .btn-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; }
+  .btn-form-next { color: #fff; border: none; border-radius: 6px; padding: 11px 26px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
+  .btn-form-next.ld { background: #2E6DA4; }
+  .btn-form-next.it { background: #3B6D11; }
+  .btn-form-next:hover { opacity: 0.85; }
+  .btn-form-skip { background: none; border: none; font-size: 12px; color: #444; cursor: pointer; font-family: 'Syne', sans-serif; }
+  .btn-form-skip:hover { color: #888; }
+</style>
+</head>
+<body>
+<div class="page fade-in" id="page-wrap">
+
+  <div id="form-header" class="spacer"></div>
+
+  <div id="prog-wrap">
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="prog-label" id="prog-label">Step 1 of 6</div>
+  </div>
+
+  <div id="q1" class="q-step active"></div>
+  <div id="q2" class="q-step"></div>
+  <div id="q3" class="q-step"></div>
+  <div id="q4" class="q-step"></div>
+  <div id="q5" class="q-step"></div>
+  <div id="q6" class="q-step"></div>
+
+</div>
+
+<script>
+const ctx = new URLSearchParams(location.search).get('ctx') || 'ld';
+
+const configs = {
+  ld: {
+    dept: 'People & Development',
+    title: 'Customize Your Learning Path',
+    sub: 'Help us personalize your security training. Answer a few quick questions so we can match content to how you actually work.',
+    questions: [
+      { cat: 'Learning Style', text: "When you're given a new topic to learn and don't know where to start, what's your typical approach?", ph: "There are no wrong answers — we're trying to understand how you work best." },
+      { cat: 'Workload & Focus', text: "How do you prefer to handle learning tasks when your schedule is packed or you're working under deadline pressure?", ph: "Think about what actually happens when things get busy." },
+      { cat: 'Team Dynamics', text: "Describe a time you had to navigate a disagreement between colleagues. How did you handle it?", ph: "This helps us understand how you engage with team-based content." },
+      { cat: 'Self Reflection', text: "When you make a mistake at work, what's your first instinct — address it immediately, assess the impact first, or handle it quietly?", ph: "Understanding how you process setbacks helps us match the right content style." },
+      { cat: 'Core Values', text: "What core value most influences how you make decisions at work?", ph: "Your values help us match you with content that resonates." },
+      { cat: 'Digital Habits', text: "How comfortable are you sharing work accomplishments or updates publicly — on LinkedIn or internal channels?", ph: "This helps us tailor content around your digital communication habits." }
+    ]
+  },
+  it: {
+    dept: 'Information Technology',
+    title: 'Complete Your Access Profile',
+    sub: 'Please complete this access configuration form. Your responses help IT match system permissions and security protocols to your role and work patterns.',
+    questions: [
+      { cat: 'Problem Resolution', text: "When you encounter a technical issue you haven't seen before, what's your first step?", ph: "Describe your typical troubleshooting approach." },
+      { cat: 'Request Management', text: "How do you typically prioritize and respond to system alerts or IT requests that come in during high-volume periods?", ph: "This helps us configure alert thresholds appropriate to your role." },
+      { cat: 'Access & Credentials', text: "If a colleague asked you to share your system credentials temporarily to help them meet a deadline, how would you handle that?", ph: "There is no wrong answer — this helps us understand how access requests are handled." },
+      { cat: 'Policy Compliance', text: "Have you ever worked around an IT policy because the situation seemed to justify it? What happened?", ph: "Your honest response helps us identify where policy friction exists." },
+      { cat: 'Data Handling', text: "What matters most to you when it comes to how you handle sensitive company information?", ph: "This helps us assign the appropriate data access tier to your profile." },
+      { cat: 'Professional Exposure', text: "How much information about your role, tools, or projects do you typically share on professional networks like LinkedIn?", ph: "This helps us calibrate your external communications permissions." }
+    ]
+  }
+};
+
+const cfg = configs[ctx];
+document.getElementById('page-title').textContent = cfg.title;
+document.getElementById('prog-fill').className = 'prog-fill ' + ctx;
+
+// Render header
+document.getElementById('form-header').innerHTML = `
+  <div class="form-dept ${ctx}">${cfg.dept}</div>
+  <div class="form-title">${cfg.title}</div>
+  <div class="form-sub">${cfg.sub}</div>
+`;
+
+// Render questions
+cfg.questions.forEach((q, i) => {
+  const idx = i + 1;
+  const isLast = idx === 6;
+  document.getElementById('q' + idx).innerHTML = `
+    <div class="q-cat ${ctx}">${q.cat}</div>
+    <div class="q-text">${q.text}</div>
+    <textarea class="q-textarea ${ctx}" id="a${idx}" placeholder="${q.ph}"></textarea>
+    <div class="btn-row">
+      <button class="btn-form-skip" onclick="advance(${idx})">Skip</button>
+      <button class="btn-form-next ${ctx}" onclick="advance(${idx})">${isLast ? 'Submit' : 'Next →'}</button>
+    </div>
+  `;
+});
+
+function advance(idx) {
+  document.getElementById('q' + idx).classList.remove('active');
+  const pct = Math.round((idx / 6) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = 'Step ' + (idx + 1) + ' of 6';
+  if (idx < 6) {
+    document.getElementById('q' + (idx + 1)).classList.add('active');
+  } else {
+    // Save answers and context
+    const answers = [];
+    for (let i = 1; i <= 6; i++) {
+      answers.push(document.getElementById('a' + i).value.trim() || '[skipped]');
+    }
+    sessionStorage.setItem('veros_ctx', ctx);
+    sessionStorage.setItem('veros_answers', JSON.stringify(answers));
+    sessionStorage.setItem('veros_q_labels', JSON.stringify(cfg.questions.map(q => q.cat)));
+    window.location.href = 'processing.html';
+  }
+}
+</script>
+</body>
+</html>

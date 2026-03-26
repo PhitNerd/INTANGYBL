@@ -1,1 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intangybl — Experience Veros</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .door-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 2rem; }
+  .door-card {
+    background: #111;
+    border: 0.5px solid #1E1E1E;
+    border-radius: 12px;
+    padding: 1.75rem 1.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    text-decoration: none;
+    display: block;
+  }
+  .door-card:hover { transform: translateY(-3px); }
+  .door-card.ld:hover { border-color: #2E6DA4; }
+  .door-card.it:hover { border-color: #3B6D11; }
+  .door-icon {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+  }
+  .door-icon.ld { background: #0D1F2E; }
+  .door-icon.it { background: #0F1F0F; }
+  .door-dept {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .door-dept.ld { color: #2E6DA4; }
+  .door-dept.it { color: #3B6D11; }
+  .door-title { font-size: 15px; font-weight: 500; color: #F0EDE8; margin-bottom: 8px; }
+  .door-desc { font-size: 12px; color: #666; line-height: 1.6; margin-bottom: 14px; }
+  .door-cta {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 5px 14px;
+    border-radius: 40px;
+    border: 0.5px solid;
+    display: inline-block;
+  }
+  .door-cta.ld { color: #2E6DA4; border-color: #2E6DA4; }
+  .door-cta.it { color: #3B6D11; border-color: #3B6D11; }
+  .bottom-note {
+    margin-top: 2.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #333;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+<div class="page fade-in">
 
+  <nav class="veros-nav">
+    <div class="veros-nav-logo">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M3 10 C3 10 5 4 10 4 C15 4 17 10 17 10 C17 10 15 16 10 16 C5 16 3 10 3 10Z" stroke="#BA7517" stroke-width="1.2" fill="none"/><circle cx="10" cy="10" r="2.5" fill="#BA7517"/></svg>
+    </div>
+    <div>
+      <div class="veros-nav-name">Veros <span>/ Demo</span></div>
+      <div class="veros-nav-tag">Powered by the Aether Behavioral Framework</div>
+    </div>
+  </nav>
+
+  <div class="eyebrow">Adaptive Deployment</div>
+  <div class="page-title">Choose your <span>entry point.</span></div>
+  <div class="page-sub">Veros deploys through contexts employees already trust. Select a scenario — the same behavioral engine runs behind both doors.</div>
+
+  <div class="door-grid">
+    <a class="door-card ld" href="survey.html?ctx=ld">
+      <div class="door-icon ld">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="4" width="14" height="2" rx="1" fill="#2E6DA4"/>
+          <rect x="3" y="9" width="10" height="2" rx="1" fill="#2E6DA4"/>
+          <rect x="3" y="14" width="12" height="2" rx="1" fill="#2E6DA4"/>
+        </svg>
+      </div>
+      <div class="door-dept ld">People & Development</div>
+      <div class="door-title">Customize Your Learning Path</div>
+      <div class="door-desc">Employees personalize their security training. Feels like a benefit. Builds the profile.</div>
+      <span class="door-cta ld">Enter as employee →</span>
+    </a>
+
+    <a class="door-card it" href="survey.html?ctx=it">
+      <div class="door-icon it">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="4" width="14" height="10" rx="2" stroke="#3B6D11" stroke-width="1.5" fill="none"/>
+          <rect x="7" y="15" width="6" height="1.5" rx="0.75" fill="#3B6D11"/>
+          <rect x="8" y="8" width="4" height="2.5" rx="0.5" fill="#3B6D11"/>
+        </svg>
+      </div>
+      <div class="door-dept it">Information Technology</div>
+      <div class="door-title">Complete Your Access Profile</div>
+      <div class="door-desc">Standard IT onboarding form. Systems access setup. Nobody questions IT.</div>
+      <span class="door-cta it">Enter as employee →</span>
+    </a>
+  </div>
+
+  <div class="bottom-note">Same engine. Different door. Same result.</div>
+</div>
+</body>
+</html>

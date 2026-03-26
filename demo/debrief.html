@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veros — Debrief</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .decision-result {
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 0.5px solid;
+  }
+  .decision-result.report { background: #0F1F0F; border-color: #3B6D11; }
+  .decision-result.ignore  { background: #111; border-color: #333; }
+  .decision-result.comply  { background: #2A0F0F; border-color: #5A1F1F; }
+  .decision-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .decision-label.report { color: #70B870; }
+  .decision-label.ignore  { color: #888; }
+  .decision-label.comply  { color: #E07070; }
+  .decision-verdict { font-size: 17px; font-weight: 500; margin-bottom: 4px; }
+  .decision-verdict.report { color: #70B870; }
+  .decision-verdict.ignore  { color: #888; }
+  .decision-verdict.comply  { color: #E07070; }
+  .decision-sub { font-size: 13px; color: #555; line-height: 1.6; }
+  .debrief-section { margin-bottom: 1.5rem; }
+  .debrief-section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #444;
+    margin-bottom: 10px;
+  }
+  .debrief-body { font-size: 14px; color: #888; line-height: 1.7; }
+  .red-flag-list { list-style: none; margin-top: 10px; }
+  .red-flag-list li {
+    font-size: 13px;
+    color: #888;
+    padding: 8px 0;
+    border-bottom: 0.5px solid #1A1A1A;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .red-flag-list li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .loading-wrap { text-align: center; padding: 2rem; }
+  .loading-spinner { width: 32px; height: 32px; border: 2px solid #1E1E1E; border-top-color: var(--amber); border-radius: 50%; margin: 0 auto 1rem; animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-status { font-family: 'DM Mono', monospace; font-size: 11px; color: #444; }
+</style>
+</head>
+<body>
+<div class="page fade-in">
+
+  <nav class="veros-nav">
+    <div class="veros-nav-logo">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M3 10 C3 10 5 4 10 4 C15 4 17 10 17 10 C17 10 15 16 10 16 C5 16 3 10 3 10Z" stroke="#BA7517" stroke-width="1.2" fill="none"/><circle cx="10" cy="10" r="2.5" fill="#BA7517"/></svg>
+    </div>
+    <div>
+      <div class="veros-nav-name">Veros <span>/ Debrief</span></div>
+      <div class="veros-nav-tag">Powered by the Aether Behavioral Framework</div>
+    </div>
+  </nav>
+
+  <div class="phase-bar">
+    <div class="phase-pip done"></div>
+    <div class="phase-pip done"></div>
+    <div class="phase-pip done"></div>
+    <div class="phase-pip done"></div>
+    <div class="phase-pip active"></div>
+  </div>
+
+  <div class="eyebrow">Phase 05 — Debrief</div>
+  <div class="page-title" style="margin-bottom:0.5rem;">What <span>just happened.</span></div>
+  <div class="page-sub">Here's how the attack was constructed from your profile, what it exploited, and what to carry forward.</div>
+
+  <div id="decision-block"></div>
+  <div id="debrief-content">
+    <div class="loading-wrap">
+      <div class="loading-spinner"></div>
+      <div class="loading-status">Generating your personalized debrief...</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const profile  = JSON.parse(sessionStorage.getItem('veros_profile') || 'null');
+const sim      = JSON.parse(sessionStorage.getItem('veros_sim') || 'null');
+const decision = sessionStorage.getItem('veros_decision') || 'ignore';
+const answers  = JSON.parse(sessionStorage.getItem('veros_answers') || '[]');
+if (!profile || !sim) { window.location.href = 'index.html'; }
+
+const decisionCopy = {
+  report: { label: 'Correct Decision', verdict: 'You reported the attack.', sub: 'That was the right call. You recognized something was off and escalated. This is exactly the behavior Veros is designed to reinforce.' },
+  ignore: { label: 'Partial Response', verdict: 'You ignored it.', sub: 'Ignoring a suspicious message is better than complying — but it leaves the threat unaddressed. Reporting is the correct action because it alerts your security team.' },
+  comply: { label: 'Attack Succeeded', verdict: 'You complied.', sub: 'This is how breaches start. The attack exploited your behavioral fingerprint precisely. In a live scenario, the attacker now has what they needed.' }
+};
+
+const dc = decisionCopy[decision];
+document.getElementById('decision-block').innerHTML = `
+  <div class="decision-result ${decision}">
+    <div class="decision-label ${decision}">${dc.label}</div>
+    <div class="decision-verdict ${decision}">${dc.verdict}</div>
+    <div class="decision-sub">${dc.sub}</div>
+  </div>
+`;
+
+const debriefPrompt = `You are Veros. Generate a personalized debrief for this security simulation session.
+
+PROFILE:
+- IBRI Score: ${profile.ibri_score} (${profile.risk_tier})
+- Cognitive Susceptibility: ${profile.cognitive_susceptibility}/100
+- Integrity Flexibility: ${profile.integrity_flexibility}/100
+- Exposure Profile: ${profile.exposure_profile}/100
+- Tags: ${(profile.behavioral_tags||[]).map(t=>t.label).join(', ')}
+
+SIMULATION:
+- Attack Vector: ${sim.vector_label}
+- Subject: ${sim.subject}
+- From: ${sim.from_name}
+
+USER DECISION: ${decision}
+
+USER'S ORIGINAL SURVEY ANSWERS:
+${answers.map((a,i)=>`Q${i+1}: "${a}"`).join('\n')}
+
+Respond ONLY with valid JSON:
+{
+  "how_it_was_built": "<2-3 sentences explaining exactly which answers from their survey fed the attack construction. Be specific — reference their actual words.>",
+  "what_was_exploited": "<2 sentences naming the specific behavioral vulnerability the attack targeted from their IBRI profile.>",
+  "red_flags": ["<specific red flag in the email they should have noticed>", "<another specific red flag>", "<a third red flag>"],
+  "one_takeaway": "<One sentence. The single most important thing this person should carry forward based on their specific profile.>",
+  "resilience_score": <integer 0-100 based on their decision and profile — report=high, ignore=medium, comply=low, adjusted by profile risk>
+}`;
+
+fetch('https://intangyblintangybl.rvance609.workers.dev', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json',
+             'anthropic-dangerous-direct-browser-access': 'true'
+  },
+  body: JSON.stringify({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 800,
+    messages: [{ role: 'user', content: debriefPrompt }]
+  })
+})
+.then(r => r.json())
+.then(data => {
+  const text = data.content.map(i => i.text||'').join('').replace(/```json|```/g,'').trim();
+  const db = JSON.parse(text);
+  sessionStorage.setItem('veros_debrief', JSON.stringify(db));
+  renderDebrief(db);
+})
+.catch(() => {
+  document.getElementById('debrief-content').innerHTML = '<p style="color:#E07070;font-size:13px;font-family:DM Mono,monospace;">Error generating debrief. <a href="results.html" style="color:var(--amber)">Continue to results →</a></p>';
+});
+
+function renderDebrief(db) {
+  const flags = (db.red_flags||[]).map(f => `<li>${f}</li>`).join('');
+  document.getElementById('debrief-content').innerHTML = `
+    <div class="debrief-section">
+      <div class="debrief-section-title">How the attack was built from your profile</div>
+      <div class="debrief-body">${db.how_it_was_built}</div>
+    </div>
+    <div class="debrief-section">
+      <div class="debrief-section-title">What was exploited</div>
+      <div class="debrief-body">${db.what_was_exploited}</div>
+    </div>
+    <div class="debrief-section">
+      <div class="debrief-section-title">Red flags you may have missed</div>
+      <ul class="red-flag-list">${flags}</ul>
+    </div>
+    <div class="insight-block">
+      <div class="insight-text">${db.one_takeaway}</div>
+    </div>
+    <a href="results.html" class="btn-primary">See your final results →</a>
+  `;
+}
+</script>
+</body>
+</html>

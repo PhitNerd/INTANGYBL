@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veros — Results</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+  .metric-card { background: #111; border: 0.5px solid #1E1E1E; border-radius: 8px; padding: 1rem 1.25rem; }
+  .metric-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #444; margin-bottom: 8px; }
+  .metric-value { font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1; margin-bottom: 4px; }
+  .metric-value.low { color: #70B870; }
+  .metric-value.medium { color: var(--amber); }
+  .metric-value.high { color: #E07070; }
+  .metric-sub { font-size: 12px; color: #444; }
+  .session-summary { background: #111; border: 0.5px solid #1E1E1E; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+  .summary-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid #1A1A1A; font-size: 13px; }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-key { color: #444; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.5px; }
+  .summary-val { color: #888; }
+  .summary-val.amber { color: var(--amber); }
+  .cta-block { background: #111; border: 0.5px solid #1E1E1E; border-radius: 10px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
+  .cta-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; }
+  .cta-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: #F0EDE8; margin-bottom: 6px; }
+  .cta-sub { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 1.25rem; }
+  .cta-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .bottom-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1rem; }
+</style>
+</head>
+<body>
+<div class="page fade-in">
+
+  <nav class="veros-nav">
+    <div class="veros-nav-logo">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M3 10 C3 10 5 4 10 4 C15 4 17 10 17 10 C17 10 15 16 10 16 C5 16 3 10 3 10Z" stroke="#BA7517" stroke-width="1.2" fill="none"/><circle cx="10" cy="10" r="2.5" fill="#BA7517"/></svg>
+    </div>
+    <div>
+      <div class="veros-nav-name">Veros <span>/ Session Complete</span></div>
+      <div class="veros-nav-tag">Powered by the Aether Behavioral Framework</div>
+    </div>
+  </nav>
+
+  <div class="phase-bar">
+    <div class="phase-pip done"></div>
+    <div class="phase-pip done"></div>
+    <div class="phase-pip done"></div>
+    <div class="phase-pip done"></div>
+    <div class="phase-pip done"></div>
+  </div>
+
+  <div class="eyebrow">Session Complete</div>
+  <div class="page-title" style="margin-bottom:1.5rem;"><span>Training</span> complete.</div>
+
+  <div class="results-grid">
+    <div class="metric-card">
+      <div class="metric-label">IBRI Score</div>
+      <div class="metric-value" id="ibri-display">--</div>
+      <div class="metric-sub" id="ibri-tier-display">—</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Resilience Score</div>
+      <div class="metric-value" id="resilience-display">--</div>
+      <div class="metric-sub" id="resilience-sub">This session</div>
+    </div>
+  </div>
+
+  <div class="session-summary" id="session-summary"></div>
+
+  <div class="insight-block spacer">
+    <div class="insight-text" id="takeaway-text"></div>
+  </div>
+
+  <div class="cta-block">
+    <div class="cta-eyebrow">What comes next</div>
+    <div class="cta-title">Know your blind spot before they do.</div>
+    <div class="cta-sub">In a full Veros deployment, your profile evolves after every session. Simulations get harder. Your resilience score climbs. The attacker never gets ahead.</div>
+    <div class="cta-row">
+      <a href="https://intangybl.com" class="btn-primary">Learn about Veros →</a>
+      <a href="index.html" class="btn-ghost">Run again</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const profile  = JSON.parse(sessionStorage.getItem('veros_profile') || 'null');
+const sim      = JSON.parse(sessionStorage.getItem('veros_sim') || 'null');
+const debrief  = JSON.parse(sessionStorage.getItem('veros_debrief') || 'null');
+const decision = sessionStorage.getItem('veros_decision') || 'ignore';
+const ctx      = sessionStorage.getItem('veros_ctx') || 'ld';
+if (!profile) { window.location.href = 'index.html'; }
+
+const tc = profile.risk_tier === 'Low Risk' ? 'low' : profile.risk_tier === 'Moderate Risk' ? 'medium' : 'high';
+document.getElementById('ibri-display').textContent = profile.ibri_score;
+document.getElementById('ibri-display').className = 'metric-value ' + tc;
+document.getElementById('ibri-tier-display').textContent = profile.risk_tier;
+
+const rs = debrief ? debrief.resilience_score : (decision === 'report' ? 82 : decision === 'ignore' ? 55 : 28);
+const rClass = rs >= 70 ? 'low' : rs >= 45 ? 'medium' : 'high';
+document.getElementById('resilience-display').textContent = rs;
+document.getElementById('resilience-display').className = 'metric-value ' + rClass;
+
+const decisionLabels = { report: 'Reported (correct)', ignore: 'Ignored', comply: 'Complied (attack succeeded)' };
+const ctxLabels = { ld: 'People & Development', it: 'Information Technology' };
+
+document.getElementById('session-summary').innerHTML = `
+  <div class="summary-row"><span class="summary-key">Entry context</span><span class="summary-val">${ctxLabels[ctx]}</span></div>
+  <div class="summary-row"><span class="summary-key">Attack vector</span><span class="summary-val amber">${sim ? sim.vector_label : '—'}</span></div>
+  <div class="summary-row"><span class="summary-key">Your decision</span><span class="summary-val">${decisionLabels[decision]}</span></div>
+  <div class="summary-row"><span class="summary-key">Highest risk dimension</span><span class="summary-val amber">${getHighestDim()}</span></div>
+  <div class="summary-row"><span class="summary-key">Behavioral tags</span><span class="summary-val">${(profile.behavioral_tags||[]).slice(0,3).map(t=>t.label).join(' · ') || '—'}</span></div>
+`;
+
+document.getElementById('takeaway-text').textContent = debrief ? debrief.one_takeaway : profile.veros_insight;
+
+function getHighestDim() {
+  const dims = [
+    { name: 'Cognitive Susceptibility', val: profile.cognitive_susceptibility },
+    { name: 'Integrity Flexibility', val: profile.integrity_flexibility },
+    { name: 'Exposure Profile', val: profile.exposure_profile }
+  ];
+  return dims.sort((a,b) => b.val - a.val)[0].name;
+}
+</script>
+</body>
+</html>

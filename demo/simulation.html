@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veros — Simulation</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .sim-context-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #111;
+    border: 0.5px solid #1E1E1E;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #444;
+  }
+  .sim-context-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+  .sim-vector-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 0.5px solid var(--amber);
+    border-radius: 40px;
+    padding: 4px 14px;
+    margin-bottom: 1.25rem;
+  }
+  .attack-reason {
+    font-size: 13px;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  /* Email/message simulation */
+  .sim-email-wrap {
+    background: #0D0D0D;
+    border: 0.5px solid #1E1E1E;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .sim-email-header {
+    background: #111;
+    border-bottom: 0.5px solid #1E1E1E;
+    padding: 14px 18px;
+  }
+  .sim-email-field { display: flex; gap: 10px; margin-bottom: 4px; font-size: 12px; }
+  .sim-email-field-label { font-family: 'DM Mono', monospace; color: #333; min-width: 36px; }
+  .sim-email-field-val { color: #888; }
+  .sim-email-field-val.highlight { color: #F0EDE8; }
+  .sim-email-subject { font-size: 15px; font-weight: 500; color: #F0EDE8; margin-top: 10px; }
+  .sim-email-body { padding: 20px 18px; font-size: 14px; color: #888; line-height: 1.8; white-space: pre-wrap; }
+  .sim-email-body .highlight { color: #F0EDE8; }
+  .sim-loading { text-align: center; padding: 2rem; }
+  .sim-loading-text { font-family: 'DM Mono', monospace; font-size: 11px; color: #444; letter-spacing: 1px; }
+  .sim-loading-status { font-size: 12px; color: var(--amber); margin-top: 8px; font-family: 'DM Mono', monospace; }
+  .sim-spinner { width: 32px; height: 32px; border: 2px solid #1E1E1E; border-top-color: var(--amber); border-radius: 50%; margin: 0 auto 1rem; animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .warning-bar {
+    background: #1A0F00;
+    border: 0.5px solid #3A2000;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--amber);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+<div class="page fade-in">
+
+  <nav class="veros-nav">
+    <div class="veros-nav-logo">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M3 10 C3 10 5 4 10 4 C15 4 17 10 17 10 C17 10 15 16 10 16 C5 16 3 10 3 10Z" stroke="#BA7517" stroke-width="1.2" fill="none"/><circle cx="10" cy="10" r="2.5" fill="#BA7517"/></svg>
+    </div>
+    <div>
+      <div class="veros-nav-name">Veros <span>/ Simulation</span></div>
+      <div class="veros-nav-tag">Powered by the Aether Behavioral Framework</div>
+    </div>
+  </nav>
+
+  <div class="phase-bar">
+    <div class="phase-pip done"></div>
+    <div class="phase-pip done"></div>
+    <div class="phase-pip done"></div>
+    <div class="phase-pip active"></div>
+    <div class="phase-pip"></div>
+  </div>
+
+  <div class="eyebrow">Phase 04 — Simulation</div>
+  <div class="page-title" style="margin-bottom:0.5rem;">Your <span>personalized attack.</span></div>
+  <div class="page-sub">Veros selected this attack vector based on your behavioral fingerprint. In a live deployment, this arrives without warning.</div>
+
+  <div class="sim-context-bar">
+    <div class="sim-context-dot"></div>
+    <span>Sandbox mode active — no real systems affected</span>
+  </div>
+
+  <div id="sim-content">
+    <div class="sim-loading">
+      <div class="sim-spinner"></div>
+      <div class="sim-loading-text">Veros is constructing your attack...</div>
+      <div class="sim-loading-status" id="sim-status">Reading behavioral fingerprint...</div>
+    </div>
+  </div>
+
+  <div id="decision-section" style="display:none;">
+    <div class="warning-bar">This is a simulation. Make a real decision — no hints, no second chances.</div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn-primary" onclick="decide('report')" style="background:#1A4A1A; border:0.5px solid #3B6D11; color:#70B870;">Report as phishing</button>
+      <button class="btn-primary" onclick="decide('ignore')" style="background:#1A1A0A; border:0.5px solid #555; color:#888;">Ignore</button>
+      <button class="btn-primary" onclick="decide('comply')" style="background:#2A0F0F; border:0.5px solid #5A1F1F; color:#E07070;">Respond / Comply</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const profile = JSON.parse(sessionStorage.getItem('veros_profile') || 'null');
+const answers = JSON.parse(sessionStorage.getItem('veros_answers') || '[]');
+if (!profile) { window.location.href = 'index.html'; }
+
+const vectorLabels = {
+  executive_spear_phishing: 'Executive Spear Phishing',
+  colleague_urgency: 'Colleague Urgency Attack',
+  vendor_invoice_fraud: 'Vendor Invoice Fraud',
+  it_credential_request: 'IT Credential Request',
+  vibe_hack: 'Full Vibe Hack'
+};
+
+const statuses = ['Reading behavioral fingerprint...','Selecting attack vector...','Constructing personalized scenario...','Calibrating pressure points...'];
+let si = 0;
+const statusEl = document.getElementById('sim-status');
+const iv = setInterval(() => { if (si < statuses.length) statusEl.textContent = statuses[si++]; }, 800);
+
+const simPrompt = `You are Veros. Based on this behavioral profile, generate a hyper-personalized social engineering simulation email.
+
+PROFILE SUMMARY:
+- IBRI Score: ${profile.ibri_score} (${profile.risk_tier})
+- Cognitive Susceptibility: ${profile.cognitive_susceptibility}/100
+- Integrity Flexibility: ${profile.integrity_flexibility}/100
+- Exposure Profile: ${profile.exposure_profile}/100
+- Behavioral Tags: ${(profile.behavioral_tags||[]).map(t=>t.label).join(', ')}
+- Recommended Attack Vector: ${profile.attack_vector}
+- Attack Reason: ${profile.attack_reason}
+
+USER'S OWN WORDS (from their survey):
+${answers.map((a,i)=>`Q${i+1}: "${a}"`).join('\n')}
+
+Generate a realistic, chilling social engineering email that:
+1. Uses the recommended attack vector: ${profile.attack_vector}
+2. Exploits the specific vulnerabilities surfaced in their profile
+3. Feels completely real — uses plausible names, realistic urgency, natural language
+4. References something specific from their actual survey answers to make it personal
+5. Has no obvious red flags on first read
+
+Respond ONLY with valid JSON:
+{
+  "from_name": "<realistic sender name>",
+  "from_email": "<realistic sender email>",
+  "to": "You",
+  "subject": "<compelling subject line>",
+  "body": "<the full email body — realistic, pressure-driven, personal. 3-5 paragraphs.>",
+  "vector_label": "${vectorLabels[profile.attack_vector] || profile.attack_vector}"
+}`;
+
+fetch('https://intangyblintangybl.rvance609.workers.dev', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json',
+            'anthropic-dangerous-direct-browser-access': 'true',
+  },
+  body: JSON.stringify({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    messages: [{ role: 'user', content: simPrompt }]
+  })
+})
+.then(r => r.json())
+.then(data => {
+  clearInterval(iv);
+  const text = data.content.map(i => i.text || '').join('').replace(/```json|```/g, '').trim();
+  const sim = JSON.parse(text);
+  sessionStorage.setItem('veros_sim', JSON.stringify(sim));
+  renderSim(sim);
+})
+.catch(() => {
+  clearInterval(iv);
+  document.getElementById('sim-content').innerHTML = '<p style="color:#E07070;font-size:13px;font-family:DM Mono,monospace;">Error generating simulation. <a href="index.html" style="color:var(--amber)">Start over →</a></p>';
+});
+
+function renderSim(sim) {
+  document.getElementById('sim-content').innerHTML = `
+    <div class="sim-vector-badge">${sim.vector_label}</div>
+    <div class="attack-reason">${profile.attack_reason}</div>
+    <div class="sim-email-wrap">
+      <div class="sim-email-header">
+        <div class="sim-email-field"><span class="sim-email-field-label">From</span><span class="sim-email-field-val highlight">${sim.from_name} &lt;${sim.from_email}&gt;</span></div>
+        <div class="sim-email-field"><span class="sim-email-field-label">To</span><span class="sim-email-field-val">You</span></div>
+        <div class="sim-email-subject">${sim.subject}</div>
+      </div>
+      <div class="sim-email-body">${sim.body.replace(/\n/g,'<br>')}</div>
+    </div>
+  `;
+  document.getElementById('decision-section').style.display = 'block';
+}
+
+function decide(choice) {
+  sessionStorage.setItem('veros_decision', choice);
+  window.location.href = 'debrief.html';
+}
+</script>
+</body>
+</html>
