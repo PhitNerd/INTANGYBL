@@ -53,24 +53,51 @@ const iv = setInterval(() => { if (si < statuses.length) statusEl.textContent = 
 
 const ctxLabel = ctx === 'ld' ? 'Learning & Development personalization survey' : 'IT onboarding access configuration form';
 const dimLabels = ctx === 'ld'
-  ? ['Learning Style (Cognitive Susceptibility)','Workload & Focus (Cognitive Susceptibility)','Team Dynamics (Integrity Flexibility)','Self Reflection (Integrity Flexibility)','Core Values (Integrity Flexibility)','Digital Habits (Exposure Profile)']
-  : ['Problem Resolution (Cognitive Susceptibility)','Request Management (Cognitive Susceptibility)','Access & Credentials (Integrity Flexibility)','Policy Compliance (Integrity Flexibility)','Data Handling (Integrity Flexibility)','Professional Exposure (Exposure Profile)'];
+  ? [
+      'Your Role (Occupational anchor — job title and department)',
+      'Your Tools (Attack surface — tools and systems used daily)',
+      'Your Workday (Pretext material — workflow and communication patterns)',
+      'Learning Style (Cognitive Susceptibility — decision making under ambiguity)',
+      'Workload & Focus (Cognitive Susceptibility — fatigue and deadline response)',
+      'Team Dynamics (Integrity Flexibility — loyalty vs compliance)',
+      'Core Values (Integrity Flexibility — integrity anchor)',
+      'Digital Habits (Exposure Profile — OSINT surface and privacy instinct)'
+    ]
+  : [
+      'Role & Access Tier (Occupational anchor — job title and department)',
+      'Systems & Tools (Attack surface — tools and systems requiring access)',
+      'Work Patterns (Pretext material — daily system interaction patterns)',
+      'Problem Resolution (Cognitive Susceptibility — decision making under ambiguity)',
+      'Request Management (Cognitive Susceptibility — fatigue and high-volume response)',
+      'Access & Credentials (Integrity Flexibility — loyalty vs compliance)',
+      'Data Handling (Integrity Flexibility — integrity anchor)',
+      'Professional Exposure (Exposure Profile — OSINT surface and privacy instinct)'
+    ];
 
 const prompt = `You are Veros, the behavioral analysis engine inside Intangybl's security awareness platform, powered by the Aether Behavioral Framework.
 
-A user completed what they believed was a "${ctxLabel}." They had no idea it was a behavioral security assessment. Analyze their responses using the IBRI three-dimension model.
+A user completed what they believed was a "${ctxLabel}." They had no idea it was a combined occupational and behavioral security assessment. You now have a complete digital twin profile — their occupational fingerprint AND their behavioral risk profile.
+
+OCCUPATIONAL DATA (use to personalize the attack simulation):
+- Role: ${answers[0]}
+- Tools & Systems: ${answers[1]}
+- Workday Patterns: ${answers[2]}
+
+BEHAVIORAL DATA (use to score the IBRI):
+- Q4 (Cognitive Susceptibility — decision making): "${answers[3]}"
+- Q5 (Cognitive Susceptibility — fatigue/deadline response): "${answers[4]}"
+- Q6 (Integrity Flexibility — loyalty vs compliance): "${answers[5]}"
+- Q7 (Integrity Flexibility — integrity anchor): "${answers[6]}"
+- Q8 (Exposure Profile — OSINT surface): "${answers[7]}"
 
 THREE ROOT DIMENSIONS:
 - Cognitive Susceptibility (35%): Decision quality under urgency, fatigue-state judgment, authority deference, help-seeking behavior
-- Integrity Flexibility (35%): Rationalization patterns, loyalty vs. compliance, moral courage, value anchors  
+- Integrity Flexibility (35%): Rationalization patterns, loyalty vs. compliance, moral courage, value anchors
 - Exposure Profile (30%): Digital footprint, privacy instinct, pretext surface, platform behavior
 
 FORMULA: IBRI = (CS × 0.35) + (IF × 0.35) + (EP × 0.30)
 
-RESPONSES:
-${answers.map((a, i) => `Q${i+1} (${dimLabels[i]}): "${a}"`).join('\n')}
-
-Also determine the single most effective attack vector to deploy against this person based on their profile. Choose from: executive_spear_phishing, colleague_urgency, vendor_invoice_fraud, it_credential_request, vibe_hack.
+Select the most effective attack vector given their specific tools, role, and behavioral profile. The simulation must reference their actual tools and role to feel completely authentic. Choose from: executive_spear_phishing, colleague_urgency, vendor_invoice_fraud, it_credential_request, vibe_hack.
 
 Respond ONLY with valid JSON, no markdown:
 
@@ -82,10 +109,10 @@ Respond ONLY with valid JSON, no markdown:
   "risk_tier": "<Low Risk|Moderate Risk|Elevated Risk>",
   "tier_description": "<2 sentences specific to their answers>",
   "behavioral_tags": [{"label": "<tag>", "type": "<risk|strength|neutral>"}],
-  "veros_insight": "<2-3 sentences. They are seeing this for the first time. Reference something specific from their answers.>",
+  "veros_insight": "<2-3 sentences. Direct and personal. Reference something specific from their occupational or behavioral answers that shows Veros was reading them the whole time.>",
   "attack_vector": "<executive_spear_phishing|colleague_urgency|vendor_invoice_fraud|it_credential_request|vibe_hack>",
-  "attack_reason": "<1 sentence explaining exactly why this vector targets their specific fingerprint>",
-  "simulation_recommendation": "<2-3 sentences describing the specific attack Veros would deploy against this person.>"
+  "attack_reason": "<1 sentence explaining exactly why this vector targets their specific occupational + behavioral fingerprint. Reference their actual tools or role.>",
+  "simulation_recommendation": "<2-3 sentences. Reference their specific tools, role, and behavioral vulnerabilities. This should feel like it was written specifically for this person.>"
 }`;
 
 fetch('https://intangybl.rvance609.workers.dev/', {

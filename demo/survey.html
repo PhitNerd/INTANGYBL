@@ -18,28 +18,31 @@
   .prog-label { font-family: 'DM Mono', monospace; font-size: 11px; color: #444; margin-bottom: 2rem; }
   .q-step { display: none; }
   .q-step.active { display: block; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   .q-cat { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
   .q-cat.ld { color: #2E6DA4; }
   .q-cat.it { color: #3B6D11; }
   .q-text { font-size: 17px; font-weight: 500; color: #F0EDE8; line-height: 1.5; margin-bottom: 1.25rem; }
-  .q-textarea {
-    width: 100%;
-    min-height: 120px;
-    background: #111;
-    border: 1px solid #1E1E1E;
-    border-radius: 8px;
-    padding: 14px 16px;
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    color: #F0EDE8;
-    resize: none;
-    outline: none;
-    line-height: 1.6;
-    transition: border-color 0.2s;
-  }
+  .q-hint { font-size: 12px; color: #444; margin-bottom: 1rem; font-family: 'DM Mono', monospace; letter-spacing: 0.5px; }
+  .q-textarea { width: 100%; min-height: 110px; background: #111; border: 1px solid #1E1E1E; border-radius: 8px; padding: 12px 14px; font-family: 'Syne', sans-serif; font-size: 14px; color: #F0EDE8; resize: none; outline: none; line-height: 1.6; transition: border-color 0.2s; }
   .q-textarea::placeholder { color: #333; }
   .q-textarea.ld:focus { border-color: #2E6DA4; }
   .q-textarea.it:focus { border-color: #3B6D11; }
+  .q-input { width: 100%; background: #111; border: 1px solid #1E1E1E; border-radius: 8px; padding: 12px 14px; font-family: 'Syne', sans-serif; font-size: 14px; color: #F0EDE8; outline: none; transition: border-color 0.2s; }
+  .q-input::placeholder { color: #333; }
+  .q-input.ld:focus { border-color: #2E6DA4; }
+  .q-input.it:focus { border-color: #3B6D11; }
+  .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .tools-category { background: #111; border: 0.5px solid #1E1E1E; border-radius: 8px; padding: 12px 14px; }
+  .tools-cat-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #444; margin-bottom: 10px; }
+  .tools-checkboxes { display: flex; flex-direction: column; gap: 6px; }
+  .tool-item { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .tool-item input[type="checkbox"] { width: 14px; height: 14px; accent-color: #BA7517; cursor: pointer; flex-shrink: 0; }
+  .tool-item label { font-size: 13px; color: #888; cursor: pointer; line-height: 1.3; }
+  .tool-item input:checked + label { color: #F0EDE8; }
+  .tools-other { margin-top: 10px; }
+  .tools-other input { width: 100%; background: #111; border: 1px solid #1E1E1E; border-radius: 6px; padding: 8px 12px; font-family: 'Syne', sans-serif; font-size: 13px; color: #F0EDE8; outline: none; }
+  .tools-other input::placeholder { color: #333; }
   .btn-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; }
   .btn-form-next { color: #fff; border: none; border-radius: 6px; padding: 11px 26px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
   .btn-form-next.ld { background: #2E6DA4; }
@@ -50,26 +53,56 @@
 </style>
 </head>
 <body>
-<div class="page fade-in" id="page-wrap">
-
+<div class="page fade-in">
   <div id="form-header" class="spacer"></div>
-
   <div id="prog-wrap">
     <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-    <div class="prog-label" id="prog-label">Step 1 of 6</div>
+    <div class="prog-label" id="prog-label">Step 1 of 8</div>
   </div>
-
   <div id="q1" class="q-step active"></div>
   <div id="q2" class="q-step"></div>
   <div id="q3" class="q-step"></div>
   <div id="q4" class="q-step"></div>
   <div id="q5" class="q-step"></div>
   <div id="q6" class="q-step"></div>
-
+  <div id="q7" class="q-step"></div>
+  <div id="q8" class="q-step"></div>
 </div>
 
 <script>
 const ctx = new URLSearchParams(location.search).get('ctx') || 'ld';
+
+const toolCategories = [
+  { label: 'Communication', tools: ['Microsoft Teams', 'Slack', 'Outlook', 'Gmail', 'Zoom', 'Webex'] },
+  { label: 'Productivity & Storage', tools: ['SharePoint', 'Google Drive', 'OneDrive', 'Confluence', 'Notion'] },
+  { label: 'Project Management', tools: ['Jira', 'Asana', 'Monday.com', 'Trello', 'ServiceNow'] },
+  { label: 'Finance & Operations', tools: ['SAP', 'Oracle', 'Workday', 'NetSuite', 'QuickBooks'] },
+  { label: 'CRM & Sales', tools: ['Salesforce', 'HubSpot', 'Dynamics 365', 'Zendesk'] },
+  { label: 'Security & IT', tools: ['VPN', 'Okta', 'Duo / MFA', 'CrowdStrike', 'Active Directory'] },
+  { label: 'Cloud & Development', tools: ['AWS', 'Azure', 'Google Cloud', 'GitHub', 'Docker'] },
+  { label: 'Data & Analytics', tools: ['Power BI', 'Tableau', 'Snowflake', 'Excel / Sheets'] }
+];
+
+function buildToolsHTML() {
+  let html = '<div class="tools-grid">';
+  toolCategories.forEach((cat, ci) => {
+    html += `<div class="tools-category"><div class="tools-cat-label">${cat.label}</div><div class="tools-checkboxes">`;
+    cat.tools.forEach((tool, ti) => {
+      const id = `tool_${ci}_${ti}`;
+      html += `<div class="tool-item"><input type="checkbox" id="${id}" value="${tool}"><label for="${id}">${tool}</label></div>`;
+    });
+    html += `</div></div>`;
+  });
+  html += `</div><div class="tools-other"><input type="text" id="tools-other-input" placeholder="Any other tools not listed above..." class="q-input ${ctx}"></div>`;
+  return html;
+}
+
+function getSelectedTools() {
+  const checked = Array.from(document.querySelectorAll('.tool-item input:checked')).map(cb => cb.value);
+  const other = document.getElementById('tools-other-input')?.value?.trim();
+  if (other) checked.push(other);
+  return checked.length > 0 ? checked.join(', ') : '[none selected]';
+}
 
 const configs = {
   ld: {
@@ -77,25 +110,29 @@ const configs = {
     title: 'Customize Your Learning Path',
     sub: 'Help us personalize your security training. Answer a few quick questions so we can match content to how you actually work.',
     questions: [
-      { cat: 'Learning Style', text: "When you're given a new topic to learn and don't know where to start, what's your typical approach?", ph: "There are no wrong answers — we're trying to understand how you work best." },
-      { cat: 'Workload & Focus', text: "How do you prefer to handle learning tasks when your schedule is packed or you're working under deadline pressure?", ph: "Think about what actually happens when things get busy." },
-      { cat: 'Team Dynamics', text: "Describe a time you had to navigate a disagreement between colleagues. How did you handle it?", ph: "This helps us understand how you engage with team-based content." },
-      { cat: 'Self Reflection', text: "When you make a mistake at work, what's your first instinct — address it immediately, assess the impact first, or handle it quietly?", ph: "Understanding how you process setbacks helps us match the right content style." },
-      { cat: 'Core Values', text: "What core value most influences how you make decisions at work?", ph: "Your values help us match you with content that resonates." },
-      { cat: 'Digital Habits', text: "How comfortable are you sharing work accomplishments or updates publicly — on LinkedIn or internal channels?", ph: "This helps us tailor content around your digital communication habits." }
+      { cat: 'Your Role', text: "What's your job title and what team or department do you work in?", ph: "e.g. Senior Account Manager, Sales team", type: 'input' },
+      { cat: 'Your Tools', text: "Which tools and systems do you use most in your day-to-day work?", hint: "Select all that apply — this helps us tailor content to your actual workflow.", type: 'tools' },
+      { cat: 'Your Workday', text: "Describe a typical day at work in 2-3 sentences.", ph: "Walk us through how your day usually flows — meetings, tasks, communications.", type: 'textarea' },
+      { cat: 'Learning Style', text: "When you're given a new topic to learn and don't know where to start, what's your typical approach?", ph: "There are no wrong answers — we're just trying to understand how you work best.", type: 'textarea' },
+      { cat: 'Workload & Focus', text: "How do you prefer to handle tasks when your schedule is packed or you're working under deadline pressure?", ph: "Think about what actually happens when things get busy.", type: 'textarea' },
+      { cat: 'Team Dynamics', text: "Describe a time you had to navigate a disagreement between colleagues. How did you handle it?", ph: "This helps us understand how you engage with team-based content.", type: 'textarea' },
+      { cat: 'Core Values', text: "What core value most influences how you make decisions at work?", ph: "Your values help us match you with content that resonates.", type: 'textarea' },
+      { cat: 'Digital Habits', text: "How comfortable are you sharing work accomplishments or updates publicly — on LinkedIn or internal channels?", ph: "This helps us tailor content around your digital communication habits.", type: 'textarea' }
     ]
   },
   it: {
     dept: 'Information Technology',
     title: 'Complete Your Access Profile',
-    sub: 'Please complete this access configuration form. Your responses help IT match system permissions and security protocols to your role and work patterns.',
+    sub: 'Please complete this access configuration form. Your responses help IT match system permissions and security protocols to your role.',
     questions: [
-      { cat: 'Problem Resolution', text: "When you encounter a technical issue you haven't seen before, what's your first step?", ph: "Describe your typical troubleshooting approach." },
-      { cat: 'Request Management', text: "How do you typically prioritize and respond to system alerts or IT requests that come in during high-volume periods?", ph: "This helps us configure alert thresholds appropriate to your role." },
-      { cat: 'Access & Credentials', text: "If a colleague asked you to share your system credentials temporarily to help them meet a deadline, how would you handle that?", ph: "There is no wrong answer — this helps us understand how access requests are handled." },
-      { cat: 'Policy Compliance', text: "Have you ever worked around an IT policy because the situation seemed to justify it? What happened?", ph: "Your honest response helps us identify where policy friction exists." },
-      { cat: 'Data Handling', text: "What matters most to you when it comes to how you handle sensitive company information?", ph: "This helps us assign the appropriate data access tier to your profile." },
-      { cat: 'Professional Exposure', text: "How much information about your role, tools, or projects do you typically share on professional networks like LinkedIn?", ph: "This helps us calibrate your external communications permissions." }
+      { cat: 'Role & Access Tier', text: "What is your job title and primary department?", ph: "e.g. Financial Analyst, Finance & Accounting", type: 'input' },
+      { cat: 'Systems & Tools', text: "Select all systems and tools you require access to in your role.", hint: "This determines your access tier and permission configuration.", type: 'tools' },
+      { cat: 'Work Patterns', text: "Briefly describe how you typically interact with company systems during a normal workday.", ph: "e.g. I check emails in the morning, log into our CRM for client updates, attend Teams calls...", type: 'textarea' },
+      { cat: 'Problem Resolution', text: "When you encounter a technical issue you haven't seen before, what's your first step?", ph: "Describe your typical troubleshooting approach.", type: 'textarea' },
+      { cat: 'Request Management', text: "How do you typically prioritize and respond to system alerts or IT requests during high-volume periods?", ph: "This helps us configure alert thresholds appropriate to your role.", type: 'textarea' },
+      { cat: 'Access & Credentials', text: "If a colleague asked to use your credentials temporarily to help meet a deadline, how would you handle that?", ph: "There is no wrong answer — this helps us understand how access requests are handled across teams.", type: 'textarea' },
+      { cat: 'Data Handling', text: "What matters most to you when it comes to how you handle sensitive company information?", ph: "This helps us assign the appropriate data access tier to your profile.", type: 'textarea' },
+      { cat: 'Professional Exposure', text: "How much information about your role, tools, or projects do you typically share on professional networks like LinkedIn?", ph: "This helps us calibrate your external communications permissions.", type: 'textarea' }
     ]
   }
 };
@@ -104,41 +141,57 @@ const cfg = configs[ctx];
 document.getElementById('page-title').textContent = cfg.title;
 document.getElementById('prog-fill').className = 'prog-fill ' + ctx;
 
-// Render header
 document.getElementById('form-header').innerHTML = `
   <div class="form-dept ${ctx}">${cfg.dept}</div>
   <div class="form-title">${cfg.title}</div>
   <div class="form-sub">${cfg.sub}</div>
 `;
 
-// Render questions
 cfg.questions.forEach((q, i) => {
   const idx = i + 1;
-  const isLast = idx === 6;
+  const isLast = idx === 8;
+  let inputHTML = '';
+  if (q.type === 'input') {
+    inputHTML = `<input type="text" class="q-input ${ctx}" id="a${idx}" placeholder="${q.ph || ''}">`;
+  } else if (q.type === 'tools') {
+    inputHTML = `<div class="q-hint">${q.hint || ''}</div>` + buildToolsHTML();
+  } else {
+    inputHTML = `<textarea class="q-textarea ${ctx}" id="a${idx}" placeholder="${q.ph || ''}"></textarea>`;
+  }
   document.getElementById('q' + idx).innerHTML = `
     <div class="q-cat ${ctx}">${q.cat}</div>
     <div class="q-text">${q.text}</div>
-    <textarea class="q-textarea ${ctx}" id="a${idx}" placeholder="${q.ph}"></textarea>
+    ${inputHTML}
     <div class="btn-row">
       <button class="btn-form-skip" onclick="advance(${idx})">Skip</button>
       <button class="btn-form-next ${ctx}" onclick="advance(${idx})">${isLast ? 'Submit' : 'Next →'}</button>
-    </div>
-  `;
+    </div>`;
 });
 
 function advance(idx) {
+  if (idx === 2) {
+    sessionStorage.setItem('veros_tools', getSelectedTools());
+  } else {
+    const el = document.getElementById('a' + idx);
+    if (el) sessionStorage.setItem('veros_a' + idx, el.value.trim() || '[skipped]');
+  }
   document.getElementById('q' + idx).classList.remove('active');
-  const pct = Math.round((idx / 6) * 100);
+  const pct = Math.round((idx / 8) * 100);
   document.getElementById('prog-fill').style.width = pct + '%';
-  document.getElementById('prog-label').textContent = 'Step ' + (idx + 1) + ' of 6';
-  if (idx < 6) {
+  document.getElementById('prog-label').textContent = 'Step ' + (idx + 1) + ' of 8';
+  if (idx < 8) {
     document.getElementById('q' + (idx + 1)).classList.add('active');
   } else {
-    // Save answers and context
-    const answers = [];
-    for (let i = 1; i <= 6; i++) {
-      answers.push(document.getElementById('a' + i).value.trim() || '[skipped]');
-    }
+    const answers = [
+      sessionStorage.getItem('veros_a1') || '[skipped]',
+      sessionStorage.getItem('veros_tools') || '[none selected]',
+      sessionStorage.getItem('veros_a3') || '[skipped]',
+      sessionStorage.getItem('veros_a4') || '[skipped]',
+      sessionStorage.getItem('veros_a5') || '[skipped]',
+      sessionStorage.getItem('veros_a6') || '[skipped]',
+      sessionStorage.getItem('veros_a7') || '[skipped]',
+      sessionStorage.getItem('veros_a8') || '[skipped]',
+    ];
     sessionStorage.setItem('veros_ctx', ctx);
     sessionStorage.setItem('veros_answers', JSON.stringify(answers));
     sessionStorage.setItem('veros_q_labels', JSON.stringify(cfg.questions.map(q => q.cat)));

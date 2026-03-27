@@ -125,7 +125,12 @@ document.getElementById('decision-block').innerHTML = `
 
 const debriefPrompt = `You are Veros. Generate a personalized debrief for this security simulation session.
 
-PROFILE:
+OCCUPATIONAL PROFILE:
+- Role: ${answers[0]}
+- Tools: ${answers[1]}
+- Workday: ${answers[2]}
+
+BEHAVIORAL PROFILE:
 - IBRI Score: ${profile.ibri_score} (${profile.risk_tier})
 - Cognitive Susceptibility: ${profile.cognitive_susceptibility}/100
 - Integrity Flexibility: ${profile.integrity_flexibility}/100
@@ -139,16 +144,13 @@ SIMULATION:
 
 USER DECISION: ${decision}
 
-USER'S ORIGINAL SURVEY ANSWERS:
-${answers.map((a,i)=>`Q${i+1}: "${a}"`).join('\n')}
-
 Respond ONLY with valid JSON:
 {
-  "how_it_was_built": "<2-3 sentences explaining exactly which answers from their survey fed the attack construction. Be specific — reference their actual words.>",
-  "what_was_exploited": "<2 sentences naming the specific behavioral vulnerability the attack targeted from their IBRI profile.>",
-  "red_flags": ["<specific red flag in the email they should have noticed>", "<another specific red flag>", "<a third red flag>"],
-  "one_takeaway": "<One sentence. The single most important thing this person should carry forward based on their specific profile.>",
-  "resilience_score": <integer 0-100 based on their decision and profile — report=high, ignore=medium, comply=low, adjusted by profile risk>
+  "how_it_was_built": "<2-3 sentences. Explain exactly how their role, tools, and behavioral responses fed the attack construction. Reference their actual tools and answers specifically.>",
+  "what_was_exploited": "<2 sentences. Name the specific behavioral vulnerability and how it aligned with their occupational profile.>",
+  "red_flags": ["<specific red flag in the email>", "<another red flag>", "<a third red flag>"],
+  "one_takeaway": "<One sentence. The single most important thing this person should carry forward given their specific role and behavioral profile.>",
+  "resilience_score": <integer 0-100>
 }`;
 
 fetch('https://intangybl.rvance609.workers.dev/', {

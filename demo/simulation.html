@@ -145,9 +145,14 @@ let si = 0;
 const statusEl = document.getElementById('sim-status');
 const iv = setInterval(() => { if (si < statuses.length) statusEl.textContent = statuses[si++]; }, 800);
 
-const simPrompt = `You are Veros. Based on this behavioral profile, generate a hyper-personalized social engineering simulation email.
+const simPrompt = `You are Veros. Based on this complete digital twin profile, generate a hyper-personalized social engineering simulation email.
 
-PROFILE SUMMARY:
+OCCUPATIONAL PROFILE:
+- Role: ${answers[0]}
+- Tools & Systems used daily: ${answers[1]}
+- Workday patterns: ${answers[2]}
+
+BEHAVIORAL PROFILE:
 - IBRI Score: ${profile.ibri_score} (${profile.risk_tier})
 - Cognitive Susceptibility: ${profile.cognitive_susceptibility}/100
 - Integrity Flexibility: ${profile.integrity_flexibility}/100
@@ -156,23 +161,21 @@ PROFILE SUMMARY:
 - Recommended Attack Vector: ${profile.attack_vector}
 - Attack Reason: ${profile.attack_reason}
 
-USER'S OWN WORDS (from their survey):
-${answers.map((a,i)=>`Q${i+1}: "${a}"`).join('\n')}
-
 Generate a realistic, chilling social engineering email that:
 1. Uses the recommended attack vector: ${profile.attack_vector}
-2. Exploits the specific vulnerabilities surfaced in their profile
-3. Feels completely real — uses plausible names, realistic urgency, natural language
-4. References something specific from their actual survey answers to make it personal
-5. Has no obvious red flags on first read
+2. References the target's ACTUAL tools from their profile (e.g. if they use Salesforce, reference Salesforce)
+3. Matches their role and department in the sender context and subject line
+4. Exploits the specific behavioral vulnerabilities from their IBRI profile
+5. Feels completely real — plausible sender name, realistic urgency, natural language
+6. Has no obvious red flags on first read — this should be undetectable
 
 Respond ONLY with valid JSON:
 {
-  "from_name": "<realistic sender name>",
-  "from_email": "<realistic sender email>",
+  "from_name": "<realistic sender name matching the attack vector and their role>",
+  "from_email": "<realistic sender email — slightly off but plausible>",
   "to": "You",
-  "subject": "<compelling subject line>",
-  "body": "<the full email body — realistic, pressure-driven, personal. 3-5 paragraphs.>",
+  "subject": "<compelling subject line referencing their actual role or tools>",
+  "body": "<the full email body — realistic, pressure-driven, personal. References their actual tools, role, or work patterns. 3-5 paragraphs.>",
   "vector_label": "${vectorLabels[profile.attack_vector] || profile.attack_vector}"
 }`;
 
