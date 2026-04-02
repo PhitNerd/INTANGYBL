@@ -6,9 +6,6 @@
 <title>Veros Pulse System</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   TOKENS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 :root {
   --ink:      #05070d;
   --ink2:     #090c14;
@@ -37,954 +34,313 @@
   --ease:     cubic-bezier(0.4,0,0.2,1);
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   RESET + BASE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--ink); font-family: var(--sans); color: var(--bone); min-height: 100vh; overflow-x: hidden; }
+body::after { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; opacity: 0.5; }
 
-body {
-  background: var(--ink);
-  font-family: var(--sans);
-  color: var(--bone);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+.shell { display: grid; grid-template-columns: 220px 1fr; grid-template-rows: 48px 1fr; min-height: 100vh; }
 
-/* Subtle noise grain */
-body::after {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 9999; opacity: 0.5;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   LAYOUT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.shell {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  grid-template-rows: 48px 1fr;
-  min-height: 100vh;
-}
-
-/* ── TOPBAR ── */
-.topbar {
-  grid-column: 1 / -1;
-  background: var(--ink2);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1.25rem;
-  position: sticky; top: 0; z-index: 100;
-}
-
+/* TOPBAR */
+.topbar { grid-column: 1 / -1; background: var(--ink2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 1.25rem; position: sticky; top: 0; z-index: 100; }
 .topbar-left { display: flex; align-items: center; gap: 0.75rem; }
-
-.veros-logo {
-  display: flex; align-items: center; gap: 0.5rem;
-}
-
-.logo-mark {
-  width: 18px; height: 18px;
-  border: 1.5px solid var(--amber);
-  border-radius: 3px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.logo-mark::after {
-  content: '';
-  width: 5px; height: 5px;
-  background: var(--amber);
-  border-radius: 50%;
-}
-.logo-name {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  color: var(--amber);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
+.veros-logo { display: flex; align-items: center; gap: 0.5rem; }
+.logo-mark { width: 18px; height: 18px; border: 1.5px solid var(--amber); border-radius: 3px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.logo-mark::after { content: ''; width: 5px; height: 5px; background: var(--amber); border-radius: 50%; }
+.logo-name { font-family: var(--mono); font-size: 0.65rem; color: var(--amber); letter-spacing: 0.12em; text-transform: uppercase; }
 .topbar-sep { width: 1px; height: 20px; background: var(--border2); }
-
-.topbar-context {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-}
-
+.topbar-context { font-family: var(--mono); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.06em; }
 .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+.topbar-user { font-family: var(--mono); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.06em; }
+.status-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blip 2.5s ease infinite; }
 
-.topbar-user {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-}
-
-.status-pip {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  animation: blip 2.5s ease infinite;
-}
-
-/* ── SIDEBAR ── */
-.sidebar {
-  background: var(--ink2);
-  border-right: 1px solid var(--border);
-  padding: 1.25rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  position: sticky; top: 48px;
-  height: calc(100vh - 48px);
-  overflow-y: auto;
-}
-
-.sidebar-section {
-  padding: 0 0.75rem 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.sidebar-label {
-  font-family: var(--mono);
-  font-size: 0.52rem;
-  color: var(--dim);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 0 0.5rem;
-  margin-bottom: 0.35rem;
-}
-
-.nav-item {
-  display: flex; align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  border: none; background: none; width: 100%; text-align: left;
-}
-
+/* SIDEBAR */
+.sidebar { background: var(--ink2); border-right: 1px solid var(--border); padding: 1.25rem 0; display: flex; flex-direction: column; gap: 0.25rem; position: sticky; top: 48px; height: calc(100vh - 48px); overflow-y: auto; }
+.sidebar-section { padding: 0 0.75rem 0.5rem; margin-top: 0.5rem; }
+.sidebar-label { font-family: var(--mono); font-size: 0.52rem; color: var(--dim); letter-spacing: 0.12em; text-transform: uppercase; padding: 0 0.5rem; margin-bottom: 0.35rem; }
+.nav-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.5rem; border-radius: 4px; cursor: pointer; transition: background 0.15s, color 0.15s; border: none; background: none; width: 100%; text-align: left; }
 .nav-item:hover { background: var(--ink4); }
-
-.nav-item.active {
-  background: var(--amber-d);
-  border: 1px solid rgba(245,166,35,0.15);
-}
-
-.nav-icon {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  color: var(--muted);
-  width: 14px; text-align: center; flex-shrink: 0;
-}
+.nav-item.active { background: var(--amber-d); border: 1px solid rgba(245,166,35,0.15); }
+.nav-icon { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); width: 14px; text-align: center; flex-shrink: 0; }
 .nav-item.active .nav-icon { color: var(--amber); }
-
-.nav-text {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-}
+.nav-text { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em; }
 .nav-item.active .nav-text { color: var(--amber); }
+.nav-badge { margin-left: auto; background: var(--red); color: white; font-family: var(--mono); font-size: 0.5rem; border-radius: 8px; padding: 0.1rem 0.35rem; line-height: 1; }
 
-.nav-badge {
-  margin-left: auto;
-  background: var(--red);
-  color: white;
-  font-family: var(--mono);
-  font-size: 0.5rem;
-  border-radius: 8px;
-  padding: 0.1rem 0.35rem;
-  line-height: 1;
-}
-
-/* Drift indicator in sidebar */
-.sidebar-drift {
-  margin: auto 0 0;
-  padding: 0.75rem;
-  border-top: 1px solid var(--border);
-}
-
-.drift-compact {
-  background: var(--ink3);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.6rem 0.75rem;
-}
-
-.drift-compact-label {
-  font-family: var(--mono);
-  font-size: 0.52rem;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 0.4rem;
-}
-
-.drift-compact-row {
-  display: flex; align-items: center;
-  justify-content: space-between;
-}
-
-.drift-compact-score {
-  font-family: var(--mono);
-  font-size: 1rem;
-  color: var(--amber);
-  font-weight: 500;
-}
-
-.drift-compact-status {
-  display: flex; align-items: center; gap: 0.35rem;
-}
-
-.drift-pip {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-}
-
+.sidebar-drift { margin: auto 0 0; padding: 0.75rem; border-top: 1px solid var(--border); }
+.drift-compact { background: var(--ink3); border: 1px solid var(--border); border-radius: 4px; padding: 0.6rem 0.75rem; margin-bottom: 0.6rem; }
+.drift-compact-label { font-family: var(--mono); font-size: 0.52rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.drift-compact-row { display: flex; align-items: center; justify-content: space-between; }
+.drift-compact-score { font-family: var(--mono); font-size: 1rem; color: var(--amber); font-weight: 500; }
+.drift-compact-status { display: flex; align-items: center; gap: 0.35rem; }
+.drift-pip { width: 5px; height: 5px; border-radius: 50%; }
 .drift-pip.stable   { background: var(--green); }
 .drift-pip.elevated { background: var(--amber); animation: blip 1.4s ease infinite; }
 .drift-pip.high     { background: var(--red);   animation: blip 0.9s ease infinite; }
-
-.drift-compact-state {
-  font-family: var(--mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.06em;
-}
+.drift-compact-state { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.06em; }
 .drift-compact-state.stable   { color: var(--green); }
 .drift-compact-state.elevated { color: var(--amber); }
-.drift-compact-state.high     { color: var(--red);   }
+.drift-compact-state.high     { color: var(--red); }
 
-/* ── MAIN PANEL ── */
-.main {
-  overflow-y: auto;
-  position: relative;
-}
+/* IBRI sidebar explainer */
+.ibri-sidebar-note { font-size: 0.72rem; font-weight: 300; color: var(--muted); line-height: 1.55; }
+.ibri-sidebar-note b { color: var(--bone2); font-weight: 400; }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   VIEWS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* MAIN */
+.main { overflow-y: auto; position: relative; }
+
+/* VIEWS */
 .view { display: none; padding: 2rem; max-width: 720px; }
 .view.active { display: block; }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   VIEW: PULSE CHECK-IN
+   EXPLAINER BLOCKS
+   Shared inline explanation style
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.pulse-wrap {
-  max-width: 460px;
-}
-
-.view-eyebrow {
-  display: flex; align-items: center; gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-.view-eyebrow-line { flex: 1; height: 1px; background: var(--border); }
-.view-eyebrow-text {
-  font-family: var(--mono);
-  font-size: 0.55rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-/* Pulse card */
-.pulse-card {
-  background: var(--ink2);
+.explain-block {
+  background: var(--ink3);
   border: 1px solid var(--border);
-  border-left: 2px solid var(--amber);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 1.5rem;
-  position: relative;
+  border-left: 2px solid var(--dim);
+  border-radius: 5px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.25rem;
+}
+.explain-label {
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  color: var(--dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.explain-block p {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--bone2);
+  line-height: 1.65;
+}
+.explain-block p + p { margin-top: 0.4rem; }
+.explain-block b { color: var(--bone); font-weight: 500; }
+
+/* Inline question gloss */
+.q-gloss {
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: var(--dim);
+  line-height: 1.5;
+  margin-top: 0.3rem;
+  font-style: italic;
 }
 
-.pulse-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, var(--amber), transparent 55%);
-  opacity: 0.35;
-}
+/* Color legend */
+.legend { display: flex; gap: 1rem; padding: 0.5rem 0.75rem; background: var(--ink3); border: 1px solid var(--border); border-radius: 4px; margin-top: 0.5rem; }
+.legend-item { display: flex; align-items: center; gap: 0.35rem; }
+.legend-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.legend-dot.low  { background: var(--green); }
+.legend-dot.med  { background: var(--amber); }
+.legend-dot.high { background: var(--red); }
+.legend-txt { font-family: var(--mono); font-size: 0.52rem; color: var(--muted); letter-spacing: 0.04em; }
 
-.pulse-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0.7rem 1rem;
-  border-bottom: 1px solid var(--border);
-}
+/* Stat card tooltip system */
+.stat-card { background: var(--ink2); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; position: relative; overflow: visible; }
+.stat-tip { position: absolute; top: 0.6rem; right: 0.6rem; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--border2); background: var(--ink3); display: flex; align-items: center; justify-content: center; cursor: help; font-family: var(--mono); font-size: 0.48rem; color: var(--dim); transition: all 0.15s; }
+.stat-tip:hover { border-color: var(--amber); color: var(--amber); }
+.stat-tooltip { display: none; position: absolute; top: calc(100% + 6px); right: 0; background: var(--ink4); border: 1px solid var(--border2); border-radius: 4px; padding: 0.5rem 0.65rem; font-size: 0.72rem; font-weight: 300; color: var(--bone2); line-height: 1.5; width: 190px; z-index: 50; pointer-events: none; }
+.stat-card:hover .stat-tooltip { display: block; }
 
+/* PULSE */
+.pulse-wrap { max-width: 460px; }
+.view-eyebrow { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+.view-eyebrow-line { flex: 1; height: 1px; background: var(--border); }
+.view-eyebrow-text { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+
+.pulse-card { background: var(--ink2); border: 1px solid var(--border); border-left: 2px solid var(--amber); border-radius: 6px; overflow: hidden; margin-bottom: 1.5rem; position: relative; }
+.pulse-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--amber), transparent 55%); opacity: 0.35; }
+.pulse-head { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); }
 .pulse-head-left { display: flex; align-items: center; gap: 0.5rem; }
-
-.pulse-mark {
-  width: 14px; height: 14px;
-  border: 1.5px solid var(--amber);
-  border-radius: 2px;
-  display: flex; align-items: center; justify-content: center;
-}
-.pulse-mark::after {
-  content: '';
-  width: 4px; height: 4px;
-  background: var(--amber);
-  border-radius: 50%;
-}
-
-.pulse-name {
-  font-family: var(--mono);
-  font-size: 0.6rem; color: var(--amber);
-  letter-spacing: 0.1em; text-transform: uppercase;
-}
-
-.pulse-meta {
-  display: flex; align-items: center; gap: 0.6rem;
-}
-
-.pulse-counter {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--muted);
-  letter-spacing: 0.06em;
-}
-
-/* Progress */
+.pulse-mark { width: 14px; height: 14px; border: 1.5px solid var(--amber); border-radius: 2px; display: flex; align-items: center; justify-content: center; }
+.pulse-mark::after { content: ''; width: 4px; height: 4px; background: var(--amber); border-radius: 50%; }
+.pulse-name { font-family: var(--mono); font-size: 0.6rem; color: var(--amber); letter-spacing: 0.1em; text-transform: uppercase; }
+.pulse-meta { display: flex; align-items: center; gap: 0.6rem; }
+.pulse-counter { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); letter-spacing: 0.06em; }
 .pulse-progress { height: 2px; background: var(--border); }
-.pulse-progress-fill {
-  height: 100%; background: var(--amber);
-  transition: width 0.5s var(--ease);
-  position: relative;
-}
-.pulse-progress-fill::after {
-  content: '';
-  position: absolute; right: 0; top: 0; bottom: 0; width: 16px;
-  background: linear-gradient(90deg, transparent, rgba(245,166,35,0.5));
-}
-
-/* Question */
+.pulse-progress-fill { height: 100%; background: var(--amber); transition: width 0.5s var(--ease); position: relative; }
+.pulse-progress-fill::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 16px; background: linear-gradient(90deg, transparent, rgba(245,166,35,0.5)); }
 .pulse-q-area { padding: 1.2rem 1rem 0.75rem; min-height: 80px; }
-
 .pulse-q { display: none; }
 .pulse-q.active { display: block; animation: slideQ 0.22s var(--ease); }
-
-.pulse-q-text {
-  font-size: 0.88rem; font-weight: 400;
-  color: var(--bone); line-height: 1.5;
-  letter-spacing: 0.01em; margin-bottom: 0.2rem;
-}
-
-.pulse-q-tag {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--muted);
-  letter-spacing: 0.08em;
-}
-
-/* Ack */
-.pulse-ack {
-  display: none; padding: 1rem;
-  align-items: center; gap: 0.6rem;
-}
+.pulse-q-text { font-size: 0.88rem; font-weight: 400; color: var(--bone); line-height: 1.5; letter-spacing: 0.01em; margin-bottom: 0.2rem; }
+.pulse-q-tag { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); letter-spacing: 0.08em; }
+.pulse-ack { display: none; padding: 1rem; align-items: center; gap: 0.6rem; }
 .pulse-ack.show { display: flex; animation: fadeIn 0.3s ease; }
-.ack-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%; background: var(--green);
-  flex-shrink: 0; animation: blip 1.8s ease infinite;
-}
-.ack-txt {
-  font-family: var(--mono);
-  font-size: 0.62rem; color: var(--muted);
-  letter-spacing: 0.05em;
-}
+.ack-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; animation: blip 1.8s ease infinite; }
+.ack-txt { font-family: var(--mono); font-size: 0.62rem; color: var(--muted); letter-spacing: 0.05em; }
 .ack-txt b { color: var(--bone); font-weight: 500; }
-
-/* Response buttons */
-.pulse-responses {
-  display: flex; gap: 0.5rem;
-  padding: 0 1rem 1rem;
-  transition: opacity 0.2s;
-}
+.pulse-responses { display: flex; gap: 0.5rem; padding: 0 1rem 1rem; transition: opacity 0.2s; }
 .pulse-responses.fade { opacity: 0; pointer-events: none; }
-
-.res-btn {
-  flex: 1;
-  background: var(--ink4);
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  padding: 0.55rem 0.4rem;
-  cursor: pointer;
-  display: flex; flex-direction: column;
-  align-items: center; gap: 0.25rem;
-  transition: all 0.14s var(--ease);
-}
-.res-btn:hover {
-  border-color: var(--amber);
-  background: var(--amber-d);
-  transform: translateY(-1px);
-}
-.res-btn.picked {
-  border-color: var(--amber);
-  background: var(--amber-d);
-}
+.res-btn { flex: 1; background: var(--ink4); border: 1px solid var(--border2); border-radius: 4px; padding: 0.55rem 0.4rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 0.25rem; transition: all 0.14s var(--ease); }
+.res-btn:hover { border-color: var(--amber); background: var(--amber-d); transform: translateY(-1px); }
+.res-btn.picked { border-color: var(--amber); background: var(--amber-d); }
 .res-btn:active { transform: translateY(0); }
-
 .res-icon { font-size: 0.9rem; line-height: 1; }
-.res-lbl {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--muted);
-  letter-spacing: 0.05em; text-transform: uppercase; text-align: center;
-}
-.res-btn:hover .res-lbl,
-.res-btn.picked .res-lbl { color: var(--amber); }
+.res-lbl { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; text-align: center; }
+.res-btn:hover .res-lbl, .res-btn.picked .res-lbl { color: var(--amber); }
 
-/* History strip */
-.history-strip {
-  background: var(--ink2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.history-head {
-  padding: 0.6rem 1rem;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-
-.history-head-label {
-  font-family: var(--mono);
-  font-size: 0.58rem; color: var(--muted);
-  letter-spacing: 0.08em; text-transform: uppercase;
-}
-
+/* HISTORY */
+.history-strip { background: var(--ink2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.history-head { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.history-head-label { font-family: var(--mono); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
 .history-rows { padding: 0.25rem 0; }
-
-.hist-row {
-  display: flex; align-items: center; gap: 0.75rem;
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid var(--border);
-  transition: background 0.15s;
-}
+.hist-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); transition: background 0.15s; }
 .hist-row:last-child { border-bottom: none; }
 .hist-row:hover { background: var(--ink3); }
 .hist-row.today { background: var(--amber-dd); }
-
-.hist-day {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--muted);
-  width: 32px; flex-shrink: 0; letter-spacing: 0.04em;
-}
+.hist-day { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); width: 32px; flex-shrink: 0; letter-spacing: 0.04em; }
 .hist-row.today .hist-day { color: var(--amber); }
-
-.hist-bar-wrap {
-  flex: 1; height: 3px;
-  background: var(--border); border-radius: 2px; overflow: hidden;
-}
-.hist-bar {
-  height: 100%; border-radius: 2px;
-  transition: width 1s var(--ease);
-}
-.hist-bar.low    { background: var(--green); }
-.hist-bar.med    { background: var(--amber); }
-.hist-bar.high   { background: var(--red);   }
-
-.hist-val {
-  font-family: var(--mono);
-  font-size: 0.58rem; width: 28px; text-align: right; flex-shrink: 0;
-}
+.hist-bar-wrap { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.hist-bar { height: 100%; border-radius: 2px; transition: width 1s var(--ease); }
+.hist-bar.low  { background: var(--green); }
+.hist-bar.med  { background: var(--amber); }
+.hist-bar.high { background: var(--red); }
+.hist-val { font-family: var(--mono); font-size: 0.58rem; width: 28px; text-align: right; flex-shrink: 0; }
 .hist-val.low  { color: var(--green); }
 .hist-val.med  { color: var(--amber); }
-.hist-val.high { color: var(--red);   }
-
-.hist-flag {
-  font-family: var(--mono);
-  font-size: 0.52rem; color: var(--red);
-  width: 10px; flex-shrink: 0;
-  opacity: 0; transition: opacity 0.2s;
-}
+.hist-val.high { color: var(--red); }
+.hist-flag { font-family: var(--mono); font-size: 0.52rem; color: var(--red); width: 10px; flex-shrink: 0; opacity: 0; transition: opacity 0.2s; }
 .hist-flag.show { opacity: 1; }
-
-/* Drift footer */
-.drift-footer {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0.6rem 1rem;
-  background: var(--ink3);
-  border-top: 1px solid var(--border2);
-}
-
-.drift-footer-label {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--muted);
-  letter-spacing: 0.08em; text-transform: uppercase;
-}
-
+.drift-footer { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1rem; background: var(--ink3); border-top: 1px solid var(--border2); }
+.drift-footer-label { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
 .drift-footer-status { display: flex; align-items: center; gap: 0.4rem; }
 .drift-footer-pip { width: 5px; height: 5px; border-radius: 50%; }
 .drift-footer-pip.stable   { background: var(--green); }
 .drift-footer-pip.elevated { background: var(--amber); animation: blip 1.2s ease infinite; }
 .drift-footer-pip.high     { background: var(--red);   animation: blip 0.8s ease infinite; }
-
-.drift-footer-txt {
-  font-family: var(--mono);
-  font-size: 0.58rem; letter-spacing: 0.06em;
-}
+.drift-footer-txt { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.06em; }
 .drift-footer-txt.stable   { color: var(--green); }
 .drift-footer-txt.elevated { color: var(--amber); }
-.drift-footer-txt.high     { color: var(--red);   }
+.drift-footer-txt.high     { color: var(--red); }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   VIEW: DRIFT ENGINE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.drift-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
+/* DRIFT ENGINE */
+.drift-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+.stat-label { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+.stat-val { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; line-height: 1; margin-bottom: 0.25rem; }
+.stat-val.amber { color: var(--amber); }
+.stat-val.green { color: var(--green); }
+.stat-val.red   { color: var(--red); }
+.stat-sub { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); letter-spacing: 0.04em; }
 
-.stat-card {
-  background: var(--ink2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 1rem;
-}
-
-.stat-label {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--muted);
-  letter-spacing: 0.08em; text-transform: uppercase;
-  margin-bottom: 0.5rem;
-}
-
-.stat-val {
-  font-family: var(--mono);
-  font-size: 1.4rem; font-weight: 500;
-  line-height: 1; margin-bottom: 0.25rem;
-}
-.stat-val.amber  { color: var(--amber); }
-.stat-val.green  { color: var(--green); }
-.stat-val.red    { color: var(--red);   }
-
-.stat-sub {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--muted);
-  letter-spacing: 0.04em;
-}
-
-/* Dimension detail */
-.dim-detail {
-  background: var(--ink2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 1rem;
-}
-
-.dim-detail-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0.7rem 1rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.dim-detail-name {
-  font-family: var(--mono);
-  font-size: 0.58rem; color: var(--muted);
-  letter-spacing: 0.08em; text-transform: uppercase;
-}
-
-.dim-detail-score {
-  font-family: var(--mono);
-  font-size: 0.8rem; font-weight: 500;
-}
+.dim-detail { background: var(--ink2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 1rem; }
+.dim-detail-head { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); }
+.dim-detail-name { font-family: var(--mono); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.dim-detail-score { font-family: var(--mono); font-size: 0.8rem; font-weight: 500; }
 .dim-detail-score.stable   { color: var(--green); }
 .dim-detail-score.elevated { color: var(--amber); }
-.dim-detail-score.high     { color: var(--red);   }
-
-.dim-sub-rows { padding: 0.5rem 1rem 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
-
-.sub-row {
-  display: flex; align-items: center; gap: 0.75rem;
-}
-
-.sub-name {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--muted);
-  width: 120px; flex-shrink: 0; letter-spacing: 0.04em;
-}
-
-.sub-bar-wrap {
-  flex: 1; height: 2px;
-  background: var(--border2); border-radius: 1px; overflow: hidden;
-}
-.sub-bar {
-  height: 100%; border-radius: 1px;
-  transition: width 1.1s var(--ease);
-}
+.dim-detail-score.high     { color: var(--red); }
+.dim-sub-rows { padding: 0.6rem 1rem 0.85rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.sub-row { display: flex; align-items: flex-start; gap: 0.75rem; }
+.sub-row-left { width: 130px; flex-shrink: 0; }
+.sub-name { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); letter-spacing: 0.04em; display: block; }
+.sub-gloss { font-size: 0.68rem; font-weight: 300; color: var(--dim); line-height: 1.4; margin-top: 0.15rem; font-style: italic; display: block; }
+.sub-bar-wrap { flex: 1; height: 2px; background: var(--border2); border-radius: 1px; overflow: hidden; margin-top: 0.6rem; }
+.sub-bar { height: 100%; border-radius: 1px; transition: width 1.1s var(--ease); }
 .sub-bar.low  { background: var(--green); }
 .sub-bar.med  { background: var(--amber); }
-.sub-bar.high { background: var(--red);   }
-
-.sub-val {
-  font-family: var(--mono);
-  font-size: 0.55rem; width: 24px; text-align: right; flex-shrink: 0;
-}
+.sub-bar.high { background: var(--red); }
+.sub-val { font-family: var(--mono); font-size: 0.55rem; width: 24px; text-align: right; flex-shrink: 0; margin-top: 0.45rem; }
 .sub-val.low  { color: var(--green); }
 .sub-val.med  { color: var(--amber); }
-.sub-val.high { color: var(--red);   }
+.sub-val.high { color: var(--red); }
 
-/* Threshold trigger */
-.threshold-card {
-  background: var(--ink2);
-  border: 1px solid var(--border2);
-  border-left: 2px solid var(--red);
-  border-radius: 6px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  position: relative; overflow: hidden;
-}
-.threshold-card::after {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, var(--red), transparent 50%);
-  opacity: 0.3;
-}
-
-.threshold-head {
-  display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;
-}
-.threshold-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%; background: var(--red);
-  animation: blip 0.9s ease infinite; flex-shrink: 0;
-}
-.threshold-label {
-  font-family: var(--mono);
-  font-size: 0.58rem; color: var(--red);
-  letter-spacing: 0.1em; text-transform: uppercase;
-}
-.threshold-body {
-  font-size: 0.8rem; font-weight: 300;
-  color: var(--bone2); line-height: 1.55; margin-bottom: 0.75rem;
-}
+.threshold-card { background: var(--ink2); border: 1px solid var(--border2); border-left: 2px solid var(--red); border-radius: 6px; padding: 1rem; margin-bottom: 1rem; position: relative; overflow: hidden; }
+.threshold-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--red), transparent 50%); opacity: 0.3; }
+.threshold-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.threshold-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); animation: blip 0.9s ease infinite; flex-shrink: 0; }
+.threshold-label { font-family: var(--mono); font-size: 0.58rem; color: var(--red); letter-spacing: 0.1em; text-transform: uppercase; }
+.threshold-body { font-size: 0.8rem; font-weight: 300; color: var(--bone2); line-height: 1.55; margin-bottom: 0.75rem; }
 .threshold-body b { color: var(--bone); font-weight: 500; }
-
 .threshold-actions { display: flex; align-items: center; gap: 0.5rem; }
-
-.btn-primary {
-  font-family: var(--mono);
-  font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase;
-  background: var(--amber); color: var(--ink);
-  border: none; border-radius: 3px;
-  padding: 0.38rem 0.7rem; cursor: pointer; font-weight: 500;
-  transition: background 0.15s;
-}
+.btn-primary { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--amber); color: var(--ink); border: none; border-radius: 3px; padding: 0.38rem 0.7rem; cursor: pointer; font-weight: 500; transition: background 0.15s; }
 .btn-primary:hover { background: var(--amber2); }
-
-.btn-ghost {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--muted);
-  background: none; border: 1px solid var(--border2);
-  border-radius: 3px; padding: 0.35rem 0.6rem;
-  cursor: pointer; letter-spacing: 0.06em;
-  transition: all 0.15s;
-}
+.btn-ghost { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); background: none; border: 1px solid var(--border2); border-radius: 3px; padding: 0.35rem 0.6rem; cursor: pointer; letter-spacing: 0.06em; transition: all 0.15s; }
 .btn-ghost:hover { color: var(--bone2); border-color: var(--border3); }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   VIEW: BRIEFING
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.brief-header {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.brief-eyebrow {
-  display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;
-}
-.brief-eyebrow-txt {
-  font-family: var(--mono);
-  font-size: 0.58rem; color: var(--amber);
-  letter-spacing: 0.1em; text-transform: uppercase;
-}
-
-.brief-title {
-  font-size: 1.25rem; font-weight: 500;
-  color: var(--bone); letter-spacing: -0.01em;
-  line-height: 1.3; margin-bottom: 0.35rem;
-}
-
+/* BRIEFING */
+.brief-header { margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+.brief-eyebrow { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem; }
+.brief-eyebrow-txt { font-family: var(--mono); font-size: 0.58rem; color: var(--amber); letter-spacing: 0.1em; text-transform: uppercase; }
+.brief-title { font-size: 1.25rem; font-weight: 500; color: var(--bone); letter-spacing: -0.01em; line-height: 1.3; margin-bottom: 0.35rem; }
 .brief-meta { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
-.brief-meta-item {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--muted); letter-spacing: 0.05em;
-}
-.brief-meta-sep {
-  width: 2px; height: 2px; border-radius: 50%;
-  background: var(--dim);
-}
-
-/* IBRI bar */
-.ibri-bar-block {
-  background: var(--ink2);
-  border: 1px solid var(--border);
-  border-radius: 6px; overflow: hidden;
-  margin-bottom: 1.5rem;
-}
-
-.ibri-bar-top {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.ibri-bar-label {
-  font-family: var(--mono);
-  font-size: 0.58rem; color: var(--muted);
-  letter-spacing: 0.08em; text-transform: uppercase;
-}
-
-.ibri-bar-score {
-  display: flex; align-items: baseline; gap: 0.35rem;
-}
-
-.ibri-num {
-  font-family: var(--mono);
-  font-size: 1.4rem; font-weight: 500;
-  color: var(--amber); line-height: 1;
-}
-.ibri-denom {
-  font-family: var(--mono);
-  font-size: 0.6rem; color: var(--muted);
-}
-.ibri-chip {
-  font-family: var(--mono);
-  font-size: 0.55rem; border-radius: 2px;
-  padding: 0.12rem 0.35rem; letter-spacing: 0.04em;
-}
-.ibri-chip.up   { background: var(--red-d);   color: var(--red);   }
+.brief-meta-item { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); letter-spacing: 0.05em; }
+.brief-meta-sep { width: 2px; height: 2px; border-radius: 50%; background: var(--dim); }
+.ibri-bar-block { background: var(--ink2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 1.5rem; }
+.ibri-bar-top { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+.ibri-bar-label { font-family: var(--mono); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.ibri-bar-score { display: flex; align-items: baseline; gap: 0.35rem; }
+.ibri-num { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; color: var(--amber); line-height: 1; }
+.ibri-denom { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); }
+.ibri-chip { font-family: var(--mono); font-size: 0.55rem; border-radius: 2px; padding: 0.12rem 0.35rem; letter-spacing: 0.04em; }
+.ibri-chip.up   { background: var(--red-d);   color: var(--red); }
 .ibri-chip.down { background: var(--green-d); color: var(--green); }
-
 .ibri-dims { padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.65rem; }
-
 .ibri-dim-row { display: flex; align-items: center; gap: 0.75rem; }
-.ibri-dim-name {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--muted);
-  width: 150px; flex-shrink: 0; letter-spacing: 0.05em;
-}
+.ibri-dim-name { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); width: 150px; flex-shrink: 0; letter-spacing: 0.05em; }
 .ibri-dim-wrap { flex: 1; height: 3px; background: var(--border2); border-radius: 2px; overflow: visible; position: relative; }
-.ibri-dim-fill {
-  height: 100%; border-radius: 2px;
-  transition: width 1.2s var(--ease);
-  position: relative;
-}
-.ibri-dim-fill::after {
-  content: ''; position: absolute;
-  right: -3px; top: 50%; transform: translateY(-50%);
-  width: 6px; height: 6px;
-  border-radius: 50%; background: inherit;
-}
+.ibri-dim-fill { height: 100%; border-radius: 2px; transition: width 1.2s var(--ease); position: relative; }
+.ibri-dim-fill::after { content: ''; position: absolute; right: -3px; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; border-radius: 50%; background: inherit; }
 .ibri-dim-fill.stable   { background: var(--green); }
 .ibri-dim-fill.elevated { background: var(--amber); }
-.ibri-dim-fill.high     { background: var(--red);   }
-
-.ibri-dim-val {
-  font-family: var(--mono);
-  font-size: 0.58rem; width: 28px; text-align: right; flex-shrink: 0;
-}
+.ibri-dim-fill.high     { background: var(--red); }
+.ibri-dim-val { font-family: var(--mono); font-size: 0.58rem; width: 28px; text-align: right; flex-shrink: 0; }
 .ibri-dim-val.stable   { color: var(--green); }
 .ibri-dim-val.elevated { color: var(--amber); }
-.ibri-dim-val.high     { color: var(--red);   }
-
-/* Brief sections */
+.ibri-dim-val.high     { color: var(--red); }
 .brief-section { margin-bottom: 1.5rem; }
-
-.brief-sec-head {
-  display: flex; align-items: center; gap: 0.5rem;
-  padding-bottom: 0.5rem; margin-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border);
-}
-.brief-sec-num {
-  font-family: var(--mono);
-  font-size: 0.52rem; color: var(--dim); letter-spacing: 0.06em;
-}
-.brief-sec-title {
-  font-family: var(--mono);
-  font-size: 0.58rem; color: var(--muted);
-  letter-spacing: 0.1em; text-transform: uppercase;
-}
-
-.signal-summary {
-  background: var(--ink2);
-  border: 1px solid var(--border);
-  border-radius: 6px; padding: 0.9rem;
-  border-left: 2px solid transparent;
-}
+.brief-sec-head { display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+.brief-sec-num { font-family: var(--mono); font-size: 0.52rem; color: var(--dim); letter-spacing: 0.06em; }
+.brief-sec-title { font-family: var(--mono); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+.signal-summary { background: var(--ink2); border: 1px solid var(--border); border-radius: 6px; padding: 0.9rem; border-left: 2px solid transparent; }
 .signal-summary.elevated { border-left-color: var(--amber); }
 .signal-summary.stable   { border-left-color: var(--green); }
-.signal-summary.high     { border-left-color: var(--red);   }
-
-.signal-sum-head {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 0.4rem;
-}
-.signal-sum-label {
-  font-family: var(--mono);
-  font-size: 0.55rem; letter-spacing: 0.08em; text-transform: uppercase;
-}
+.signal-summary.high     { border-left-color: var(--red); }
+.signal-sum-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; }
+.signal-sum-label { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .signal-sum-label.elevated { color: var(--amber); }
 .signal-sum-label.stable   { color: var(--green); }
-.signal-sum-label.high     { color: var(--red);   }
-
-.signal-sum-tag {
-  font-family: var(--mono);
-  font-size: 0.52rem; color: var(--dim); letter-spacing: 0.05em;
-}
-.signal-sum-body {
-  font-size: 0.8rem; font-weight: 300;
-  color: var(--bone2); line-height: 1.6;
-}
+.signal-sum-label.high     { color: var(--red); }
+.signal-sum-tag { font-family: var(--mono); font-size: 0.52rem; color: var(--dim); letter-spacing: 0.05em; }
+.signal-sum-body { font-size: 0.8rem; font-weight: 300; color: var(--bone2); line-height: 1.6; }
 .signal-sum-body b { color: var(--bone); font-weight: 500; }
-
-/* Watch items */
 .watch-list { display: flex; flex-direction: column; }
-.watch-item {
-  display: flex; gap: 0.7rem;
-  padding: 0.65rem 0;
-  border-bottom: 1px solid var(--border);
-}
+.watch-item { display: flex; gap: 0.7rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); }
 .watch-item:last-child { border-bottom: none; }
-.watch-arrow {
-  font-family: var(--mono);
-  font-size: 0.6rem; color: var(--amber);
-  flex-shrink: 0; margin-top: 0.1rem; width: 14px;
-}
-.watch-txt {
-  font-size: 0.8rem; font-weight: 300;
-  color: var(--bone2); line-height: 1.6;
-}
+.watch-arrow { font-family: var(--mono); font-size: 0.6rem; color: var(--amber); flex-shrink: 0; margin-top: 0.1rem; width: 14px; }
+.watch-txt { font-size: 0.8rem; font-weight: 300; color: var(--bone2); line-height: 1.6; }
 .watch-txt b { color: var(--bone); font-weight: 500; }
-.watch-tag {
-  font-family: var(--mono);
-  font-size: 0.5rem; color: var(--muted);
-  background: var(--ink3); border: 1px solid var(--border);
-  border-radius: 2px; padding: 0.05rem 0.25rem;
-  vertical-align: middle; margin-left: 0.25rem;
-}
-
-/* Takeaway */
-.takeaway {
-  background: var(--ink2);
-  border: 1px solid var(--border2);
-  border-radius: 6px; padding: 1rem 1rem 1rem 1.2rem;
-  position: relative; overflow: hidden;
-}
-.takeaway::before {
-  content: '';
-  position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
-  background: linear-gradient(180deg, var(--amber), transparent);
-}
-.takeaway::after {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, var(--amber), transparent 45%);
-  opacity: 0.25;
-}
-.takeaway-lbl {
-  font-family: var(--mono);
-  font-size: 0.52rem; color: var(--amber);
-  letter-spacing: 0.12em; text-transform: uppercase;
-  margin-bottom: 0.45rem;
-  display: flex; align-items: center; gap: 0.35rem;
-}
+.watch-tag { font-family: var(--mono); font-size: 0.5rem; color: var(--muted); background: var(--ink3); border: 1px solid var(--border); border-radius: 2px; padding: 0.05rem 0.25rem; vertical-align: middle; margin-left: 0.25rem; }
+.takeaway { background: var(--ink2); border: 1px solid var(--border2); border-radius: 6px; padding: 1rem 1rem 1rem 1.2rem; position: relative; overflow: hidden; }
+.takeaway::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--amber), transparent); }
+.takeaway::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--amber), transparent 45%); opacity: 0.25; }
+.takeaway-lbl { font-family: var(--mono); font-size: 0.52rem; color: var(--amber); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.45rem; display: flex; align-items: center; gap: 0.35rem; }
 .takeaway-lbl::before { content: '▸'; font-size: 0.48rem; }
-.takeaway-txt {
-  font-size: 0.85rem; font-weight: 300;
-  color: var(--bone); line-height: 1.65; font-style: italic;
-}
-
-/* Cohort row */
-.cohort-row {
-  display: flex; align-items: flex-start; gap: 0.6rem;
-  padding: 0.75rem;
-  background: var(--ink3); border: 1px solid var(--border);
-  border-radius: 4px;
-}
+.takeaway-txt { font-size: 0.85rem; font-weight: 300; color: var(--bone); line-height: 1.65; font-style: italic; }
+.cohort-row { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem; background: var(--ink3); border: 1px solid var(--border); border-radius: 4px; }
 .cohort-pip-wrap { padding-top: 0.2rem; }
-.cohort-pip {
-  width: 5px; height: 5px;
-  border-radius: 50%; background: var(--blue);
-  animation: blip 2.2s ease infinite;
-}
-.cohort-txt {
-  font-family: var(--mono);
-  font-size: 0.58rem; color: var(--muted);
-  letter-spacing: 0.04em; line-height: 1.55;
-}
+.cohort-pip { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); animation: blip 2.2s ease infinite; }
+.cohort-txt { font-family: var(--mono); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.04em; line-height: 1.55; }
 .cohort-txt span { color: var(--bone2); }
-
-/* Scenario invite */
-.scenario-card {
-  background: var(--ink2);
-  border: 1px solid var(--border);
-  border-radius: 6px; padding: 1rem;
-  display: flex; gap: 0.75rem;
-  margin-top: 0.75rem;
-}
-.scenario-icon {
-  font-family: var(--mono);
-  font-size: 0.65rem; color: var(--amber);
-  flex-shrink: 0; margin-top: 0.1rem;
-}
-.scenario-lbl {
-  font-family: var(--mono);
-  font-size: 0.55rem; color: var(--amber);
-  letter-spacing: 0.08em; text-transform: uppercase;
-  margin-bottom: 0.3rem;
-}
-.scenario-desc {
-  font-size: 0.78rem; font-weight: 300;
-  color: var(--bone2); line-height: 1.5; margin-bottom: 0.6rem;
-}
+.scenario-card { background: var(--ink2); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; display: flex; gap: 0.75rem; margin-top: 0.75rem; }
+.scenario-icon { font-family: var(--mono); font-size: 0.65rem; color: var(--amber); flex-shrink: 0; margin-top: 0.1rem; }
+.scenario-lbl { font-family: var(--mono); font-size: 0.55rem; color: var(--amber); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.3rem; }
+.scenario-desc { font-size: 0.78rem; font-weight: 300; color: var(--bone2); line-height: 1.5; margin-bottom: 0.6rem; }
 .scenario-actions { display: flex; align-items: center; gap: 0.5rem; }
-
-/* Brief footer */
-.brief-footer {
-  margin-top: 2rem; padding-top: 0.9rem;
-  border-top: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 0.5rem;
-}
-.brief-footer-left {
-  font-family: var(--mono);
-  font-size: 0.52rem; color: var(--dim); letter-spacing: 0.05em;
-}
+.brief-footer { margin-top: 2rem; padding-top: 0.9rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+.brief-footer-left { font-family: var(--mono); font-size: 0.52rem; color: var(--dim); letter-spacing: 0.05em; }
 .brief-footer-right { display: flex; gap: 0.5rem; }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   ANIMATIONS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-@keyframes blip {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.25; }
-}
-@keyframes slideQ {
-  from { opacity: 0; transform: translateX(8px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes rise {
-  from { opacity: 0; transform: translateY(5px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+@keyframes blip { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+@keyframes slideQ { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rise { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   RESPONSIVE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 @media (max-width: 600px) {
   .shell { grid-template-columns: 1fr; grid-template-rows: 48px auto 1fr; }
   .sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; padding: 0.5rem; border-right: none; border-bottom: 1px solid var(--border); }
@@ -994,34 +350,18 @@ body::after {
   .drift-grid { grid-template-columns: 1fr 1fr; }
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   NOTIFICATION BANNER
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.notif {
-  position: fixed; top: 56px; right: 1rem;
-  background: var(--ink3); border: 1px solid var(--border2);
-  border-left: 2px solid var(--amber);
-  border-radius: 5px; padding: 0.7rem 1rem;
-  font-family: var(--mono);
-  font-size: 0.6rem; color: var(--bone2); letter-spacing: 0.05em;
-  z-index: 200; max-width: 260px;
-  opacity: 0; transform: translateX(10px);
-  transition: all 0.3s var(--ease);
-  pointer-events: none;
-}
+.notif { position: fixed; top: 56px; right: 1rem; background: var(--ink3); border: 1px solid var(--border2); border-left: 2px solid var(--amber); border-radius: 5px; padding: 0.7rem 1rem; font-family: var(--mono); font-size: 0.6rem; color: var(--bone2); letter-spacing: 0.05em; z-index: 200; max-width: 260px; opacity: 0; transform: translateX(10px); transition: all 0.3s var(--ease); pointer-events: none; }
 .notif.show { opacity: 1; transform: translateX(0); pointer-events: all; }
 .notif b { color: var(--amber); }
-
 </style>
 </head>
 <body>
 
-<!-- ── NOTIFICATION ── -->
 <div class="notif" id="notif"></div>
 
 <div class="shell">
 
-  <!-- ── TOPBAR ── -->
+  <!-- TOPBAR -->
   <header class="topbar">
     <div class="topbar-left">
       <div class="veros-logo">
@@ -1039,9 +379,8 @@ body::after {
     </div>
   </header>
 
-  <!-- ── SIDEBAR ── -->
+  <!-- SIDEBAR -->
   <nav class="sidebar">
-
     <div class="sidebar-section">
       <div class="sidebar-label">Monitor</div>
       <button class="nav-item active" onclick="showView('pulse')" id="nav-pulse">
@@ -1054,7 +393,6 @@ body::after {
         <span class="nav-text">Drift Engine</span>
       </button>
     </div>
-
     <div class="sidebar-section">
       <div class="sidebar-label">Output</div>
       <button class="nav-item" onclick="showView('briefing')" id="nav-briefing">
@@ -1063,6 +401,7 @@ body::after {
       </button>
     </div>
 
+    <!-- IBRI score + plain-language explainer -->
     <div class="sidebar-drift">
       <div class="drift-compact">
         <div class="drift-compact-label">Current IBRI</div>
@@ -1074,15 +413,17 @@ body::after {
           </div>
         </div>
       </div>
+      <p class="ibri-sidebar-note">
+        The <b>IBRI</b> is your behavioral risk score — a composite of four dimensions that measure how your traits and current state interact to create susceptibility to manipulation. It updates with every check-in.
+      </p>
     </div>
-
   </nav>
 
-  <!-- ── MAIN ── -->
+  <!-- MAIN -->
   <main class="main">
 
     <!-- ══════════════════════
-         VIEW: PULSE
+         VIEW: PULSE CHECK-IN
     ══════════════════════ -->
     <div class="view active" id="view-pulse">
       <div class="pulse-wrap">
@@ -1090,6 +431,13 @@ body::after {
         <div class="view-eyebrow">
           <span class="view-eyebrow-text">Fatigue Vulnerability · Daily Signal</span>
           <div class="view-eyebrow-line"></div>
+        </div>
+
+        <!-- PULSE EXPLAINER -->
+        <div class="explain-block">
+          <div class="explain-label">What is the Pulse Check-in?</div>
+          <p>Three questions, answered daily. Each one captures a different aspect of <b>Fatigue Vulnerability</b> — how cognitive depletion is affecting your decision-making right now.</p>
+          <p>Fatigue doesn't just make you tired. It narrows attention, lowers skepticism, and makes you more likely to comply with requests you'd normally question. The Pulse tracks that in real time so the system knows when your risk window is open.</p>
         </div>
 
         <!-- PULSE CARD -->
@@ -1112,18 +460,22 @@ body::after {
             <div class="pulse-q active" id="pq1">
               <p class="pulse-q-text">How clear were your priorities today?</p>
               <p class="pulse-q-tag">FV · CLARITY INDEX</p>
+              <p class="q-gloss">Measures whether cognitive load has fragmented your focus. Scattered priorities are an early signal of fatigue accumulation.</p>
             </div>
             <div class="pulse-q" id="pq2">
               <p class="pulse-q-text">Did anything feel urgent that wasn't planned?</p>
               <p class="pulse-q-tag">FV · URGENCY INTRUSION</p>
+              <p class="q-gloss">Tracks unplanned urgency — a key attack surface. Fatigued people process urgency as real, which is exactly what social engineering exploits.</p>
             </div>
             <div class="pulse-q" id="pq3">
               <p class="pulse-q-text">How much capacity do you have left right now?</p>
               <p class="pulse-q-tag">FV · RESIDUAL CAPACITY</p>
+              <p class="q-gloss">Your remaining mental bandwidth. Low capacity suppresses verification instincts — you're more likely to approve, comply, or click without checking.</p>
             </div>
+            <!-- Ack kept in markup, never triggered in flow -->
             <div class="pulse-ack" id="pulseAck">
               <div class="ack-dot"></div>
-              <p class="ack-txt">Signal recorded. <b id="ackMsg">Processing drift...</b></p>
+              <p class="ack-txt">Signal recorded. <b id="ackMsg"></b></p>
             </div>
           </div>
 
@@ -1143,7 +495,7 @@ body::after {
           </div>
         </div>
 
-        <!-- HISTORY STRIP -->
+        <!-- 7-DAY HISTORY -->
         <div class="history-strip">
           <div class="history-head">
             <span class="history-head-label">7-Day Fatigue Signal</span>
@@ -1155,6 +507,19 @@ body::after {
               <div class="drift-footer-pip elevated" id="driftPip"></div>
               <span class="drift-footer-txt elevated" id="driftTxt">—</span>
             </div>
+          </div>
+        </div>
+
+        <!-- HISTORY LEGEND + EXPLAINER -->
+        <div style="margin-top: 0.65rem;">
+          <div class="legend">
+            <div class="legend-item"><div class="legend-dot low"></div><span class="legend-txt">Within baseline</span></div>
+            <div class="legend-item"><div class="legend-dot med"></div><span class="legend-txt">Mild elevation</span></div>
+            <div class="legend-item"><div class="legend-dot high"></div><span class="legend-txt">Threshold — high risk</span></div>
+          </div>
+          <div class="explain-block" style="margin-top: 0.6rem; margin-bottom: 0;">
+            <div class="explain-label">Reading this chart</div>
+            <p>Each bar is your fatigue signal for that day, built from how your three check-in responses combined. <b>Baseline Drift</b> compares your recent average to your established baseline — a rising drift means your susceptibility window is opening and the system will flag it.</p>
           </div>
         </div>
 
@@ -1171,30 +536,49 @@ body::after {
         <div class="view-eyebrow-line"></div>
       </div>
 
+      <!-- DRIFT ENGINE EXPLAINER -->
+      <div class="explain-block">
+        <div class="explain-label">What is the Drift Engine?</div>
+        <p>The Drift Engine watches for meaningful movement away from your behavioral baseline. A single elevated day is noise. A pattern across check-ins is signal. When fatigue scores shift consistently upward, your susceptibility rises — and the engine flags it before it becomes a problem.</p>
+        <p>It's the analytical layer between your daily check-in and your weekly briefing. It decides when current conditions are significant enough to warrant attention and action.</p>
+      </div>
+
       <div class="drift-grid">
         <div class="stat-card">
+          <div class="stat-tip">?
+            <div class="stat-tooltip">Your composite behavioral risk score across all four IBRI dimensions. Updates with each check-in you complete.</div>
+          </div>
           <div class="stat-label">Current IBRI</div>
           <div class="stat-val amber" id="driftIBRI">—</div>
           <div class="stat-sub" id="driftIBRIsub">awaiting signal</div>
         </div>
         <div class="stat-card">
+          <div class="stat-tip">?
+            <div class="stat-tooltip">Today's Fatigue Vulnerability score — your clarity, urgency exposure, and residual capacity combined into a single reading.</div>
+          </div>
           <div class="stat-label">FV Score</div>
           <div class="stat-val amber" id="driftFV">—</div>
           <div class="stat-sub" id="driftFVsub">Fatigue Vulnerability</div>
         </div>
         <div class="stat-card">
+          <div class="stat-tip">?
+            <div class="stat-tooltip">How far your recent average has moved from your 30-day baseline. A positive delta means you're running hotter than normal — risk is elevated.</div>
+          </div>
           <div class="stat-label">Baseline Delta</div>
           <div class="stat-val amber" id="driftDelta">—</div>
           <div class="stat-sub" id="driftDeltaSub">30-day baseline</div>
         </div>
         <div class="stat-card">
+          <div class="stat-tip">?
+            <div class="stat-tooltip">Consistency is what makes the signal reliable. Five check-ins per week gives the engine enough data to detect real drift versus random variation.</div>
+          </div>
           <div class="stat-label">Check-ins This Week</div>
           <div class="stat-val amber" id="driftCount">—</div>
           <div class="stat-sub">of 5 target</div>
         </div>
       </div>
 
-      <!-- FV dimension breakdown -->
+      <!-- FV SUB-DIMENSION BREAKDOWN -->
       <div class="dim-detail" id="dimDetailBlock">
         <div class="dim-detail-head">
           <span class="dim-detail-name">Fatigue Vulnerability · Sub-dimensions</span>
@@ -1202,24 +586,33 @@ body::after {
         </div>
         <div class="dim-sub-rows">
           <div class="sub-row">
-            <span class="sub-name">FV-01 · Clarity</span>
+            <div class="sub-row-left">
+              <span class="sub-name">FV-01 · Clarity</span>
+              <span class="sub-gloss">How fragmented your focus is today</span>
+            </div>
             <div class="sub-bar-wrap"><div class="sub-bar med" id="sub01" style="width:0%"></div></div>
             <span class="sub-val med" id="sub01v">—</span>
           </div>
           <div class="sub-row">
-            <span class="sub-name">FV-02 · Urgency</span>
+            <div class="sub-row-left">
+              <span class="sub-name">FV-02 · Urgency</span>
+              <span class="sub-gloss">Unplanned pressure you absorbed today</span>
+            </div>
             <div class="sub-bar-wrap"><div class="sub-bar med" id="sub02" style="width:0%"></div></div>
             <span class="sub-val med" id="sub02v">—</span>
           </div>
           <div class="sub-row">
-            <span class="sub-name">FV-03 · Capacity</span>
+            <div class="sub-row-left">
+              <span class="sub-name">FV-03 · Capacity</span>
+              <span class="sub-gloss">Remaining bandwidth for critical decisions</span>
+            </div>
             <div class="sub-bar-wrap"><div class="sub-bar med" id="sub03" style="width:0%"></div></div>
             <span class="sub-val med" id="sub03v">—</span>
           </div>
         </div>
       </div>
 
-      <!-- Threshold trigger — shown when conditions met -->
+      <!-- THRESHOLD TRIGGER -->
       <div class="threshold-card" id="thresholdCard" style="display:none">
         <div class="threshold-head">
           <div class="threshold-dot"></div>
@@ -1249,11 +642,7 @@ body::after {
 </div>
 
 <script>
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   STATE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 const STATE = {
-  // Historical scores (last 6 days) — simulate prior check-ins
   history: [
     { day:'Mon', score:1.3 },
     { day:'Tue', score:1.7 },
@@ -1262,19 +651,16 @@ const STATE = {
     { day:'Fri', score:2.0 },
     { day:'Sat', score:1.8 },
   ],
-  // Current session
   currentQ: 0,
   scores: [],
   sessionScore: null,
-  // Sub-dimension scores from this session
   subScores: [null, null, null],
-  // Persistent IBRI (other dims stable for demo)
   otherDims: {
     socialCompliance:   52,
     riskRationalization:44,
     exposureAwareness:  38,
   },
-  checkinsThisWeek: 4, // prior check-ins this week
+  checkinsThisWeek: 4,
 };
 
 const QUESTIONS = [
@@ -1283,9 +669,6 @@ const QUESTIONS = [
   { id:'pq3', tag:'FV-03', options:['Good','Low','Depleted'] },
 ];
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   INIT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function init() {
   renderHistory();
   updateDriftFooter();
@@ -1293,9 +676,6 @@ function init() {
   updateSidebar();
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   NAVIGATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function showView(key) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1306,27 +686,19 @@ function showView(key) {
   if (key === 'drift') renderDriftView();
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   PULSE FLOW
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function renderButtons(qi) {
   const q = QUESTIONS[qi];
-  const btns = document.querySelectorAll('.res-btn');
-  q.options.forEach((opt, i) => {
-    document.getElementById('lbl' + i).textContent = opt;
-  });
-  btns.forEach(b => b.classList.remove('picked'));
+  document.querySelectorAll('.res-btn').forEach(b => b.classList.remove('picked'));
+  q.options.forEach((opt, i) => { document.getElementById('lbl' + i).textContent = opt; });
 }
 
 function respond(optIdx, score) {
-  // Visual pick
   document.querySelectorAll('.res-btn')[optIdx].classList.add('picked');
   STATE.scores.push(score);
   STATE.subScores[STATE.currentQ] = score;
 
   setTimeout(() => {
     if (STATE.currentQ < QUESTIONS.length - 1) {
-      // Next question
       document.getElementById(QUESTIONS[STATE.currentQ].id).classList.remove('active');
       STATE.currentQ++;
       document.getElementById(QUESTIONS[STATE.currentQ].id).classList.add('active');
@@ -1344,26 +716,16 @@ function completeSession() {
   STATE.sessionScore = avg;
   STATE.checkinsThisWeek++;
 
-  // Hide questions and responses
+  // Silent completion — no processing indicator shown
   QUESTIONS.forEach(q => document.getElementById(q.id).classList.remove('active'));
   document.getElementById('pulseResponses').classList.add('fade');
   document.getElementById('pulseProgress').style.width = '100%';
   document.getElementById('pulseCtr').textContent = '✓';
 
-  // Ack message
-  let ackMsg = 'No drift detected.';
-  if (avg >= 2.5)      ackMsg = 'Elevated fatigue signal logged.';
-  else if (avg >= 2.0) ackMsg = 'Mild elevation noted.';
-  document.getElementById('ackMsg').textContent = ackMsg;
-  document.getElementById('pulseAck').classList.add('show');
-
   // Remove pulse badge
-  const badge = document.getElementById('pulsebage');
-  if (badge) badge.remove();
-  document.getElementById('pulsebage') && (document.getElementById('pulsebage').style.display = 'none');
-  const nb = document.getElementById('pulsebage');
+  const pulseBadge = document.getElementById('pulsebadge');
+  if (pulseBadge) pulseBadge.remove();
 
-  // Update history
   STATE.history.push({ day: 'Now', score: avg, isToday: true });
 
   setTimeout(() => {
@@ -1372,9 +734,9 @@ function completeSession() {
     updateSidebar();
     checkThreshold();
     triggerBriefing();
-    // Notify
+
     notify(`Signal logged · <b>IBRI updated</b> · Briefing ready`);
-    // Show badge on briefing nav
+
     const briefNav = document.getElementById('nav-briefing');
     if (!briefNav.querySelector('.nav-badge')) {
       const badge = document.createElement('span');
@@ -1382,12 +744,12 @@ function completeSession() {
       badge.textContent = 'new';
       briefNav.appendChild(badge);
     }
+
+    // Navigate to briefing — the reveal IS the payoff
+    showView('briefing');
   }, 700);
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   HISTORY RENDER
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function scoreLevel(s) {
   if (s <= 1.6) return 'low';
   if (s <= 2.3) return 'med';
@@ -1440,11 +802,7 @@ function updateDriftFooter() {
   txt.textContent = label;
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   SIDEBAR
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function calcIBRI() {
-  // FV score from history
   const fvRaw = STATE.sessionScore || (STATE.history.slice(-1)[0].score);
   const fv = Math.round(((fvRaw - 1) / 2) * 100);
   const sc = STATE.otherDims.socialCompliance;
@@ -1469,14 +827,10 @@ function updateSidebar() {
   state.textContent = s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   DRIFT ENGINE VIEW
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function renderDriftView() {
   const ibri = calcIBRI();
   const fvRaw = STATE.sessionScore || STATE.history.slice(-1)[0].score;
   const fvScore = Math.round(((fvRaw-1)/2)*100);
-
   const baseline = STATE.history.slice(0,4).map(h=>h.score).reduce((a,b)=>a+b,0)/4;
   const recent   = STATE.history.slice(-3).map(h=>h.score).reduce((a,b)=>a+b,0)/3;
   const delta = recent - baseline;
@@ -1488,11 +842,8 @@ function renderDriftView() {
   document.getElementById('driftDelta').textContent = (delta >= 0 ? '+' : '') + delta.toFixed(2);
   document.getElementById('driftDeltaSub').textContent = delta > 0.3 ? '↑ Above baseline' : 'Within baseline';
   document.getElementById('driftCount').textContent = STATE.checkinsThisWeek;
-
-  // FV composite
   document.getElementById('fvComposite').textContent = fvScore;
 
-  // Sub-dimension bars
   const subs = STATE.subScores.map((s,i) => s !== null ? s : [1.8,2.0,2.2][i]);
   const subLevels = subs.map(s => s <= 1.5 ? 'low' : s <= 2.2 ? 'med' : 'high');
   const subPcts = subs.map(s => Math.round(((s-1)/2)*100));
@@ -1507,47 +858,33 @@ function renderDriftView() {
   });
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   THRESHOLD CHECK
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function checkThreshold() {
   const recent = STATE.history.slice(-3).map(h => h.score);
   const allElevated = recent.every(s => s >= 2.0);
   const card = document.getElementById('thresholdCard');
-
   if (allElevated) {
     const avg = recent.reduce((a,b)=>a+b,0)/3;
-    let body = '';
-    if (avg >= 2.5) {
-      body = '<b>Sustained high fatigue detected across your last three check-ins.</b> This pattern is consistent with elevated susceptibility — particularly to time-pressure and authority vectors. Your briefing has been updated with specific watch items. A calibrated scenario is queued.';
-    } else {
-      body = '<b>Moderate fatigue elevation detected across three consecutive check-ins.</b> Your baseline has shifted. Your briefing reflects the current conditions and includes targeted guidance for this week.';
-    }
-    document.getElementById('thresholdBody').textContent = '';
+    let body = avg >= 2.5
+      ? '<b>Sustained high fatigue detected across your last three check-ins.</b> This pattern is consistent with elevated susceptibility — particularly to time-pressure and authority vectors. Your briefing has been updated with specific watch items. A calibrated scenario is queued.'
+      : '<b>Moderate fatigue elevation detected across three consecutive check-ins.</b> Your baseline has shifted. Your briefing reflects the current conditions and includes targeted guidance for this week.';
     document.getElementById('thresholdBody').innerHTML = body;
     card.style.display = 'block';
     card.style.animation = 'rise 0.4s ease forwards';
   }
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   BRIEFING GENERATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function triggerBriefing() {
   const ibri = calcIBRI();
   const fvRaw = STATE.sessionScore;
   const fvScore = Math.round(((fvRaw-1)/2)*100);
-
-  let level, signalLabel, signalTag, signalBody, watchItems, takeaway, cohortNote, showScenario;
-
   const baseline = STATE.history.slice(0,4).map(h=>h.score).reduce((a,b)=>a+b,0)/4;
   const recent   = STATE.history.slice(-3).map(h=>h.score).reduce((a,b)=>a+b,0)/3;
   const delta = recent - baseline;
 
+  let level, signalLabel, signalTag, signalBody, watchItems, takeaway, cohortNote, showScenario;
+
   if (fvRaw >= 2.5) {
-    level = 'high';
-    signalLabel = 'Threshold · Significant Drift';
-    signalTag = 'FV + trend · 3-day';
+    level = 'high'; signalLabel = 'Threshold · Significant Drift'; signalTag = 'FV + trend · 3-day';
     signalBody = 'Five consecutive check-ins show <b>sustained high fatigue with simultaneous capacity depletion.</b> This is your highest-risk behavioral state — depleted capacity directly reduces the verification instincts that protect against social engineering.';
     watchItems = [
       { text: '<b>Authority-based requests carry elevated risk this week.</b> When capacity is low, deference to perceived authority rises automatically. Treat any request from leadership or IT that requires immediate action as a verification trigger. <span class="watch-tag">FV × Social Compliance</span>' },
@@ -1558,9 +895,7 @@ function triggerBriefing() {
     cohortNote = 'Your team\'s <span>FV average is elevated this week</span>, consistent with the current project cycle. A department-level signal has been flagged for your security team.';
     showScenario = true;
   } else if (fvRaw >= 2.0) {
-    level = 'elevated';
-    signalLabel = 'Elevated · Fatigue Vulnerability';
-    signalTag = 'FV dimensions · recent trend';
+    level = 'elevated'; signalLabel = 'Elevated · Fatigue Vulnerability'; signalTag = 'FV dimensions · recent trend';
     signalBody = 'Your check-ins this week showed <b>declining clarity and increased urgency intrusion.</b> Residual capacity is below your 30-day baseline. This pattern is consistent with mild susceptibility elevation — particularly to time-pressure and familiar-sender manipulation.';
     watchItems = [
       { text: '<b>Urgent requests from familiar contacts carry higher risk when you\'re fatigued.</b> Social compliance rises as capacity drops — you\'re more likely to act on a trusted-sender request without the usual verification. <span class="watch-tag">FV × Social Compliance</span>' },
@@ -1570,9 +905,7 @@ function triggerBriefing() {
     cohortNote = 'Your team\'s <span>FV cohort average rose this week</span>, consistent with current deadlines. You\'re not the outlier — the environment is uniformly more exploitable right now.';
     showScenario = true;
   } else {
-    level = 'stable';
-    signalLabel = 'Stable · Within Baseline';
-    signalTag = 'All FV dimensions · 7-day';
+    level = 'stable'; signalLabel = 'Stable · Within Baseline'; signalTag = 'All FV dimensions · 7-day';
     signalBody = 'Your pulse signals this week stayed within your established baseline across all three Fatigue Vulnerability sub-dimensions. <b>Clarity, urgency, and capacity readings were consistent.</b> No drift detected.';
     watchItems = [
       { text: '<b>Risk Rationalization is your highest active dimension.</b> Even when fatigue is low, a tendency to rationalize compliance remains. Watch for reasoning that starts with "it\'s probably fine." <span class="watch-tag">Risk Rationalization</span>' },
@@ -1592,14 +925,13 @@ function triggerBriefing() {
 
   const ibriDelta = delta > 0 ? `+${Math.round(delta*20)} this week` : `${Math.round(delta*20)} this week`;
   const ibriChipClass = delta > 0.2 ? 'up' : 'down';
-
   const today = new Date();
   const weekStr = 'Week of ' + today.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 
   document.getElementById('briefingContent').innerHTML = `
     <div class="brief-header">
       <div class="brief-eyebrow">
-        <div class="veros-pip" style="width:14px;height:14px;border:1.5px solid var(--amber);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <div style="width:14px;height:14px;border:1.5px solid var(--amber);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <div style="width:4px;height:4px;background:var(--amber);border-radius:50%;"></div>
         </div>
         <span class="brief-eyebrow-txt">Veros · Personal Briefing</span>
@@ -1612,6 +944,11 @@ function triggerBriefing() {
         <div class="brief-meta-sep"></div>
         <span class="brief-meta-item">Fatigue Vulnerability focus</span>
       </div>
+    </div>
+
+    <div class="explain-block">
+      <div class="explain-label">How to read your IBRI score</div>
+      <p>The four dimensions below are not equal — and higher isn't always worse. <b>Fatigue Vulnerability, Social Compliance, and Risk Rationalization</b> are risk dimensions: a higher score means higher susceptibility. <b>Exposure Awareness</b> is the opposite — it's protective. A higher EA score means you're more likely to recognize and resist an attack. Your composite IBRI score weights all four together.</p>
     </div>
 
     <div class="ibri-bar-block">
@@ -1637,10 +974,7 @@ function triggerBriefing() {
     </div>
 
     <div class="brief-section">
-      <div class="brief-sec-head">
-        <span class="brief-sec-num">01</span>
-        <span class="brief-sec-title">What Your Signal Said</span>
-      </div>
+      <div class="brief-sec-head"><span class="brief-sec-num">01</span><span class="brief-sec-title">What Your Signal Said</span></div>
       <div class="signal-summary ${level}">
         <div class="signal-sum-head">
           <span class="signal-sum-label ${level}">${signalLabel}</span>
@@ -1651,10 +985,7 @@ function triggerBriefing() {
     </div>
 
     <div class="brief-section">
-      <div class="brief-sec-head">
-        <span class="brief-sec-num">02</span>
-        <span class="brief-sec-title">Watch For This Week</span>
-      </div>
+      <div class="brief-sec-head"><span class="brief-sec-num">02</span><span class="brief-sec-title">Watch For This Week</span></div>
       <div class="watch-list">
         ${watchItems.map(w => `
           <div class="watch-item">
@@ -1666,10 +997,7 @@ function triggerBriefing() {
     </div>
 
     <div class="brief-section">
-      <div class="brief-sec-head">
-        <span class="brief-sec-num">03</span>
-        <span class="brief-sec-title">One Thing to Carry</span>
-      </div>
+      <div class="brief-sec-head"><span class="brief-sec-num">03</span><span class="brief-sec-title">One Thing to Carry</span></div>
       <div class="takeaway">
         <div class="takeaway-lbl">This week's behavioral principle</div>
         <p class="takeaway-txt">${takeaway}</p>
@@ -1677,10 +1005,7 @@ function triggerBriefing() {
     </div>
 
     <div class="brief-section">
-      <div class="brief-sec-head">
-        <span class="brief-sec-num">04</span>
-        <span class="brief-sec-title">Your Environment</span>
-      </div>
+      <div class="brief-sec-head"><span class="brief-sec-num">04</span><span class="brief-sec-title">Your Environment</span></div>
       <div class="cohort-row">
         <div class="cohort-pip-wrap"><div class="cohort-pip"></div></div>
         <p class="cohort-txt">${cohortNote}</p>
@@ -1690,14 +1015,13 @@ function triggerBriefing() {
         <span class="scenario-icon">▶</span>
         <div>
           <div class="scenario-lbl">Scenario Queued</div>
-          <p class="scenario-desc">A scenario has been calibrated to your current FV profile — timed to your highest-risk window. You\'ve been briefed on what to watch for. That\'s the advantage.</p>
+          <p class="scenario-desc">A scenario has been calibrated to your current FV profile — timed to your highest-risk window. You've been briefed on what to watch for. That's the advantage.</p>
           <div class="scenario-actions">
             <button class="btn-primary" onclick="window.location.href='veros-scenario.html'">Accept scenario</button>
             <button class="btn-ghost">Skip this week</button>
           </div>
         </div>
-      </div>
-      ` : ''}
+      </div>` : ''}
     </div>
 
     <div class="brief-footer">
@@ -1709,15 +1033,11 @@ function triggerBriefing() {
     </div>
   `;
 
-  // Animate IBRI bars
   setTimeout(() => {
     document.querySelectorAll('.ibri-dim-fill').forEach(b => b.style.width = b.dataset.w);
   }, 350);
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   NOTIFY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 let notifTimer;
 function notify(msg) {
   const el = document.getElementById('notif');
@@ -1727,9 +1047,6 @@ function notify(msg) {
   notifTimer = setTimeout(() => el.classList.remove('show'), 3800);
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   BOOT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 init();
 </script>
 </body>
