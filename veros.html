@@ -63,7 +63,6 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    STAGE 0 — DOOR SELECTION
-   Veros-branded (internal/demo only)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 #stage-door {
   background: var(--ink);
@@ -124,7 +123,6 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    STAGE 1a — L&D DISGUISE
-   Looks like a real HR platform
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 #stage-ld {
   background: var(--ld-bg);
@@ -195,7 +193,6 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    STAGE 1b — IT DISGUISE
-   Looks like an enterprise access portal
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 #stage-it {
   background: var(--it-bg);
@@ -360,7 +357,6 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
 
 .profile-body { flex:1; padding:2.5rem 1.5rem 4rem; max-width:700px; margin:0 auto; width:100%; }
 
-/* Profile header */
 .profile-head { margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
 .profile-head-eyebrow { font-family:var(--mono); font-size:0.58rem; color:var(--amber); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.5rem; }
 .profile-head-title { font-family:var(--display); font-size:clamp(2.5rem,8vw,4.5rem); color:var(--bone); line-height:0.95; letter-spacing:0.03em; margin-bottom:0.5rem; }
@@ -368,7 +364,6 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
 .profile-head-meta-item { font-family:var(--mono); font-size:0.55rem; color:var(--muted); letter-spacing:0.06em; }
 .profile-head-meta-sep { width:2px; height:2px; border-radius:50%; background:var(--dim); }
 
-/* IBRI score */
 .ibri-score-block { background:var(--ink2); border:1px solid var(--border); border-radius:6px; overflow:hidden; margin-bottom:1.5rem; }
 .ibri-score-top { display:flex; align-items:center; justify-content:space-between; padding:0.85rem 1rem; border-bottom:1px solid var(--border); }
 .ibri-score-label { font-family:var(--mono); font-size:0.6rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
@@ -394,7 +389,6 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
 .ibri-dim-val.elevated { color:var(--amber); }
 .ibri-dim-val.high     { color:var(--red); }
 
-/* Profile insights */
 .profile-insights { display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.5rem; }
 .insight-card { background:var(--ink2); border:1px solid var(--border); border-left:2px solid transparent; border-radius:6px; padding:1rem; }
 .insight-card.fv { border-left-color:var(--red); }
@@ -411,12 +405,10 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
 .insight-card-txt { font-size:0.8rem; font-weight:300; color:var(--bone2); line-height:1.6; }
 .insight-card-txt b { color:var(--bone); font-weight:500; }
 
-/* Profile loading state */
 .profile-loading { display:flex; align-items:center; gap:0.6rem; padding:1rem; }
 .profile-loading-dot { width:6px; height:6px; border-radius:50%; background:var(--amber); animation:blip 1s ease infinite; }
 .profile-loading-txt { font-family:var(--mono); font-size:0.62rem; color:var(--muted); letter-spacing:0.06em; }
 
-/* Profile CTA */
 .profile-cta-block { background:var(--ink2); border:1px solid var(--border); border-radius:6px; padding:1.25rem; display:flex; gap:1rem; align-items:flex-start; }
 .profile-cta-icon { font-family:var(--mono); font-size:0.7rem; color:var(--amber); flex-shrink:0; margin-top:0.05rem; }
 .profile-cta-body { flex:1; }
@@ -534,7 +526,7 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
         <div class="ld-q-text">Describe what a normal workday looks like for you in 2–3 sentences.</div>
         <textarea class="ld-textarea" id="ldA3" placeholder="Walk us through your usual day..."></textarea>
       </div>
-      <!-- Q4 — Cognitive susceptibility -->
+      <!-- Q4 -->
       <div class="ld-q" id="ldq4">
         <div class="ld-q-label">Learning Style</div>
         <div class="ld-q-text">When you're given an unfamiliar topic and don't know where to start, what's your natural approach?</div>
@@ -545,7 +537,7 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
           <div class="ld-option" data-val="Jump in — I learn best by attempting the task and figuring it out as I go." onclick="selectLdOpt(this,4)"><div class="ld-option-radio"></div><span class="ld-option-text">Jump in — learn by attempting the task and figuring it out.</span></div>
         </div>
       </div>
-      <!-- Q5 — Fatigue vulnerability -->
+      <!-- Q5 -->
       <div class="ld-q" id="ldq5">
         <div class="ld-q-label">Workload & Pressure</div>
         <div class="ld-q-text">How do you handle learning tasks or new requests when your schedule is already packed or you're under deadline pressure?</div>
@@ -556,13 +548,13 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
           <div class="ld-option" data-val="I push through regardless — I don't like things sitting unactioned." onclick="selectLdOpt(this,5)"><div class="ld-option-radio"></div><span class="ld-option-text">Push through — I don't like things sitting unactioned.</span></div>
         </div>
       </div>
-      <!-- Q6 — Social compliance -->
+      <!-- Q6 -->
       <div class="ld-q" id="ldq6">
         <div class="ld-q-label">Workplace Dynamics</div>
         <div class="ld-q-text">Describe a time you had to navigate a disagreement or tension with a colleague. How did you approach it?</div>
         <textarea class="ld-textarea" id="ldA6" placeholder="Share a brief example..."></textarea>
       </div>
-      <!-- Q7 — Integrity anchor -->
+      <!-- Q7 -->
       <div class="ld-q" id="ldq7">
         <div class="ld-q-label">Core Values</div>
         <div class="ld-q-text">What core value most influences how you make decisions at work?</div>
@@ -573,7 +565,7 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
           <div class="ld-option" data-val="Impact — focusing on outcomes that matter and move things forward." onclick="selectLdOpt(this,7)"><div class="ld-option-radio"></div><span class="ld-option-text">Impact — outcomes that matter and move things forward.</span></div>
         </div>
       </div>
-      <!-- Q8 — Exposure profile -->
+      <!-- Q8 -->
       <div class="ld-q" id="ldq8">
         <div class="ld-q-label">Professional Presence</div>
         <div class="ld-q-text">How comfortable are you sharing work accomplishments or professional updates publicly — on LinkedIn or internal channels?</div>
@@ -660,7 +652,7 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
           <div class="it-field-sub">Describe how you typically interact with company systems during a normal working day. Used for access anomaly baseline configuration.</div>
           <textarea class="it-textarea" id="itA3" placeholder="Describe your typical system usage..."></textarea>
         </div>
-        <!-- Q4 — Cognitive susceptibility -->
+        <!-- Q4 -->
         <div class="it-q" id="itq4">
           <div class="it-field-label">Technical Issue Resolution Protocol <span class="req">*</span></div>
           <div class="it-field-sub">When you encounter an unfamiliar technical issue, what is your standard first step?</div>
@@ -671,7 +663,7 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
             <div class="it-radio-item" data-val="Escalate immediately to avoid risk of causing further issues." onclick="selectItOpt(this,4)"><div class="it-radio-dot"></div><span class="it-radio-text">Escalate immediately to avoid risk of causing further issues.</span></div>
           </div>
         </div>
-        <!-- Q5 — Fatigue vulnerability -->
+        <!-- Q5 -->
         <div class="it-q" id="itq5">
           <div class="it-field-label">Alert & Request Management Under Load <span class="req">*</span></div>
           <div class="it-field-sub">How do you typically handle system alerts or IT requests during high-volume or high-pressure periods?</div>
@@ -679,16 +671,16 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
             <div class="it-radio-item" data-val="Triage and action all alerts systematically regardless of workload." onclick="selectItOpt(this,5)"><div class="it-radio-dot"></div><span class="it-radio-text">Triage and action all alerts systematically regardless of workload.</span></div>
             <div class="it-radio-item" data-val="Prioritize critical items and defer lower-priority alerts." onclick="selectItOpt(this,5)"><div class="it-radio-dot"></div><span class="it-radio-text">Prioritize critical items and defer lower-priority alerts.</span></div>
             <div class="it-radio-item" data-val="Action urgent requests immediately and handle the rest when volume decreases." onclick="selectItOpt(this,5)"><div class="it-radio-dot"></div><span class="it-radio-text">Action urgent requests immediately, handle rest when volume decreases.</span></div>
-            <div class="it-radio-item" data-val="Route all non-essential requests to a colleague during high-demand periods." onclick="selectItOpt(this,5)"><div class="it-radio-dot"></div><span class="ld-option-text">Route non-essential requests to a colleague during high-demand periods.</span></div>
+            <div class="it-radio-item" data-val="Route all non-essential requests to a colleague during high-demand periods." onclick="selectItOpt(this,5)"><div class="it-radio-dot"></div><span class="it-radio-text">Route non-essential requests to a colleague during high-demand periods.</span></div>
           </div>
         </div>
-        <!-- Q6 — Social compliance -->
+        <!-- Q6 -->
         <div class="it-q" id="itq6">
           <div class="it-field-label">Credential & Access Sharing Protocol <span class="req">*</span></div>
           <div class="it-field-sub">If a colleague required temporary use of your credentials or system access to meet a critical deadline, how would you handle the request?</div>
           <textarea class="it-textarea" id="itA6" placeholder="Describe how you would handle this situation..."></textarea>
         </div>
-        <!-- Q7 — Integrity anchor -->
+        <!-- Q7 -->
         <div class="it-q" id="itq7">
           <div class="it-field-label">Security Policy Acknowledgement <span class="req">*</span></div>
           <div class="it-field-sub">Which statement best reflects your approach to organizational security policies?</div>
@@ -699,7 +691,7 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
             <div class="it-radio-item" data-val="I escalate when policies are unclear rather than making independent decisions." onclick="selectItOpt(this,7)"><div class="it-radio-dot"></div><span class="it-radio-text">Escalate when policies are unclear rather than deciding independently.</span></div>
           </div>
         </div>
-        <!-- Q8 — Exposure profile -->
+        <!-- Q8 -->
         <div class="it-q" id="itq8">
           <div class="it-field-label">External Digital Footprint <span class="req">*</span></div>
           <div class="it-field-sub">Describe your level of professional activity on external platforms such as LinkedIn. Used for social engineering risk baseline configuration.</div>
@@ -722,19 +714,22 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
 
 <!-- ══════════════════════════════════
      STAGE 2 — PROCESSING
+     Label and steps are set dynamically
+     by submitProfile() — no Veros
+     language appears here until reveal.
 ══════════════════════════════════ -->
 <div class="stage" id="stage-processing">
   <div class="proc-inner">
     <div class="proc-mark"><div class="proc-mark-inner"></div></div>
-    <div class="proc-label">Veros is processing your responses</div>
+    <div class="proc-label" id="procLabel"></div>
     <div class="proc-steps">
-      <div class="proc-step" id="ps1"><div class="proc-step-pip"></div><span class="proc-step-txt">Parsing behavioral signal from responses</span><span class="proc-step-check">✓</span></div>
-      <div class="proc-step" id="ps2"><div class="proc-step-pip"></div><span class="proc-step-txt">Mapping to IBRI dimensions</span><span class="proc-step-check">✓</span></div>
-      <div class="proc-step" id="ps3"><div class="proc-step-pip"></div><span class="proc-step-txt">Scoring Fatigue Vulnerability</span><span class="proc-step-check">✓</span></div>
-      <div class="proc-step" id="ps4"><div class="proc-step-pip"></div><span class="proc-step-txt">Scoring Social Compliance</span><span class="proc-step-check">✓</span></div>
-      <div class="proc-step" id="ps5"><div class="proc-step-pip"></div><span class="proc-step-txt">Scoring Risk Rationalization</span><span class="proc-step-check">✓</span></div>
-      <div class="proc-step" id="ps6"><div class="proc-step-pip"></div><span class="proc-step-txt">Scoring Exposure Awareness</span><span class="proc-step-check">✓</span></div>
-      <div class="proc-step" id="ps7"><div class="proc-step-pip"></div><span class="proc-step-txt">Generating behavioral signature</span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps1"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst1"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps2"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst2"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps3"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst3"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps4"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst4"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps5"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst5"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps6"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst6"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps7"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst7"></span><span class="proc-step-check">✓</span></div>
     </div>
   </div>
 </div>
@@ -798,7 +793,6 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
       </div>
     </div>
 
-    <!-- IBRI Score — populated by API -->
     <div class="ibri-score-block" id="ibriBlock">
       <div class="ibri-score-top">
         <span class="ibri-score-label">IBRI Composite Score</span>
@@ -816,10 +810,8 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
       </div>
     </div>
 
-    <!-- Insights — populated by API -->
     <div id="insightsBlock"></div>
 
-    <!-- CTA to Pulse System -->
     <div class="profile-cta-block">
       <div class="profile-cta-icon">▸</div>
       <div class="profile-cta-body">
@@ -840,11 +832,43 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-
    STATE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 const S = {
-  door: null,      // 'ld' | 'it'
-  ldQ: 1,          // current LD question
-  itQ: 1,          // current IT question
-  answers: {},     // all collected answers
-  ibriData: null,  // API response
+  door: null,
+  ldQ: 1,
+  itQ: 1,
+  answers: {},
+  ibriData: null,
+};
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PROCESSING COPY — door-aware
+   No Veros language. Stays inside
+   the disguise until the reveal.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const PROC_COPY = {
+  ld: {
+    label: 'Building your learning profile...',
+    steps: [
+      'Reviewing your role and team context',
+      'Mapping your tool and platform preferences',
+      'Analyzing your workday patterns',
+      'Identifying your learning style',
+      'Evaluating how you work under pressure',
+      'Assessing your collaboration approach',
+      'Generating your personalized learning path',
+    ]
+  },
+  it: {
+    label: 'Configuring your access profile...',
+    steps: [
+      'Validating role and department information',
+      'Reviewing systems and access requirements',
+      'Establishing usage pattern baseline',
+      'Evaluating issue resolution approach',
+      'Assessing alert and request handling',
+      'Reviewing policy alignment responses',
+      'Provisioning access tier configuration',
+    ]
+  }
 };
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -935,7 +959,6 @@ function updateItUI() {
   document.querySelectorAll('.it-q').forEach(el => el.classList.remove('active'));
   document.getElementById(`itq${q}`).classList.add('active');
   document.getElementById('itFormTitle').textContent = itTitles[q];
-  // Update step indicators
   for (let i=1; i<=8; i++) {
     const step = document.getElementById(`its${i}`);
     step.className = 'it-step';
@@ -975,9 +998,17 @@ function itPrev() {
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   SUBMIT — PROCESSING → API
+   SUBMIT — sets door-aware copy,
+   then runs processing + API call
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function submitProfile() {
+  // Inject door-aware copy — no Veros language shown yet
+  const copy = PROC_COPY[S.door];
+  document.getElementById('procLabel').textContent = copy.label;
+  copy.steps.forEach((txt, i) => {
+    document.getElementById(`pst${i + 1}`).textContent = txt;
+  });
+
   showStage('stage-processing');
   runProcessingAnimation();
   callVeros();
@@ -989,7 +1020,10 @@ function runProcessingAnimation() {
   const dones  = [650,1050,1450,1850,2250,2650,3050];
   steps.forEach((id,i) => {
     setTimeout(() => document.getElementById(id).classList.add('active'), delays[i]);
-    setTimeout(() => { document.getElementById(id).classList.remove('active'); document.getElementById(id).classList.add('done'); }, dones[i]);
+    setTimeout(() => {
+      document.getElementById(id).classList.remove('active');
+      document.getElementById(id).classList.add('done');
+    }, dones[i]);
   });
 }
 
@@ -1048,7 +1082,6 @@ Analyze these answers carefully. Generate a JSON response ONLY — no preamble, 
     const clean = text.replace(/```json|```/g,'').trim();
     S.ibriData = JSON.parse(clean);
   } catch(e) {
-    // Fallback profile if API fails
     S.ibriData = {
       ibri_score: 61,
       tier: 'Moderate',
@@ -1064,7 +1097,6 @@ Analyze these answers carefully. Generate a JSON response ONLY — no preamble, 
     };
   }
 
-  // Wait for animation to finish then reveal
   setTimeout(() => showStage('stage-reveal'), 3400);
 }
 
@@ -1075,17 +1107,14 @@ function showProfile() {
   const d = S.ibriData;
   if (!d) { showStage('stage-profile'); return; }
 
-  // Door context
   document.getElementById('profileDoorCtx').textContent = S.door === 'ld' ? 'Entry via L&D door · Learning Path Personalization' : 'Entry via IT door · Access Profile Completion';
   document.getElementById('profileTimestamp').textContent = new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
 
-  // IBRI score
   document.getElementById('ibriNum').textContent = d.ibri_score;
   const tier = document.getElementById('ibriTier');
   tier.textContent = d.tier;
   tier.className = 'ibri-score-tier ' + d.tier.toLowerCase();
 
-  // Dimension bars
   const dims = [
     { key:'fv', label:'Fatigue Vulnerability',  level: d.dimensions.fv >= 65 ? 'high' : d.dimensions.fv >= 40 ? 'elevated' : 'stable' },
     { key:'sc', label:'Social Compliance',       level: d.dimensions.sc >= 65 ? 'high' : d.dimensions.sc >= 40 ? 'elevated' : 'stable' },
@@ -1107,7 +1136,6 @@ function showProfile() {
     document.querySelectorAll('.ibri-dim-fill').forEach(b => b.style.width = b.dataset.w);
   }, 300);
 
-  // Insights
   const insightDefs = [
     { key:'fv', cls:'fv', label:'Fatigue Vulnerability' },
     { key:'sc', cls:'sc', label:'Social Compliance' },
