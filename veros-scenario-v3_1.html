@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veros · Scenario Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TOKENS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+:root {
+  /* Veros system */
+  --ink:      #05070d;
+  --ink2:     #090c14;
+  --ink3:     #0e121c;
+  --ink4:     #141925;
+  --border:   #1c2336;
+  --border2:  #252f45;
+  --amber:    #f5a623;
+  --amber2:   #e8941a;
+  --amber-d:  rgba(245,166,35,0.09);
+  --bone:     #ccd1de;
+  --bone2:    #97a0b3;
+  --muted:    #4e5870;
+  --dim:      #2a3347;
+  --green:    #1fc97a;
+  --green-d:  rgba(31,201,122,0.08);
+  --red:      #f04f4f;
+  --red-d:    rgba(240,79,79,0.08);
+  --mono:     'IBM Plex Mono', monospace;
+  --sans:     'IBM Plex Sans', sans-serif;
+  --ease:     cubic-bezier(0.4,0,0.2,1);
+
+  /* Email client simulation */
+  --mail-bg:      #f4f5f7;
+  --mail-surface: #ffffff;
+  --mail-border:  #e1e4e8;
+  --mail-text:    #1a1f2e;
+  --mail-muted:   #6b7280;
+  --mail-sidebar: #eef0f3;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--ink);
+  font-family: var(--sans);
+  color: var(--bone);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SHELL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.shell {
+  display: grid;
+  grid-template-rows: 48px 1fr;
+  min-height: 100vh;
+}
+
+/* TOPBAR */
+.topbar {
+  background: var(--ink2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.25rem;
+  position: sticky; top: 0; z-index: 200;
+}
+.topbar-left { display: flex; align-items: center; gap: 0.75rem; }
+.logo-mark {
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--amber); border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-mark::after {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--amber); border-radius: 50%;
+}
+.logo-name {
+  font-family: var(--mono);
+  font-size: 0.65rem; color: var(--amber);
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.topbar-sep { width: 1px; height: 18px; background: var(--border2); }
+.topbar-ctx {
+  font-family: var(--mono);
+  font-size: 0.58rem; color: var(--muted); letter-spacing: 0.06em;
+}
+.topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+.topbar-user { font-family: var(--mono); font-size: 0.58rem; color: var(--muted); }
+.status-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); animation: blip 1.8s ease infinite; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STAGE MANAGER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.stage { display: none; }
+.stage.active { display: flex; flex-direction: column; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STAGE 0 — PROFILE SELECTOR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#stage-select {
+  align-items: center; justify-content: center;
+  min-height: calc(100vh - 48px);
+  padding: 2rem;
+}
+
+.select-inner { width: 100%; max-width: 560px; }
+
+.select-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.58rem; color: var(--amber);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.select-eyebrow::before {
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--amber); opacity: 0.4;
+}
+
+.select-title {
+  font-size: 1.5rem; font-weight: 500;
+  color: var(--bone); letter-spacing: -0.015em;
+  line-height: 1.25; margin-bottom: 0.5rem;
+}
+
+.select-sub {
+  font-size: 0.82rem; font-weight: 300;
+  color: var(--bone2); line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+/* Profile cards */
+.profile-cards { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
+
+.profile-card {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 6px; padding: 1rem;
+  cursor: pointer;
+  display: flex; gap: 1rem; align-items: flex-start;
+  transition: all 0.18s var(--ease);
+  position: relative; overflow: hidden;
+}
+.profile-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: transparent; transition: background 0.18s;
+}
+.profile-card:hover { border-color: var(--border2); background: var(--ink3); }
+.profile-card:hover::before { background: var(--amber); }
+.profile-card.selected { border-color: var(--amber); background: var(--amber-d); }
+.profile-card.selected::before { background: var(--amber); }
+
+.profile-card-icon {
+  width: 32px; height: 32px;
+  background: var(--ink4); border: 1px solid var(--border2);
+  border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--mono); font-size: 0.65rem; color: var(--muted);
+}
+.profile-card.selected .profile-card-icon { border-color: var(--amber); color: var(--amber); }
+
+.profile-card-body { flex: 1; }
+.profile-card-name {
+  font-size: 0.85rem; font-weight: 500; color: var(--bone);
+  margin-bottom: 0.2rem;
+}
+.profile-card-desc {
+  font-size: 0.75rem; font-weight: 300; color: var(--bone2); line-height: 1.5;
+}
+
+.profile-card-chips {
+  display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem;
+}
+.chip {
+  font-family: var(--mono); font-size: 0.5rem;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  border-radius: 2px; padding: 0.1rem 0.3rem;
+  border: 1px solid transparent;
+}
+.chip.fv  { background: var(--red-d);   color: var(--red);   border-color: rgba(240,79,79,0.2); }
+.chip.sc  { background: var(--amber-d); color: var(--amber); border-color: rgba(245,166,35,0.2); }
+.chip.rr  { background: rgba(79,142,240,0.08); color: #4f8ef0; border-color: rgba(79,142,240,0.2); }
+.chip.ea  { background: var(--green-d); color: var(--green); border-color: rgba(31,201,122,0.2); }
+
+.select-btn {
+  width: 100%;
+  font-family: var(--mono); font-size: 0.65rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--amber); color: var(--ink);
+  border: none; border-radius: 4px; padding: 0.75rem;
+  cursor: pointer; font-weight: 500;
+  transition: background 0.15s; margin-bottom: 0.5rem;
+}
+.select-btn:hover { background: var(--amber2); }
+.select-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.select-note {
+  font-family: var(--mono);
+  font-size: 0.55rem; color: var(--muted);
+  letter-spacing: 0.06em; text-align: center; line-height: 1.5;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STAGE 1 — CONSTRUCT
+   (Brief interstitial while "building")
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#stage-construct {
+  align-items: center; justify-content: center;
+  min-height: calc(100vh - 48px);
+  padding: 2rem;
+}
+
+.construct-inner { width: 100%; max-width: 400px; }
+
+.construct-label {
+  font-family: var(--mono);
+  font-size: 0.6rem; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 1.5rem; text-align: center;
+}
+
+.construct-steps { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
+
+.cstep {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  background: var(--ink2); border: 1px solid var(--border);
+  border-radius: 4px; opacity: 0.3;
+  transition: opacity 0.4s, border-color 0.4s;
+}
+.cstep.done { opacity: 1; border-color: var(--green); }
+.cstep.active { opacity: 1; border-color: var(--amber); }
+
+.cstep-icon {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+.cstep.done .cstep-icon   { background: var(--green); }
+.cstep.active .cstep-icon { background: var(--amber); animation: blip 0.7s ease infinite; }
+.cstep:not(.done):not(.active) .cstep-icon { background: var(--dim); }
+
+.cstep-txt {
+  font-family: var(--mono);
+  font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em;
+}
+.cstep.done .cstep-txt   { color: var(--green); }
+.cstep.active .cstep-txt { color: var(--amber); }
+
+.cstep-check {
+  margin-left: auto;
+  font-family: var(--mono); font-size: 0.6rem; color: var(--green);
+  opacity: 0; transition: opacity 0.3s;
+}
+.cstep.done .cstep-check { opacity: 1; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STAGE 2 — SIMULATION
+   Realistic email client — NO Veros branding
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#stage-sim {
+  background: var(--mail-bg);
+  min-height: calc(100vh - 48px);
+}
+
+/* Email client shell */
+.email-client {
+  display: grid;
+  grid-template-columns: 200px 260px 1fr;
+  height: calc(100vh - 48px);
+  background: var(--mail-bg);
+}
+
+/* Left nav */
+.email-nav {
+  background: var(--mail-sidebar);
+  border-right: 1px solid var(--mail-border);
+  padding: 1rem 0;
+}
+.email-nav-header {
+  padding: 0.5rem 1rem 1rem;
+  font-size: 1.1rem; font-weight: 600;
+  color: var(--mail-text); letter-spacing: -0.01em;
+}
+.email-nav-item {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.45rem 1rem;
+  font-size: 0.82rem; color: #374151;
+  cursor: pointer; border-radius: 0;
+  transition: background 0.1s;
+}
+.email-nav-item:hover { background: rgba(0,0,0,0.05); }
+.email-nav-item.active { background: #dce1ea; font-weight: 500; color: var(--mail-text); }
+.email-nav-icon { font-size: 0.75rem; width: 16px; text-align: center; opacity: 0.6; }
+.email-nav-badge {
+  margin-left: auto;
+  background: #1d4ed8; color: white;
+  font-size: 0.65rem; border-radius: 8px;
+  padding: 0.05rem 0.4rem; font-weight: 600;
+}
+
+/* Message list */
+.email-list {
+  border-right: 1px solid var(--mail-border);
+  overflow-y: auto;
+  background: var(--mail-surface);
+}
+.email-list-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--mail-border);
+  font-size: 0.82rem; font-weight: 600; color: var(--mail-text);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; background: var(--mail-surface); z-index: 10;
+}
+.email-list-count { font-weight: 400; color: var(--mail-muted); font-size: 0.75rem; }
+
+.email-thread {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f0f2f5;
+  cursor: pointer; transition: background 0.1s;
+}
+.email-thread:hover { background: #f9fafb; }
+.email-thread.selected { background: #eef2ff; border-left: 3px solid #1d4ed8; }
+.email-thread.unread .email-thread-subject { font-weight: 600; }
+
+.email-thread-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0.2rem;
+}
+.email-thread-sender { font-size: 0.8rem; color: var(--mail-text); }
+.email-thread.unread .email-thread-sender { font-weight: 600; }
+.email-thread-time { font-size: 0.7rem; color: var(--mail-muted); }
+.email-thread-subject { font-size: 0.78rem; color: #374151; margin-bottom: 0.15rem; }
+.email-thread-preview { font-size: 0.72rem; color: var(--mail-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.unread-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #1d4ed8; flex-shrink: 0; margin-right: 0.4rem;
+}
+
+/* Message pane */
+.email-pane {
+  display: flex; flex-direction: column;
+  background: var(--mail-surface);
+  overflow-y: auto;
+}
+
+.email-pane-header {
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--mail-border);
+}
+
+.email-subject {
+  font-size: 1.1rem; font-weight: 600;
+  color: var(--mail-text); margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.email-meta {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+}
+
+.email-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 600; color: white; flex-shrink: 0;
+}
+
+.email-meta-right { flex: 1; }
+.email-from { font-size: 0.82rem; font-weight: 600; color: var(--mail-text); }
+.email-from-addr {
+  font-size: 0.72rem; color: var(--mail-muted);
+  cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+}
+.email-timestamp { font-size: 0.72rem; color: var(--mail-muted); margin-top: 0.1rem; }
+
+/* Email body */
+.email-body {
+  padding: 1.25rem 1.5rem;
+  font-size: 0.88rem; color: #1f2937;
+  line-height: 1.75; flex: 1;
+}
+.email-body p { margin-bottom: 1em; }
+.email-body p:last-child { margin-bottom: 0; }
+
+.email-sig {
+  color: var(--mail-muted);
+  border-top: 1px solid var(--mail-border);
+  padding-top: 0.75rem; margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Action bar */
+.email-actions {
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid var(--mail-border);
+  display: flex; gap: 0.75rem; align-items: center;
+  background: var(--mail-surface);
+  position: sticky; bottom: 0;
+}
+
+.email-action-primary {
+  display: flex; align-items: center; gap: 0.4rem;
+  background: #1d4ed8; color: white;
+  border: none; border-radius: 4px;
+  padding: 0.5rem 1rem; cursor: pointer;
+  font-size: 0.8rem; font-weight: 500;
+  transition: background 0.15s;
+}
+.email-action-primary:hover { background: #1a44c8; }
+
+.email-action-secondary {
+  display: flex; align-items: center; gap: 0.4rem;
+  background: white; color: var(--mail-text);
+  border: 1px solid var(--mail-border);
+  border-radius: 4px; padding: 0.5rem 1rem;
+  cursor: pointer; font-size: 0.8rem;
+  transition: background 0.15s;
+}
+.email-action-secondary:hover { background: #f9fafb; }
+
+.email-action-danger {
+  display: flex; align-items: center; gap: 0.4rem;
+  background: white; color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 4px; padding: 0.5rem 1rem;
+  cursor: pointer; font-size: 0.8rem;
+  transition: background 0.15s;
+}
+.email-action-danger:hover { background: #fef2f2; }
+
+.email-action-note {
+  margin-left: auto;
+  font-size: 0.72rem; color: var(--mail-muted);
+  font-style: italic;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STAGE 3 — DEBRIEF
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#stage-debrief {
+  min-height: calc(100vh - 48px);
+  padding: 0;
+}
+
+/* Reveal banner — dramatic transition */
+.reveal-banner {
+  background: var(--ink2);
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  display: flex; align-items: center; gap: 1.5rem;
+  animation: revealSlide 0.6s var(--ease) both;
+}
+
+.reveal-mark {
+  width: 42px; height: 42px; flex-shrink: 0;
+  border: 1.5px solid var(--amber); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+.reveal-mark-inner {
+  width: 12px; height: 12px;
+  background: var(--amber); border-radius: 2px;
+}
+
+.reveal-text {}
+.reveal-label {
+  font-family: var(--mono);
+  font-size: 0.6rem; color: var(--amber);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+.reveal-title {
+  font-size: 1.15rem; font-weight: 500;
+  color: var(--bone); letter-spacing: -0.01em;
+}
+
+.reveal-outcome {
+  margin-left: auto; flex-shrink: 0;
+  text-align: right;
+}
+.reveal-outcome-label {
+  font-family: var(--mono);
+  font-size: 0.55rem; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+.reveal-outcome-val {
+  font-family: var(--mono);
+  font-size: 1.6rem; font-weight: 500;
+  line-height: 1;
+}
+.reveal-outcome-val.caught  { color: var(--green); }
+.reveal-outcome-val.missed  { color: var(--red);   }
+.reveal-outcome-val.partial { color: var(--amber); }
+
+/* Debrief body */
+.debrief-body { padding: 2rem; max-width: 760px; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SEQUENCE ANALYSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.seq-block {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.seq-block-head {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.seq-block-label {
+  font-family: var(--mono);
+  font-size: 0.6rem; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.seq-block-tag {
+  font-family: var(--mono);
+  font-size: 0.55rem; color: var(--amber);
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.seq-framing {
+  padding: 0.75rem 1rem 0;
+  font-size: 0.78rem; color: var(--bone2); line-height: 1.6;
+  border-top: 1px solid var(--border);
+}
+.seq-framing b { color: var(--bone); font-weight: 500; }
+.seq-rail {
+  display: flex; align-items: flex-start;
+  padding: 1.5rem 1.25rem 1.1rem;
+}
+.seq-node {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  position: relative; opacity: 0;
+  animation: seqNodeIn 0.3s var(--ease) both;
+}
+.seq-node:nth-child(1) { animation-delay: 0.05s; }
+.seq-node:nth-child(2) { animation-delay: 0.17s; }
+.seq-node:nth-child(3) { animation-delay: 0.29s; }
+.seq-node:nth-child(4) { animation-delay: 0.41s; }
+@keyframes seqNodeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.seq-connector {
+  position: absolute; top: 16px;
+  left: calc(50% + 18px); right: calc(-50% + 18px);
+  height: 1px; background: var(--border2); z-index: 0;
+}
+.seq-node:last-child .seq-connector { display: none; }
+.seq-pip {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--border2);
+  background: var(--ink3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 0.6rem; color: var(--muted);
+  position: relative; z-index: 1;
+  transition: all 0.35s var(--ease);
+}
+.seq-node.state-fail .seq-pip {
+  border-color: var(--red); color: var(--red);
+  background: var(--red-d);
+  box-shadow: 0 0 0 4px rgba(240,79,79,0.06);
+}
+.seq-node.state-warn .seq-pip {
+  border-color: var(--amber); color: var(--amber);
+  background: var(--amber-d);
+  box-shadow: 0 0 0 4px rgba(245,166,35,0.06);
+}
+.seq-node-lbl {
+  font-family: var(--mono);
+  font-size: 0.55rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  text-align: center; margin-top: 0.4rem; line-height: 1.4;
+  padding: 0 2px;
+}
+.seq-node.state-fail .seq-node-lbl { color: var(--red); }
+.seq-node.state-warn .seq-node-lbl { color: var(--amber); }
+.seq-fail-tag {
+  font-family: var(--mono); font-size: 0.5rem;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 2px 5px; border-radius: 3px; margin-top: 4px;
+  opacity: 0; animation: seqTagIn 0.2s var(--ease) 0.6s both;
+}
+.seq-node.state-fail .seq-fail-tag {
+  background: var(--red-d); color: var(--red);
+  border: 1px solid rgba(240,79,79,0.18);
+}
+.seq-node.state-warn .seq-fail-tag {
+  background: var(--amber-d); color: var(--amber);
+  border: 1px solid rgba(245,166,35,0.18);
+}
+@keyframes seqTagIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.seq-mechanism {
+  margin: 0 1rem 1rem;
+  padding: 0.8rem 0.9rem;
+  background: var(--ink); border: 1px solid var(--border);
+  border-left: 2px solid var(--red);
+  border-radius: 0 4px 4px 0;
+  opacity: 0; animation: seqNodeIn 0.3s var(--ease) 0.55s both;
+}
+.seq-mechanism.amber { border-left-color: var(--amber); }
+.seq-mechanism-label {
+  font-family: var(--mono); font-size: 0.55rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+.seq-mechanism.red   .seq-mechanism-label { color: var(--red); }
+.seq-mechanism.amber .seq-mechanism-label { color: var(--amber); }
+.seq-mechanism-txt {
+  font-size: 0.78rem; color: var(--bone2); line-height: 1.65;
+}
+.seq-mechanism-txt b { color: var(--bone); font-weight: 500; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ANATOMY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* Anatomy section */
+.anatomy-block {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.anatomy-head {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.anatomy-title {
+  font-family: var(--mono);
+  font-size: 0.6rem; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.anatomy-tag {
+  font-family: var(--mono);
+  font-size: 0.55rem; color: var(--dim);
+  letter-spacing: 0.06em;
+}
+
+/* The reconstructed email with annotations */
+.annotated-email {
+  padding: 1.25rem;
+  background: #0a0d16;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: #9aa3b4;
+  line-height: 1.75;
+  position: relative;
+}
+
+.annotated-email .ann-subject {
+  font-size: 0.88rem; font-weight: 600;
+  color: var(--bone); margin-bottom: 1rem;
+}
+
+/* Highlighted attack elements */
+.ann-hl {
+  background: rgba(240,79,79,0.12);
+  border-bottom: 1.5px solid var(--red);
+  color: var(--bone); cursor: pointer;
+  position: relative;
+  transition: background 0.15s;
+  border-radius: 1px;
+}
+.ann-hl:hover { background: rgba(240,79,79,0.2); }
+
+.ann-hl-amber {
+  background: rgba(245,166,35,0.1);
+  border-bottom: 1.5px solid var(--amber);
+  color: var(--bone); cursor: pointer;
+  border-radius: 1px;
+  transition: background 0.15s;
+}
+.ann-hl-amber:hover { background: rgba(245,166,35,0.18); }
+
+.ann-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px;
+  background: var(--red); color: white;
+  border-radius: 50%; font-size: 0.48rem;
+  font-family: var(--mono); font-weight: 500;
+  vertical-align: middle; margin-left: 2px;
+  flex-shrink: 0;
+}
+.ann-num.amber { background: var(--amber); color: var(--ink); }
+
+/* Annotation list */
+.ann-list { display: flex; flex-direction: column; }
+
+.ann-item {
+  display: flex; gap: 0.9rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border);
+  animation: rise 0.4s var(--ease) both;
+}
+.ann-item:last-child { border-bottom: none; }
+
+.ann-item-num {
+  width: 20px; height: 20px; flex-shrink: 0;
+  border-radius: 50%; display: flex;
+  align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 0.52rem; font-weight: 500;
+  margin-top: 0.1rem;
+}
+.ann-item-num.red   { background: var(--red-d);   color: var(--red);   border: 1px solid rgba(240,79,79,0.25); }
+.ann-item-num.amber { background: var(--amber-d); color: var(--amber); border: 1px solid rgba(245,166,35,0.25); }
+
+.ann-item-body {}
+.ann-item-label {
+  font-family: var(--mono);
+  font-size: 0.58rem; letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+.ann-item-label.red   { color: var(--red); }
+.ann-item-label.amber { color: var(--amber); }
+
+.ann-item-txt {
+  font-size: 0.8rem; font-weight: 300;
+  color: var(--bone2); line-height: 1.6;
+}
+.ann-item-txt b { color: var(--bone); font-weight: 500; }
+
+/* Profile match block */
+.profile-match {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.pm-head {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.pm-title {
+  font-family: var(--mono);
+  font-size: 0.6rem; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.pm-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; 
+}
+.pm-cell {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.pm-cell:nth-child(2n) { border-right: none; }
+.pm-cell:nth-last-child(-n+2) { border-bottom: none; }
+
+.pm-cell-label {
+  font-family: var(--mono);
+  font-size: 0.52rem; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+.pm-cell-val {
+  font-size: 0.78rem; font-weight: 400; color: var(--bone); line-height: 1.4;
+}
+.pm-cell-val b { color: var(--amber); font-weight: 500; }
+
+/* Score block */
+.score-block {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 6px; padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex; gap: 1.5rem; align-items: center;
+}
+
+.score-ring-wrap { flex-shrink: 0; }
+
+.score-ring {
+  width: 80px; height: 80px;
+  position: relative; display: flex;
+  align-items: center; justify-content: center;
+}
+.score-ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.score-num {
+  font-family: var(--mono);
+  font-size: 1.4rem; font-weight: 500;
+  line-height: 1; z-index: 1;
+}
+.score-num.caught  { color: var(--green); }
+.score-num.missed  { color: var(--red);   }
+.score-num.partial { color: var(--amber); }
+
+.score-text {}
+.score-label {
+  font-family: var(--mono);
+  font-size: 0.6rem; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+.score-headline {
+  font-size: 0.95rem; font-weight: 500;
+  color: var(--bone); line-height: 1.4; margin-bottom: 0.3rem;
+}
+.score-body {
+  font-size: 0.78rem; font-weight: 300;
+  color: var(--bone2); line-height: 1.6;
+}
+.score-body b { color: var(--bone); font-weight: 500; }
+
+/* IBRI update */
+.ibri-update {
+  display: flex; gap: 0.6rem; align-items: center;
+  background: var(--ink3); border: 1px solid var(--border);
+  border-radius: 4px; padding: 0.6rem 0.9rem;
+  margin-top: 0.75rem; width: fit-content;
+}
+.ibri-update-label {
+  font-family: var(--mono);
+  font-size: 0.55rem; color: var(--muted);
+  letter-spacing: 0.08em;
+}
+.ibri-update-val {
+  font-family: var(--mono);
+  font-size: 0.7rem; color: var(--amber); font-weight: 500;
+}
+.ibri-update-arrow {
+  font-family: var(--mono);
+  font-size: 0.55rem; color: var(--green);
+}
+
+/* Takeaway */
+.debrief-takeaway {
+  background: var(--ink2);
+  border: 1px solid var(--border2);
+  border-radius: 6px; padding: 1rem 1rem 1rem 1.2rem;
+  position: relative; overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.debrief-takeaway::before {
+  content: ''; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(180deg, var(--amber), transparent);
+}
+.dt-label {
+  font-family: var(--mono);
+  font-size: 0.52rem; color: var(--amber);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 0.45rem;
+  display: flex; align-items: center; gap: 0.35rem;
+}
+.dt-label::before { content: '▸'; font-size: 0.48rem; }
+.dt-txt {
+  font-size: 0.85rem; font-weight: 300;
+  color: var(--bone); line-height: 1.65; font-style: italic;
+}
+
+/* Footer actions */
+.debrief-footer {
+  display: flex; gap: 0.75rem; flex-wrap: wrap;
+  padding-top: 0.5rem;
+}
+.btn-primary {
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--amber); color: var(--ink);
+  border: none; border-radius: 3px;
+  padding: 0.5rem 0.9rem; cursor: pointer; font-weight: 500;
+  transition: background 0.15s;
+}
+.btn-primary:hover { background: var(--amber2); }
+.btn-ghost {
+  font-family: var(--mono); font-size: 0.58rem; color: var(--muted);
+  background: none; border: 1px solid var(--border2);
+  border-radius: 3px; padding: 0.45rem 0.75rem;
+  cursor: pointer; letter-spacing: 0.06em;
+  transition: all 0.15s;
+}
+.btn-ghost:hover { color: var(--bone2); border-color: var(--border2); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SHARED UTILITIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.section-head {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding-bottom: 0.5rem; margin-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+.section-num {
+  font-family: var(--mono);
+  font-size: 0.52rem; color: var(--dim); letter-spacing: 0.06em;
+}
+.section-title {
+  font-family: var(--mono);
+  font-size: 0.6rem; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+@keyframes blip {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes revealSlide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESPONSIVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 700px) {
+  .email-client { grid-template-columns: 1fr; }
+  .email-nav, .email-list { display: none; }
+  .pm-grid { grid-template-columns: 1fr; }
+  .pm-cell:nth-child(2n) { border-right: none; }
+  .pm-cell { border-right: none; }
+  .score-block { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mark"></div>
+      <span class="logo-name">Veros</span>
+      <div class="topbar-sep"></div>
+      <span class="topbar-ctx" id="topbarCtx">Scenario Engine</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-user">R. Edwards</span>
+      <div class="status-pip"></div>
+      <a href="veros-pulse-system.html" style="font-family:var(--mono);font-size:0.55rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--border2);border-radius:3px;padding:0.25rem 0.6rem;transition:all 0.15s;" onmouseover="this.style.color='var(--amber)';this.style.borderColor='rgba(245,166,35,0.3)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border2)'">Pulse System</a>
+      <a href="index.html" style="font-family:var(--mono);font-size:0.55rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;transition:color 0.15s;" onmouseover="this.style.color='var(--bone)'" onmouseout="this.style.color='var(--muted)'">← Home</a>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════
+       STAGE 0 · PROFILE SELECT
+  ══════════════════════════════ -->
+  <div class="stage active" id="stage-select">
+    <div class="select-inner">
+
+      <div class="select-eyebrow">Scenario Engine · Profile Input</div>
+      <h1 class="select-title">Select your current<br>behavioral state.</h1>
+      <p class="select-sub">The scenario is constructed from your profile. Different risk states produce different attack vectors, timing, and social engineering approaches. Select the state that reflects your current IBRI readings.</p>
+
+      <div class="profile-cards" id="profileCards">
+
+        <div class="profile-card" data-profile="fv-high" onclick="selectProfile(this)">
+          <div class="profile-card-icon">FV</div>
+          <div class="profile-card-body">
+            <div class="profile-card-name">High Fatigue Vulnerability</div>
+            <div class="profile-card-desc">Depleted capacity, elevated urgency intrusion, low clarity. Optimal target state for time-pressure and authority-based vectors.</div>
+            <div class="profile-card-chips">
+              <span class="chip fv">FV · 82</span>
+              <span class="chip sc">SC · 68</span>
+              <span class="chip rr">RR · 44</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-card" data-profile="sc-high" onclick="selectProfile(this)">
+          <div class="profile-card-icon">SC</div>
+          <div class="profile-card-body">
+            <div class="profile-card-name">Elevated Social Compliance</div>
+            <div class="profile-card-desc">Strong authority deference, high trust in familiar senders. Optimal target state for impersonation and trusted-contact vectors.</div>
+            <div class="profile-card-chips">
+              <span class="chip fv">FV · 51</span>
+              <span class="chip sc">SC · 79</span>
+              <span class="chip rr">RR · 38</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-card" data-profile="rr-high" onclick="selectProfile(this)">
+          <div class="profile-card-icon">RR</div>
+          <div class="profile-card-body">
+            <div class="profile-card-name">Active Risk Rationalization</div>
+            <div class="profile-card-desc">Tendency to explain away warning signs. Optimal target state for over-explained, plausible-seeming requests that provide their own justification.</div>
+            <div class="profile-card-chips">
+              <span class="chip fv">FV · 44</span>
+              <span class="chip sc">SC · 55</span>
+              <span class="chip rr">RR · 76</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="select-btn" id="launchBtn" disabled onclick="launchConstruct()">
+        Build Scenario From Profile
+      </button>
+      <p class="select-note">The scenario deploys through a simulated email channel.<br>Your response determines your debrief and IBRI update.</p>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       STAGE 1 · CONSTRUCT
+  ══════════════════════════════ -->
+  <div class="stage" id="stage-construct">
+    <div class="construct-inner">
+      <div class="construct-label">Building scenario · Please wait</div>
+      <div class="construct-steps" id="constructSteps">
+        <div class="cstep" id="cs1">
+          <div class="cstep-icon"></div>
+          <span class="cstep-txt">Reading behavioral profile</span>
+          <span class="cstep-check">✓</span>
+        </div>
+        <div class="cstep" id="cs2">
+          <div class="cstep-icon"></div>
+          <span class="cstep-txt">Selecting attack vector</span>
+          <span class="cstep-check">✓</span>
+        </div>
+        <div class="cstep" id="cs3">
+          <div class="cstep-icon"></div>
+          <span class="cstep-txt">Calibrating pressure variables</span>
+          <span class="cstep-check">✓</span>
+        </div>
+        <div class="cstep" id="cs4">
+          <div class="cstep-icon"></div>
+          <span class="cstep-txt">Constructing sender identity</span>
+          <span class="cstep-check">✓</span>
+        </div>
+        <div class="cstep" id="cs5">
+          <div class="cstep-icon"></div>
+          <span class="cstep-txt">Deploying to channel</span>
+          <span class="cstep-check">✓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       STAGE 2 · SIMULATION
+  ══════════════════════════════ -->
+  <div class="stage" id="stage-sim">
+    <div class="email-client">
+
+      <!-- Email nav -->
+      <div class="email-nav">
+        <div class="email-nav-header">Mail</div>
+        <div class="email-nav-item active">
+          <span class="email-nav-icon">📥</span> Inbox
+          <span class="email-nav-badge" id="inboxBadge">1</span>
+        </div>
+        <div class="email-nav-item"><span class="email-nav-icon">⭐</span> Starred</div>
+        <div class="email-nav-item"><span class="email-nav-icon">📤</span> Sent</div>
+        <div class="email-nav-item"><span class="email-nav-icon">📁</span> Archive</div>
+        <div class="email-nav-item"><span class="email-nav-icon">🗑</span> Trash</div>
+      </div>
+
+      <!-- Email list -->
+      <div class="email-list">
+        <div class="email-list-header">
+          Inbox <span class="email-list-count">1 unread</span>
+        </div>
+        <!-- Background threads (noise / realism) -->
+        <div class="email-thread">
+          <div class="email-thread-top">
+            <span class="email-thread-sender">Slack</span>
+            <span class="email-thread-time">9:14 AM</span>
+          </div>
+          <div class="email-thread-subject">New messages in #general</div>
+          <div class="email-thread-preview">Jordan: Can everyone review the Q2 deck before...</div>
+        </div>
+        <div class="email-thread">
+          <div class="email-thread-top">
+            <span class="email-thread-sender">GitHub</span>
+            <span class="email-thread-time">8:52 AM</span>
+          </div>
+          <div class="email-thread-subject">Pull request approved: fix/auth-flow</div>
+          <div class="email-thread-preview">Your pull request was reviewed and approved by...</div>
+        </div>
+        <!-- TARGET EMAIL — unread, selected -->
+        <div class="email-thread unread selected" id="targetThread" onclick="void(0)">
+          <div class="email-thread-top">
+            <div style="display:flex;align-items:center;">
+              <div class="unread-dot"></div>
+              <span class="email-thread-sender" id="threadSender">—</span>
+            </div>
+            <span class="email-thread-time" id="threadTime">—</span>
+          </div>
+          <div class="email-thread-subject" id="threadSubject">—</div>
+          <div class="email-thread-preview" id="threadPreview">—</div>
+        </div>
+        <div class="email-thread">
+          <div class="email-thread-top">
+            <span class="email-thread-sender">Notion</span>
+            <span class="email-thread-time">Yesterday</span>
+          </div>
+          <div class="email-thread-subject">Weekly digest: 4 updates in your workspace</div>
+          <div class="email-thread-preview">Pages updated this week: Product Roadmap, Q3...</div>
+        </div>
+      </div>
+
+      <!-- Email pane -->
+      <div class="email-pane" id="emailPane">
+        <!-- Populated by JS -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       STAGE 3 · DEBRIEF
+  ══════════════════════════════ -->
+  <div class="stage" id="stage-debrief">
+    <!-- Populated by JS -->
+  </div>
+
+</div>
+
+<script>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SCENARIO LIBRARY
+   Each scenario is calibrated to a
+   specific dominant IBRI dimension
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const SCENARIOS = {
+
+  'fv-high': {
+    // Vector: Authority + Time Pressure
+    // Exploits: depleted capacity, urgency intrusion
+    profile: { fv:82, sc:68, rr:44 },
+    vector: 'Authority Impersonation + Time Pressure',
+    threadSender: 'Michael Chen',
+    threadTime: '4:52 PM',
+    threadSubject: 'RE: Urgent — Vendor payment needs approval today',
+    threadPreview: 'Hey — I\'m in back-to-back meetings and need this done before 5...',
+    avatarColor: '#1d4ed8',
+    avatarInitials: 'MC',
+    fromName: 'Michael Chen',
+    fromEmail: 'mchen@acmecorp-finance.com',
+    timestamp: 'Today at 4:52 PM',
+    subject: 'RE: Urgent — Vendor payment needs approval today',
+    body: [
+      'Hey —',
+      'I\'m stuck in back-to-back meetings until 6 and this is time sensitive. Our vendor Nexus Solutions is holding the deployment until we clear the outstanding balance — $4,200. Finance already signed off but the transfer requires your authorization before EOD or we roll to next week and lose the timeline.',
+      'I\'ve attached the invoice. Wire details are in the doc. Just hit approve on the portal and reply here so I know it\'s done. I\'ll circle back tonight to confirm.',
+      'Sorry to drop this on you so late — I\'ve been dealing with it all day.',
+    ],
+    sig: 'Michael Chen\nVP of Engineering\nmchen@acmecorp-finance.com',
+    actionLabels: {
+      primary:   'Approve & Reply',
+      secondary: 'Forward to Finance',
+      danger:    'Flag as Suspicious',
+    },
+    // What each action means
+    outcomes: {
+      primary:   { result:'missed',  score:12, label:'Compromised' },
+      secondary: { result:'partial', score:54, label:'Deflected'   },
+      danger:    { result:'caught',  score:91, label:'Detected'    },
+    },
+    // Forensic annotations
+    annotations: [
+      { type:'red',   label:'Authority Vector',    ref:'[1]', text: '<b>Sender email domain is wrong.</b> "acmecorp-finance.com" is not the company domain — it\'s a lookalike registered to impersonate it. A fatigued reader skips this because the display name "Michael Chen" matches a known contact.' },
+      { type:'red',   label:'Urgency Engineering', ref:'[2]', text: '<b>"Before EOD or we lose the timeline"</b> is a manufactured deadline. The specific consequence (losing the timeline) is designed to trigger loss-aversion. Your FV-02 Urgency readings made this the primary attack vector.' },
+      { type:'red',   label:'Authority Redirect',  ref:'[3]', text: '<b>"Finance already signed off"</b> pre-empts the most natural verification step. By establishing that someone else already approved, the message removes the internal check that would catch this.' },
+      { type:'amber', label:'Isolation Tactic',    ref:'[4]', text: '<b>"I\'m stuck in back-to-back meetings"</b> explains unavailability — making it plausible that you can\'t verify by calling. This is a standard isolation element in BEC attacks.' },
+      { type:'amber', label:'Social Engineering',  ref:'[5]', text: '<b>"Sorry to drop this on you so late"</b> is an empathy signal — designed to lower resistance by making the sender seem considerate and under pressure themselves. It also builds a sense of shared urgency.' },
+    ],
+    profileMatch: [
+      { label:'Exploited Dimension',   val:'<b>Fatigue Vulnerability</b> — depleted end-of-day capacity' },
+      { label:'Attack Timing',         val:'4:52 PM — calibrated to your FV-03 low-capacity window' },
+      { label:'Primary Pressure',      val:'Financial urgency + authority impersonation + deadline' },
+      { label:'Isolation Method',      val:'Sender unavailability pre-explains inability to verify' },
+      { label:'Trust Signal Used',     val:'Known display name + "Finance already approved" pre-auth' },
+      { label:'Generic Version Would', val:'Send same message to 500 people. This was built for you.' },
+    ],
+    takeaway: 'The email arrived at the exact time your capacity readings are lowest. The domain was wrong, but display names match what you see every day. When capacity is depleted, the brain substitutes pattern recognition for verification — and attackers know this.',
+    ibriChange: { from: 79, to: 74 },
+  },
+
+  'sc-high': {
+    // Vector: Trusted Contact Impersonation
+    // Exploits: authority deference, familiar-sender compliance
+    profile: { fv:51, sc:79, rr:38 },
+    vector: 'Trusted Contact Impersonation',
+    threadSender: 'Sarah Okonkwo (IT)',
+    threadTime: '11:23 AM',
+    threadSubject: 'Quick access request — MFA reset needed',
+    threadPreview: 'Hi — we\'re running a system-wide MFA audit and need to verify...',
+    avatarColor: '#059669',
+    avatarInitials: 'SO',
+    fromName: 'Sarah Okonkwo',
+    fromEmail: 'it-support@acmecorp.helpdesk-portal.com',
+    timestamp: 'Today at 11:23 AM',
+    subject: 'Quick access request — MFA reset needed',
+    body: [
+      'Hi —',
+      'We\'re running a system-wide MFA audit this morning as part of our Q2 compliance review. A few accounts flagged during the automated sweep, and yours is on the list — nothing alarming, this is routine.',
+      'To clear your account, I just need you to confirm your current MFA backup code so we can verify the device pairing is still active. You can reply directly to this email or use the portal link below. Should take 30 seconds.',
+      'Let me know if you have any questions — happy to jump on a call if easier.',
+    ],
+    sig: 'Sarah Okonkwo\nIT Support · Acme Corp\nit-support@acmecorp.helpdesk-portal.com',
+    actionLabels: {
+      primary:   'Reply with Code',
+      secondary: 'Use Portal Link',
+      danger:    'Flag as Suspicious',
+    },
+    outcomes: {
+      primary:   { result:'missed',  score:8,  label:'Compromised' },
+      secondary: { result:'missed',  score:18, label:'Compromised' },
+      danger:    { result:'caught',  score:88, label:'Detected'    },
+    },
+    annotations: [
+      { type:'red',   label:'Domain Spoofing',      ref:'[1]', text: '<b>The domain "helpdesk-portal.com" is not the company domain.</b> It\'s a subdomain-style lookalike. Your SC-driven trust in the display name "Sarah Okonkwo (IT)" bypassed domain inspection entirely.' },
+      { type:'red',   label:'Credential Harvesting', ref:'[2]', text: '<b>No legitimate IT team ever requests MFA backup codes via email.</b> This is the primary tell. High Social Compliance profiles are more likely to comply with IT authority requests without questioning the mechanism.' },
+      { type:'red',   label:'Normalization',         ref:'[3]', text: '<b>"Nothing alarming, this is routine"</b> is explicit normalization language — designed to suppress the instinct that something is wrong. The more routine something sounds, the less scrutiny it receives.' },
+      { type:'amber', label:'Urgency Softening',     ref:'[4]', text: '<b>"Should take 30 seconds"</b> minimizes friction and signals low stakes. Combined with the compliance framing, this makes the request feel like a minor administrative task rather than a security event.' },
+    ],
+    profileMatch: [
+      { label:'Exploited Dimension',   val:'<b>Social Compliance</b> — authority deference to IT' },
+      { label:'Attack Framing',        val:'Compliance audit — institutional authority + routine framing' },
+      { label:'Trust Signal Used',     val:'Known IT contact name + company process language' },
+      { label:'Credential Target',     val:'MFA backup code — account takeover vector' },
+      { label:'Normalization Depth',   val:'3 separate normalization signals in one message' },
+      { label:'Generic Version Would', val:'Send same message to 500 people. This was built for you.' },
+    ],
+    takeaway: 'IT will never ask for your MFA code. Ever. That rule doesn\'t bend for audits, compliance reviews, or urgent requests. The attack worked here because it used a trusted face on a false door — and your compliance instincts held the door open.',
+    ibriChange: { from: 62, to: 57 },
+  },
+
+  'rr-high': {
+    // Vector: Plausible Over-explained Request
+    // Exploits: rationalization tendency — message provides its own justification
+    profile: { fv:44, sc:55, rr:76 },
+    vector: 'Over-explained Plausible Request',
+    threadSender: 'David Park · Vendor Relations',
+    threadTime: '2:17 PM',
+    threadSubject: 'Updated banking details — Nexus Solutions invoice #8847',
+    threadPreview: 'Hi — wanted to give you a heads up on a change to our payment...',
+    avatarColor: '#7c3aed',
+    avatarInitials: 'DP',
+    fromName: 'David Park',
+    fromEmail: 'david.park@nexussolutions-billing.com',
+    timestamp: 'Today at 2:17 PM',
+    subject: 'Updated banking details — Nexus Solutions invoice #8847',
+    body: [
+      'Hi —',
+      'Wanted to give you a heads-up on a change to our payment routing. We recently switched banking providers (moved from First National to Meridian Business — you may have seen the announcement in the industry newsletter a few weeks back). As a result, our account and routing numbers have changed effective this billing cycle.',
+      'I\'ve attached the updated ACH details. For any outstanding invoices including #8847 ($6,400 due next Friday), please use the new banking info going forward. The old account will remain active for another two weeks to catch any payments already in process, so no rush — just wanted to make sure you had the updated details before the next cycle.',
+      'Let me know if you need anything else from our end.',
+    ],
+    sig: 'David Park\nBilling & Vendor Relations\nNexus Solutions\ndavid.park@nexussolutions-billing.com',
+    actionLabels: {
+      primary:   'Update & Confirm',
+      secondary: 'Save for Finance',
+      danger:    'Flag as Suspicious',
+    },
+    outcomes: {
+      primary:   { result:'missed',  score:15, label:'Compromised' },
+      secondary: { result:'partial', score:48, label:'Deferred'    },
+      danger:    { result:'caught',  score:86, label:'Detected'    },
+    },
+    annotations: [
+      { type:'red',   label:'Domain Lookalike',      ref:'[1]', text: '<b>"nexussolutions-billing.com" is a lookalike domain.</b> The company domain is "nexussolutions.com". The "-billing" subdomain pattern is common in vendor fraud. RR profiles are less likely to check domains because the message already feels credible.' },
+      { type:'red',   label:'Vendor Fraud Pattern',  ref:'[2]', text: '<b>Unsolicited banking detail changes are the most common B2B fraud vector.</b> Legitimate vendors send these changes through established channels with verification — not cold email updates. This is a textbook ACH fraud attempt.' },
+      { type:'red',   label:'Pre-supplied Rationale', ref:'[3]', text: '<b>The message explains itself completely before you can question it</b> — new bank, industry announcement, old account stays active to catch in-process payments. Every objection is pre-answered. This is the core RR exploit: the message does your reasoning for you.' },
+      { type:'amber', label:'Low-pressure Framing',  ref:'[4]', text: '<b>"No rush"</b> is a deliberate low-pressure signal — designed to make the request feel routine and unthreatening. Combined with the specific invoice number and dollar amount, it reads as operational rather than suspicious.' },
+    ],
+    profileMatch: [
+      { label:'Exploited Dimension',   val:'<b>Risk Rationalization</b> — over-explained messages read as credible' },
+      { label:'Attack Pattern',        val:'ACH vendor fraud — banking detail substitution' },
+      { label:'Rationalization Depth', val:'5 pre-supplied justifications in a single message' },
+      { label:'Pressure Level',        val:'Deliberately low — calibrated to avoid triggering alert instincts' },
+      { label:'Trust Signal Used',     val:'Specific invoice number + dollar amount + vendor relationship' },
+      { label:'Generic Version Would', val:'Send same message to 500 people. This was built for you.' },
+    ],
+    takeaway: 'When a message pre-answers your objections before you raise them, that\'s the tell — not the reassurance. The more thoroughly a request explains itself, the more carefully it deserves scrutiny. Credibility is easy to manufacture. Process is the only protection.',
+    ibriChange: { from: 58, to: 53 },
+  },
+
+};
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STATE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+let selectedProfile = null;
+let selectedScenario = null;
+let decisionResult = null;
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STAGE 0 — SELECT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function selectProfile(card) {
+  document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedProfile = card.dataset.profile;
+  document.getElementById('launchBtn').disabled = false;
+}
+
+function launchConstruct() {
+  if (!selectedProfile) return;
+  selectedScenario = SCENARIOS[selectedProfile];
+  showStage('construct');
+  runConstruct();
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STAGE 1 — CONSTRUCT ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function runConstruct() {
+  const steps = ['cs1','cs2','cs3','cs4','cs5'];
+  const delays = [400, 900, 1500, 2100, 2700];
+  const dones  = [800, 1400, 2000, 2600, 3100];
+
+  steps.forEach((id, i) => {
+    setTimeout(() => {
+      document.getElementById(id).classList.add('active');
+    }, delays[i]);
+    setTimeout(() => {
+      document.getElementById(id).classList.remove('active');
+      document.getElementById(id).classList.add('done');
+    }, dones[i]);
+  });
+
+  setTimeout(() => {
+    buildSimulation();
+    showStage('sim');
+  }, 3600);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STAGE 2 — BUILD SIMULATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function buildSimulation() {
+  const s = selectedScenario;
+
+  // Thread list
+  document.getElementById('threadSender').textContent  = s.threadSender;
+  document.getElementById('threadTime').textContent    = s.threadTime;
+  document.getElementById('threadSubject').textContent = s.threadSubject;
+  document.getElementById('threadPreview').textContent = s.threadPreview;
+
+  // Email pane
+  const bodyHtml = s.body.map(p => `<p>${p}</p>`).join('');
+  const sigHtml  = s.sig.split('\n').join('<br>');
+
+  document.getElementById('emailPane').innerHTML = `
+    <div class="email-pane-header">
+      <div class="email-subject">${s.subject}</div>
+      <div class="email-meta">
+        <div class="email-avatar" style="background:${s.avatarColor}">${s.avatarInitials}</div>
+        <div class="email-meta-right">
+          <div class="email-from">${s.fromName}</div>
+          <div class="email-from-addr">&lt;${s.fromEmail}&gt;</div>
+          <div class="email-timestamp">${s.timestamp}</div>
+        </div>
+      </div>
+    </div>
+    <div class="email-body">
+      ${bodyHtml}
+      <div class="email-sig">${sigHtml}</div>
+    </div>
+    <div class="email-actions">
+      <button class="email-action-primary" onclick="makeDecision('primary')">
+        ${s.actionLabels.primary}
+      </button>
+      <button class="email-action-secondary" onclick="makeDecision('secondary')">
+        ${s.actionLabels.secondary}
+      </button>
+      <button class="email-action-danger" onclick="makeDecision('danger')">
+        🚩 ${s.actionLabels.danger}
+      </button>
+      <span class="email-action-note">Your response is being recorded.</span>
+    </div>
+  `;
+
+  document.getElementById('topbarCtx').textContent = 'Scenario · Live Simulation';
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   DECISION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function makeDecision(action) {
+  decisionResult = selectedScenario.outcomes[action];
+  buildDebrief(action);
+  showStage('debrief');
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STAGE 3 — BUILD DEBRIEF
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SEQUENCE ANALYSIS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function buildSequenceAnalysis(profile) {
+  const DATA = {
+    rr: {
+      nodes: [
+        { state: 'state-pass', lbl: 'Moral\nAwareness',  tag: '' },
+        { state: 'state-fail', lbl: 'Moral\nJudgment',   tag: 'Failure point' },
+        { state: 'state-fail', lbl: 'Moral\nMotivation', tag: 'Failure point' },
+        { state: 'state-pass', lbl: 'Moral\nCharacter',  tag: '' },
+      ],
+      cls: 'red',
+      label: 'Failure pattern · Judgment reframed before motivation engaged',
+      txt: 'Awareness was intact — the situation registered. <b>Rationalization architecture assembled during the decision itself,</b> reframing the departure as principled before motivation could form. The justification felt coherent because it was built to feel that way.'
+    },
+    sc: {
+      nodes: [
+        { state: 'state-pass', lbl: 'Moral\nAwareness',  tag: '' },
+        { state: 'state-pass', lbl: 'Moral\nJudgment',   tag: '' },
+        { state: 'state-warn', lbl: 'Moral\nMotivation', tag: 'Suppressed' },
+        { state: 'state-pass', lbl: 'Moral\nCharacter',  tag: '' },
+      ],
+      cls: 'amber',
+      label: 'Failure pattern · Motivation suppressed by authority presence',
+      txt: 'Awareness was intact. Judgment was forming. <b>Authority framing suppressed the motivation to act on it</b> before it could produce behavior. SC suppression does not feel like compliance — it feels like appropriate professional judgment.'
+    },
+    fv: {
+      nodes: [
+        { state: 'state-pass', lbl: 'Moral\nAwareness',  tag: '' },
+        { state: 'state-pass', lbl: 'Moral\nJudgment',   tag: '' },
+        { state: 'state-warn', lbl: 'Moral\nMotivation', tag: 'Degraded' },
+        { state: 'state-fail', lbl: 'Moral\nCharacter',  tag: 'Failure point' },
+      ],
+      cls: 'amber',
+      label: 'Failure pattern · Intent present, volitional capacity depleted',
+      txt: '<b>The motivation to act carefully existed. The sustained capacity to follow through did not.</b> Depletion degraded moral character — the volitional follow-through that carries intention into behavior under pressure. The attack was timed to a window your profile predicted.'
+    }
+  };
+
+  const d = DATA[profile] || DATA.rr;
+  const nums = ['C1','C2','C3','C4'];
+
+  const nodes = d.nodes.map((n, i) => `
+    <div class="seq-node ${n.state}">
+      <div class="seq-connector"></div>
+      <div class="seq-pip">${nums[i]}</div>
+      <div class="seq-node-lbl">${n.lbl.replace('\n','<br>')}</div>
+      ${n.tag ? `<div class="seq-fail-tag">${n.tag}</div>` : ''}
+    </div>`).join('');
+
+  return `
+    <div class="seq-block">
+      <div class="seq-block-head">
+        <span class="seq-block-label">Decision sequence · Rest Four Component Model</span>
+        <span class="seq-block-tag">Where the sequence failed</span>
+      </div>
+      <p class="seq-framing">Ethical behavior requires <b>four components to complete in sequence.</b> Awareness must recognize the risk. Judgment must form the right response. Motivation must prioritize it over competing pressures. Character must sustain the follow-through. <b>A single failure anywhere in the sequence is sufficient to produce the outcome.</b></p>
+      <div class="seq-rail">${nodes}</div>
+      <div class="seq-mechanism ${d.cls}">
+        <div class="seq-mechanism-label">${d.label}</div>
+        <p class="seq-mechanism-txt">${d.txt}</p>
+      </div>
+    </div>`;
+}
+
+function buildDebrief(action) {
+  const s = selectedScenario;
+  const outcome = s.outcomes[action];
+
+  // Outcome config
+  const outcomeConfig = {
+    caught:  { label:'Detected',    color:'var(--green)', scoreColor:'caught',  headline:'You caught it.', body:`You flagged the email before taking action. <b>The tell was there</b> — and you found it. This is the outcome Veros is designed to produce: the briefing you received this week gave you the exact vector to watch for, and you recognized it under real conditions.` },
+    missed:  { label:'Compromised', color:'var(--red)',   scoreColor:'missed',  headline:'You complied.', body:`You took the requested action without verifying. <b>The attack succeeded.</b> This doesn't reflect poor judgment — it reflects the conditions your profile predicted: the scenario was constructed specifically around your vulnerability state. That's what makes it instructive.` },
+    partial: { label:'Deferred',    color:'var(--amber)', scoreColor:'partial', headline:'You deflected — partially.', body:`You didn't take the primary action, but you didn't stop the attack either. Deferring to another team or process slows things down, but <b>without flagging the email as suspicious</b>, the threat remains active. Partial responses often feel like the right move while the risk persists.` },
+  };
+
+  const oc = outcomeConfig[outcome.result];
+
+  // Build annotated email body
+  const annBody = buildAnnotatedEmail(s);
+
+  // Score ring
+  const score = outcome.score;
+  const circumference = 2 * Math.PI * 34;
+  const dashOffset = circumference - (score / 100) * circumference;
+  const ringColor = outcome.result === 'caught' ? '#1fc97a' : outcome.result === 'missed' ? '#f04f4f' : '#f5a623';
+
+  // Profile match rows
+  const pmRows = s.profileMatch.map(pm => `
+    <div class="pm-cell">
+      <div class="pm-cell-label">${pm.label}</div>
+      <div class="pm-cell-val">${pm.val}</div>
+    </div>
+  `).join('');
+
+  // Annotations
+  const annItems = s.annotations.map((ann, i) => `
+    <div class="ann-item" style="animation-delay:${i*0.08}s">
+      <div class="ann-item-num ${ann.type}">${i+1}</div>
+      <div class="ann-item-body">
+        <div class="ann-item-label ${ann.type}">${ann.label}</div>
+        <p class="ann-item-txt">${ann.text}</p>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('stage-debrief').innerHTML = `
+
+    <div class="reveal-banner">
+      <div class="reveal-mark"><div class="reveal-mark-inner"></div></div>
+      <div class="reveal-text">
+        <div class="reveal-label">Veros · Scenario Debrief</div>
+        <div class="reveal-title">This was a simulation. Here's what was built against you.</div>
+      </div>
+      <div class="reveal-outcome">
+        <div class="reveal-outcome-label">Outcome</div>
+        <div class="reveal-outcome-val ${outcome.result}">${oc.label}</div>
+      </div>
+    </div>
+
+    <div class="debrief-body">
+
+      <!-- Score -->
+      <div class="score-block">
+        <div class="score-ring-wrap">
+          <div class="score-ring">
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="34" fill="none" stroke="var(--border2)" stroke-width="5"/>
+              <circle cx="40" cy="40" r="34" fill="none" stroke="${ringColor}" stroke-width="5"
+                stroke-dasharray="${circumference}"
+                stroke-dashoffset="${circumference}"
+                stroke-linecap="round"
+                id="scoreArc"
+                style="transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)"/>
+            </svg>
+            <span class="score-num ${outcome.result}">${score}</span>
+          </div>
+        </div>
+        <div class="score-text">
+          <div class="score-label">Resilience Score · This Scenario</div>
+          <div class="score-headline">${oc.headline}</div>
+          <p class="score-body">${oc.body}</p>
+          <div class="ibri-update">
+            <span class="ibri-update-label">IBRI</span>
+            <span class="ibri-update-val">${s.ibriChange.from}</span>
+            <span class="ibri-update-arrow">→</span>
+            <span class="ibri-update-val">${s.ibriChange.to}</span>
+            <span class="ibri-update-label" style="margin-left:0.25rem">Updated</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anatomy -->
+      <div class="brief-section" style="margin-bottom:1.5rem">
+        <div class="section-head">
+          <span class="section-num">01</span>
+          <span class="section-title">Anatomy of the Attack</span>
+        </div>
+        <div class="anatomy-block">
+          <div class="anatomy-head">
+            <span class="anatomy-title">Annotated Simulation · Attack Elements Marked</span>
+            <span class="anatomy-tag">${s.vector}</span>
+          </div>
+          <div class="annotated-email">
+            ${annBody}
+          </div>
+          <div class="ann-list">${annItems}</div>
+        </div>
+      </div>
+
+      <!-- Sequence Analysis -->
+      <div class="brief-section" style="margin-bottom:1.5rem">
+        <div class="section-head">
+          <span class="section-num">02</span>
+          <span class="section-title">Sequence Analysis</span>
+        </div>
+        ${buildSequenceAnalysis(selectedProfile)}
+      </div>
+
+      <!-- Profile match -->
+      <div class="brief-section" style="margin-bottom:1.5rem">
+        <div class="section-head">
+          <span class="section-num">03</span>
+          <span class="section-title">How Your Profile Was Used</span>
+        </div>
+        <div class="profile-match">
+          <div class="pm-head">
+            <span class="pm-title">Profile-to-Attack Mapping · ${selectedProfile.toUpperCase()} Vector</span>
+          </div>
+          <div class="pm-grid">${pmRows}</div>
+        </div>
+      </div>
+
+      <!-- Takeaway -->
+      <div class="brief-section" style="margin-bottom:1.5rem">
+        <div class="section-head">
+          <span class="section-num">04</span>
+          <span class="section-title">Behavioral Principle</span>
+        </div>
+        <div class="debrief-takeaway">
+          <div class="dt-label">What to carry forward</div>
+          <p class="dt-txt">${s.takeaway}</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="debrief-footer">
+        <button class="btn-primary" onclick="resetToSelect()">Run Another Scenario</button>
+        <button class="btn-ghost" onclick="window.location.href='veros-pulse-system.html'">View Full History</button>
+        <button class="btn-ghost" onclick="window.location.href='index.html'">← Home</button>
+      </div>
+
+    </div>
+  `;
+
+  // Animate score arc
+  setTimeout(() => {
+    const arc = document.getElementById('scoreArc');
+    if (arc) arc.style.strokeDashoffset = dashOffset;
+  }, 400);
+
+  document.getElementById('topbarCtx').textContent = 'Scenario · Debrief';
+}
+
+/* Build annotated email HTML — marks attack elements inline */
+function buildAnnotatedEmail(s) {
+  const profile = selectedProfile;
+
+  const annotated = {
+    'fv-high': `
+      <div class="ann-subject">${s.subject}</div>
+      <p>Hey —</p>
+      <p>I'm stuck in back-to-back meetings until 6 and this is time sensitive. Our vendor Nexus Solutions is holding the deployment until we clear the outstanding balance — $4,200. <span class="ann-hl">Finance already signed off<span class="ann-num">3</span></span> but the transfer requires your authorization <span class="ann-hl">before EOD or we roll to next week and lose the timeline<span class="ann-num">2</span></span>.</p>
+      <p>I've attached the invoice. Wire details are in the doc. Just hit approve on the portal and reply here so I know it's done. <span class="ann-hl-amber">I'll circle back tonight to confirm.<span class="ann-num amber">4</span></span></p>
+      <p><span class="ann-hl-amber">Sorry to drop this on you so late — I've been dealing with it all day.<span class="ann-num amber">5</span></span></p>
+      <div style="color:var(--muted);border-top:1px solid var(--border);padding-top:0.75rem;margin-top:0.5rem;font-size:0.78rem;">
+        Michael Chen · VP of Engineering · <span class="ann-hl">mchen@acmecorp-finance.com<span class="ann-num">1</span></span>
+      </div>
+    `,
+    'sc-high': `
+      <div class="ann-subject">${s.subject}</div>
+      <p>Hi —</p>
+      <p>We're running a <span class="ann-hl-amber">system-wide MFA audit this morning as part of our Q2 compliance review<span class="ann-num amber">3</span></span>. A few accounts flagged during the automated sweep, and yours is on the list — <span class="ann-hl-amber">nothing alarming, this is routine<span class="ann-num amber">3</span></span>.</p>
+      <p>To clear your account, I just need you to <span class="ann-hl">confirm your current MFA backup code<span class="ann-num">2</span></span> so we can verify the device pairing is still active. You can reply directly to this email or use the portal link below. <span class="ann-hl-amber">Should take 30 seconds.<span class="ann-num amber">4</span></span></p>
+      <p>Let me know if you have any questions — happy to jump on a call if easier.</p>
+      <div style="color:var(--muted);border-top:1px solid var(--border);padding-top:0.75rem;margin-top:0.5rem;font-size:0.78rem;">
+        Sarah Okonkwo · IT Support · <span class="ann-hl">it-support@acmecorp.helpdesk-portal.com<span class="ann-num">1</span></span>
+      </div>
+    `,
+    'rr-high': `
+      <div class="ann-subject">${s.subject}</div>
+      <p>Hi —</p>
+      <p>Wanted to give you a heads-up on a change to our payment routing. <span class="ann-hl-amber">We recently switched banking providers (moved from First National to Meridian Business — you may have seen the announcement in the industry newsletter a few weeks back).<span class="ann-num amber">3</span></span> As a result, our account and routing numbers have changed effective this billing cycle.</p>
+      <p>I've attached the updated ACH details. For any outstanding invoices including #8847 ($6,400 due next Friday), please use the new banking info going forward. <span class="ann-hl-amber">The old account will remain active for another two weeks to catch any payments already in process, so no rush<span class="ann-num amber">4</span></span> — just wanted to make sure you had the updated details before the next cycle.</p>
+      <p>Let me know if you need anything else from our end.</p>
+      <div style="color:var(--muted);border-top:1px solid var(--border);padding-top:0.75rem;margin-top:0.5rem;font-size:0.78rem;">
+        David Park · Billing &amp; Vendor Relations · <span class="ann-hl">david.park@nexussolutions-billing.com<span class="ann-num">1</span></span>
+      </div>
+    `,
+  };
+
+  return annotated[profile] || '';
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   UTILITIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function showStage(name) {
+  document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+  document.getElementById('stage-' + name).classList.add('active');
+}
+
+function resetToSelect() {
+  selectedProfile = null;
+  selectedScenario = null;
+  decisionResult = null;
+  document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('launchBtn').disabled = true;
+  // Reset construct steps
+  ['cs1','cs2','cs3','cs4','cs5'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('active','done');
+  });
+  document.getElementById('topbarCtx').textContent = 'Scenario Engine';
+  showStage('select');
+}
+</script>
+</body>
+</html>
