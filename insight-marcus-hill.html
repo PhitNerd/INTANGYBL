@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>He Was Trying to Engineer the Climate — Intangybl Insights</title>
+<meta name="description" content="Marcus Hill ran a one-man influence campaign from beside the office thermostat. His instincts weren't wrong — he just didn't have an instrument. On behavioral signatures that hold under pressure, and the ones that only appear when someone is watching.">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#07090F;--ink-1:#0D1220;--ink-2:#151E30;--ink-3:#1E2B40;--ink-4:#2A3A54;
+  --amber:#F5A623;--amber-d:#C4801A;--amber-pale:rgba(245,166,35,0.08);--amber-glow:rgba(245,166,35,0.15);
+  --bone:#EDE8DE;--bone-2:#C8C0AE;--muted:#7A8BA8;--dim:#2A3A54;
+  --rule:rgba(245,166,35,0.10);--rule-bone:rgba(237,232,222,0.07);
+  --green:#1fc97a;--red:#f04f4f;
+  --ff-display:'Bebas Neue',sans-serif;--ff-serif:'Fraunces',Georgia,serif;
+  --ff-mono:'IBM Plex Mono',monospace;--ff-body:'IBM Plex Sans',sans-serif;
+  --ease-out:cubic-bezier(0.22,1,0.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{background:var(--ink);color:var(--bone);font-family:var(--ff-body);font-weight:300;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+a{color:inherit;text-decoration:none;}
+
+/* CURSOR */
+.cursor{position:fixed;width:8px;height:8px;background:var(--amber);border-radius:50%;pointer-events:none;z-index:9999;left:0;top:0;transform:translate(-50%,-50%);transition:width .3s var(--ease-out),height .3s var(--ease-out);}
+.cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(245,166,35,.4);border-radius:50%;pointer-events:none;z-index:9998;left:0;top:0;transform:translate(-50%,-50%);transition:width .4s var(--ease-out),height .4s var(--ease-out);}
+
+/* GRAIN */
+.grain{position:fixed;inset:0;pointer-events:none;z-index:500;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:700;padding:0 60px;height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid transparent;transition:background .4s,border-color .4s;}
+nav.scrolled{background:rgba(7,9,15,.94);border-color:var(--rule-bone);backdrop-filter:blur(12px);}
+.nav-brand{display:flex;align-items:center;gap:.6rem;}
+.nav-mark{width:16px;height:16px;border:1.5px solid var(--amber);border-radius:2px;display:flex;align-items:center;justify-content:center;}
+.nav-mark::after{content:'';width:4px;height:4px;background:var(--amber);border-radius:50%;}
+.nav-wordmark{font-family:var(--ff-mono);font-size:.62rem;color:var(--amber);letter-spacing:.14em;text-transform:uppercase;}
+.nav-links{display:flex;align-items:center;gap:2rem;list-style:none;}
+.nav-links a{font-family:var(--ff-mono);font-size:.58rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover{color:var(--bone);}
+.nav-links a.active{color:var(--amber);}
+.nav-cta{font-family:var(--ff-mono);font-size:.58rem;color:var(--ink);background:var(--amber);border:none;border-radius:3px;padding:.4rem .9rem;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;transition:background .15s;font-weight:500;}
+.nav-cta:hover{background:var(--amber-d);}
+
+/* READING PROGRESS */
+.read-bar{position:fixed;top:0;left:0;height:2px;width:0;background:var(--amber);z-index:800;transition:width .1s linear;}
+
+/* ARTICLE */
+.article{max-width:720px;margin:0 auto;padding:9rem 0 5rem;}
+.article-toprule{height:1px;background:var(--amber);opacity:.85;margin-bottom:2.5rem;}
+.article-kicker{font-family:var(--ff-mono);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);opacity:.8;margin-bottom:1.5rem;}
+.article-title{font-family:var(--ff-serif);font-weight:400;font-size:clamp(2.2rem,5.5vw,3.4rem);line-height:1.05;color:var(--bone);letter-spacing:-.01em;}
+.article-deck{font-family:var(--ff-serif);font-weight:400;font-style:italic;font-size:clamp(1.2rem,2.6vw,1.7rem);color:var(--amber);line-height:1.25;margin-top:.6rem;}
+.article-rule{height:1px;background:var(--rule-bone);margin:2.25rem 0;}
+.article-byline{font-family:var(--ff-mono);font-size:.72rem;letter-spacing:.04em;color:var(--bone-2);}
+.article-byline-sub{font-family:var(--ff-mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:.3rem;}
+
+.article-lead{font-family:var(--ff-serif);font-weight:300;font-style:italic;font-size:clamp(1.05rem,2vw,1.3rem);line-height:1.6;color:var(--bone-2);margin-bottom:1.6rem;}
+.article-lead em{font-style:normal;color:var(--amber);}
+.article-aside{font-family:var(--ff-serif);font-style:italic;font-size:1.05rem;color:var(--bone-2);margin-bottom:1.6rem;}
+.article-body p{font-size:1.02rem;font-weight:300;color:var(--bone-2);line-height:1.85;margin-bottom:1.5rem;}
+.article-body p b{color:var(--bone);font-weight:500;}
+.article-body p em{color:var(--amber);font-style:normal;}
+.article-body p.lead-in{color:var(--bone);font-weight:400;}
+
+.article-section-label{font-family:var(--ff-mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);opacity:.8;margin:3rem 0 1.4rem;display:flex;align-items:center;gap:.6rem;}
+.article-section-label::before{content:'—';opacity:.6;}
+
+.article-stinger{font-family:var(--ff-serif);font-style:italic;font-size:1.15rem;color:var(--bone);margin-bottom:1.6rem;}
+.article-stinger em{font-style:normal;color:var(--amber);}
+
+/* PULL QUOTE — rules above & below, centered italic (matches the print piece) */
+.article-pull{margin:3rem 0;text-align:left;}
+.article-pull-rule{width:200px;height:1px;background:var(--amber);opacity:.7;margin:0 0 1.75rem;}
+.article-pull-rule.bottom{margin:1.75rem 0 0;}
+.article-pull-text{font-family:var(--ff-serif);font-style:italic;font-weight:300;font-size:clamp(1.3rem,2.8vw,1.7rem);line-height:1.4;color:var(--bone);}
+.article-pull-text em{font-style:normal;color:var(--amber);}
+
+/* BULLETED INFLUENCE LIST */
+.article-list{list-style:none;margin:0 0 1.5rem;display:flex;flex-direction:column;gap:1.1rem;}
+.article-list li{position:relative;padding-left:1.6rem;font-size:1.02rem;font-weight:300;color:var(--bone-2);line-height:1.8;}
+.article-list li::before{content:'—';position:absolute;left:0;color:var(--amber);}
+.article-list li b{color:var(--bone);font-weight:500;}
+
+.article-yet{font-family:var(--ff-serif);font-style:italic;font-size:1.4rem;color:var(--amber);margin-top:.5rem;}
+
+/* ARTICLE FOOTER LINE + CTA */
+.article-end{margin-top:3.5rem;padding-top:2rem;border-top:1px solid var(--rule-bone);}
+.article-end-meta{font-family:var(--ff-mono);font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);text-align:center;}
+.article-cta{margin-top:2.5rem;background:var(--ink-1);border:1px solid var(--rule);border-left:2px solid var(--amber);border-radius:6px;padding:1.75rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;}
+.article-cta-text{font-size:.9rem;color:var(--bone-2);line-height:1.6;max-width:420px;}
+.article-cta-text b{color:var(--bone);font-weight:500;}
+.btn-primary{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--ff-mono);font-size:.62rem;color:var(--ink);background:var(--amber);border:none;border-radius:3px;padding:.65rem 1.25rem;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:background .15s;font-weight:500;white-space:nowrap;}
+.btn-primary:hover{background:var(--amber-d);}
+.article-back{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--ff-mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:2rem;transition:color .2s;}
+.article-back:hover{color:var(--amber);}
+
+/* FOOTER */
+footer{border-top:1px solid var(--rule-bone);padding:3rem 0 2rem;}
+.container{max-width:1100px;margin:0 auto;padding:0 60px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;margin-bottom:2.5rem;}
+.footer-brand-body{font-size:.78rem;font-weight:300;color:var(--muted);line-height:1.6;max-width:280px;margin-top:.5rem;}
+.footer-col-title{font-family:var(--ff-mono);font-size:.52rem;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem;}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.footer-links li{font-size:.78rem;font-weight:300;color:var(--muted);transition:color .15s;}
+.footer-links li:hover{color:var(--bone-2);}
+.footer-links a{color:inherit;}
+.footer-bottom{padding-top:1.5rem;border-top:1px solid var(--rule-bone);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
+.footer-copy{font-family:var(--ff-mono);font-size:.52rem;color:var(--dim);letter-spacing:.06em;}
+.footer-tagline{font-family:var(--ff-serif);font-size:.78rem;font-style:italic;color:var(--dim);}
+
+@media(max-width:900px){.container{padding:0 24px;}nav{padding:0 24px;}.article{padding-left:24px;padding-right:24px;}.footer-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.container{padding:0 20px;}nav{padding:0 20px;}.nav-links{display:none;}.article-cta{flex-direction:column;align-items:flex-start;}.footer-grid{grid-template-columns:1fr;gap:2rem;}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="read-bar" id="readBar"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="nav">
+  <a href="index.html" class="nav-brand"><div class="nav-mark"></div><span class="nav-wordmark">Intangybl</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#ceiling">The Ceiling</a></li>
+    <li><a href="index.html#ibri">IBRI</a></li>
+    <li><a href="index.html#foundation">Foundation</a></li>
+    <li><a href="index.html#brief">Methodology</a></li>
+    <li><a href="insights.html" class="active">Insights</a></li>
+  </ul>
+  <a href="veros.html" class="nav-cta">Open Veros</a>
+</nav>
+
+<article class="article">
+  <div class="article-toprule"></div>
+  <div class="article-kicker">Behavioral Risk</div>
+  <h1 class="article-title">He Was Trying to Engineer the Climate.</h1>
+  <div class="article-deck">He Just Didn't Have an Instrument.</div>
+
+  <div class="article-rule"></div>
+  <div class="article-byline">Ronald V. Edwards II</div>
+  <div class="article-byline-sub">Founder, Intangybl</div>
+  <div class="article-rule"></div>
+
+  <div class="article-body">
+    <p class="article-lead">By now you've probably seen the story about Marcus Hill — the 29-year-old Atlanta mailroom worker who spent three months managing his own schedule based on 'vibrational alignment,' declared Monday mornings discontinued due to 'aggressive negativity,' and was eventually terminated after refusing a performance review on the grounds that he didn't 'participate in systems that don't recognize his aura.'</p>
+
+    <p class="article-aside">It's funny. Read it. I'll wait.</p>
+
+    <p class="lead-in">Now let me tell you what everyone missed.</p>
+
+    <div class="article-section-label">The Thermostat</div>
+
+    <p>Buried in the list of Marcus's behaviors is one detail most people laughed at and scrolled past: he would stand near the office thermostat, whispering the word 'balance,' while adjusting it.</p>
+
+    <p class="article-stinger">That's not a joke. That's a <em>blueprint.</em></p>
+
+    <p>The thermostat is communal property with no official owner. Whoever controls it shapes the physical experience of everyone in the building — body temperature, comfort, alertness, irritability. And Marcus wasn't submitting a facilities request. He wasn't asking. He was claiming authorship over the environment while maintaining complete plausible deniability. Nobody writes you up for standing near a thermostat.</p>
+
+    <p>What Marcus was doing — underneath the absurdity — was attempting to engineer organizational climate from a position with zero formal authority.</p>
+
+    <div class="article-pull">
+      <div class="article-pull-rule"></div>
+      <div class="article-pull-text">His instincts weren't wrong. His methodology was <em>noise.</em></div>
+      <div class="article-pull-rule bottom"></div>
+    </div>
+
+    <div class="article-section-label">What He Was Actually Running</div>
+
+    <p>Look at the full pattern of his behavior and you'll see it isn't random eccentricity. It's a coherent — if delusional — influence campaign:</p>
+
+    <ul class="article-list">
+      <li><b>Rename things to shift how people relate to them.</b> Coffee breaks become 'healing intervals.' Meetings become 'spiritually optional.' Language shapes culture. Marcus knew this.</li>
+      <li><b>Control physical comfort.</b> The thermostat move wasn't about temperature. It was about establishing that he was the one who adjusted things.</li>
+      <li><b>Claim visible real estate.</b> The dramatic pause at the receptionist desk every morning wasn't social anxiety. It was a presence ritual — high-visibility, repeated, impossible to ignore.</li>
+      <li><b>Build a parallel authority structure.</b> 'Shift Vibe Manager' isn't delusion. It's an attempt to insert a new node into the org chart through sheer repetition.</li>
+    </ul>
+
+    <p>This is what organizational behavior researchers call bottom-up culture shaping. It happens constantly in every organization. Most of the people doing it are not as obvious as Marcus.</p>
+
+    <div class="article-section-label">The Part That Should Concern You</div>
+
+    <p>Marcus got fired because he was bad at it. He was too visible, too theatrical, too easy to document.</p>
+
+    <p class="lead-in">The people doing this with actual skill don't get fired. They get promoted.</p>
+
+    <p>They learn which environments reward performative confidence. They read the room faster than the room reads them. They know when oversight is low, when peer observation creates cover, when deadline compression makes colleagues easier to influence. They don't whisper at thermostats — they walk into performance reviews knowing exactly what the person across the table needs to hear.</p>
+
+    <p>And most organizations have no instrument to detect the difference between someone genuinely aligned with institutional values and someone who has simply learned to perform alignment under observation while behaving entirely differently when the conditions change.</p>
+
+    <div class="article-pull">
+      <div class="article-pull-rule"></div>
+      <div class="article-pull-text">The question isn't whether your organization has a Marcus. It's whether it has someone doing <em>exactly what Marcus was doing</em> — and doing it well.</div>
+      <div class="article-pull-rule bottom"></div>
+    </div>
+
+    <div class="article-section-label">The Gap</div>
+
+    <p>What Marcus lacked wasn't instinct. He correctly identified that climate is engineerable. That the way things are named matters. That physical environment shapes behavior. That visibility creates authority. These are not fringe ideas — they are foundational findings in organizational psychology.</p>
+
+    <p>What he lacked was an instrument. A way to measure whether any of it was working. A framework for understanding which conditions actually activate which behaviors — in himself and in the people around him.</p>
+
+    <p>Without that, intuition becomes performance. And performance, without accountability, becomes Marcus Hill, standing at a thermostat, whispering 'balance' into the void.</p>
+
+    <p>The organizations that get ahead of this problem aren't the ones with better HR policies. They're the ones that can finally distinguish between a behavioral signature that holds under pressure and one that only appears when someone is watching.</p>
+
+    <p>That's the instrument Marcus needed. It's also the one most organizations don't have.</p>
+
+    <p class="article-yet">Yet.</p>
+  </div>
+
+  <div class="article-end">
+    <div class="article-cta">
+      <div class="article-cta-text">Veros scores <b>which conditions activate which behaviors</b> — the instrument Marcus never had. Built on the Intangybl Behavioral Risk Index.</div>
+      <a href="veros.html" class="btn-primary">Open Veros →</a>
+    </div>
+    <div class="article-end-meta" style="margin-top:2rem;">Intangybl · Behavioral Risk Intelligence · intangybl.com</div>
+  </div>
+
+  <a href="insights.html" class="article-back">← Back to Insights</a>
+</article>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="nav-brand" style="margin-bottom:.75rem;"><div class="nav-mark"></div><span class="nav-wordmark">Intangybl</span></div>
+        <p class="footer-brand-body">Awareness training has a ceiling. The industry has not named it. Veros was built for what lives above it.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Veros</div>
+        <ul class="footer-links">
+          <li><a href="index.html#ceiling">The Ceiling</a></li>
+          <li><a href="index.html#ibri">IBRI Framework</a></li>
+          <li><a href="index.html#foundation">Academic Foundation</a></li>
+          <li><a href="index.html#brief">Methodology Brief</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Intangybl</div>
+        <ul class="footer-links">
+          <li><a href="about.html">About</a></li>
+          <li><a href="insights.html">Insights</a></li>
+          <li>Philadelphia, PA</li>
+          <li><a href="mailto:ronald@intangybl.com">ronald@intangybl.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Intangybl · All rights reserved · Philadelphia, PA</div>
+      <div class="footer-tagline">"Traits don't change. The conditions that make them dangerous do."</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* CURSOR */
+const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function animate(){
+  cursor.style.left=mx+'px';cursor.style.top=my+'px';
+  rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(animate);
+})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.style.width='14px';cursor.style.height='14px';ring.style.width='48px';ring.style.height='48px';});
+  el.addEventListener('mouseleave',()=>{cursor.style.width='8px';cursor.style.height='8px';ring.style.width='32px';ring.style.height='32px';});
+});
+
+/* NAV + READING PROGRESS */
+const bar=document.getElementById('readBar');
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40);
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  bar.style.width=(h>0?(window.scrollY/h)*100:0)+'%';
+},{passive:true});
+</script>
+</body>
+</html>
