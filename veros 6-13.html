@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Learning Path Personalization</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#06080e;--ink2:#0b0e18;--ink3:#10141f;--ink4:#161d2c;
+  --border:#1c2336;--border2:#252f45;
+  --amber:#f5a623;--amber2:#e8941a;--amber-d:rgba(245,166,35,0.09);
+  --bone:#ccd1de;--bone2:#97a0b3;--muted:#4e5870;--dim:#2a3347;
+  --green:#1fc97a;--green-d:rgba(31,201,122,0.08);
+  --red:#f04f4f;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--display:'Bebas Neue',sans-serif;
+  --ease:cubic-bezier(0.4,0,0.2,1);
+  --ld-bg:#f8f9fc;--ld-surface:#ffffff;--ld-border:#e5e7eb;--ld-text:#111827;--ld-muted:#6b7280;--ld-accent:#4f46e5;--ld-accent-d:rgba(79,70,229,0.08);
+  --it-bg:#f1f3f5;--it-surface:#ffffff;--it-border:#dee2e6;--it-text:#212529;--it-muted:#868e96;--it-accent:#1971c2;--it-accent-d:rgba(25,113,194,0.08);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+/* STAGE SYSTEM */
+.stage{display:none;min-height:100vh;}
+.stage.active{display:flex;flex-direction:column;}
+
+/* ── DOOR SELECTION ── */
+#stage-door{background:var(--ink);align-items:center;justify-content:center;padding:2rem;}
+.door-inner{width:100%;max-width:520px;}
+.door-veros-mark{display:flex;align-items:center;gap:0.6rem;margin-bottom:2.5rem;}
+.vmark{width:20px;height:20px;border:1.5px solid var(--amber);border-radius:3px;display:flex;align-items:center;justify-content:center;}
+.vmark::after{content:'';width:5px;height:5px;background:var(--amber);border-radius:50%;}
+.vmark-name{font-family:var(--mono);font-size:0.65rem;color:var(--amber);letter-spacing:0.14em;text-transform:uppercase;}
+.door-title{font-family:var(--display);font-size:clamp(2.5rem,7vw,4.5rem);color:var(--bone);line-height:1;letter-spacing:0.03em;margin-bottom:0.6rem;}
+.door-sub{font-size:0.85rem;font-weight:300;color:var(--bone2);line-height:1.65;margin-bottom:2.5rem;}
+.door-cards{display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.5rem;}
+.door-card{background:var(--ink2);border:1px solid var(--border);border-radius:6px;padding:1.1rem 1.25rem;cursor:pointer;display:flex;align-items:flex-start;gap:1rem;transition:all 0.18s var(--ease);position:relative;overflow:hidden;}
+.door-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:transparent;transition:background 0.18s;}
+.door-card:hover{border-color:var(--border2);background:var(--ink3);}
+.door-card:hover::before{background:var(--amber);}
+.door-card.selected{border-color:var(--amber);background:var(--amber-d);}
+.door-card.selected::before{background:var(--amber);}
+.door-card-icon{width:36px;height:36px;background:var(--ink4);border:1px solid var(--border2);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem;}
+.door-card.selected .door-card-icon{border-color:var(--amber);}
+.door-card-body{flex:1;}
+.door-card-dept{font-family:var(--mono);font-size:0.55rem;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.25rem;}
+.door-card-name{font-size:0.88rem;font-weight:500;color:var(--bone);margin-bottom:0.2rem;}
+.door-card-desc{font-size:0.75rem;font-weight:300;color:var(--bone2);line-height:1.5;}
+.door-launch{width:100%;font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;background:var(--amber);color:var(--ink);border:none;border-radius:4px;padding:0.8rem;cursor:pointer;font-weight:500;transition:background 0.15s;margin-bottom:0.5rem;}
+.door-launch:hover{background:var(--amber2);}
+.door-launch:disabled{opacity:0.3;cursor:not-allowed;}
+.door-note{font-family:var(--mono);font-size:0.52rem;color:var(--dim);letter-spacing:0.06em;text-align:center;}
+
+/* ── L&D DISGUISE ── */
+#stage-ld{background:var(--ld-bg);flex-direction:column;}
+.ld-nav{background:var(--ld-surface);border-bottom:1px solid var(--ld-border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.ld-nav-brand{display:flex;align-items:center;gap:0.5rem;}
+.ld-nav-logo{width:28px;height:28px;background:var(--ld-accent);border-radius:6px;display:flex;align-items:center;justify-content:center;}
+.ld-nav-logo-inner{width:12px;height:12px;background:white;border-radius:2px;}
+.ld-nav-name{font-size:0.9rem;font-weight:600;color:var(--ld-text);letter-spacing:-0.01em;}
+.ld-nav-name span{color:var(--ld-accent);}
+.ld-nav-user{font-size:0.8rem;color:var(--ld-muted);}
+.ld-body{flex:1;padding:3rem 1.5rem 4rem;max-width:680px;margin:0 auto;width:100%;}
+.ld-progress-wrap{margin-bottom:2rem;}
+.ld-progress-label{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--ld-muted);margin-bottom:0.5rem;}
+.ld-progress-track{height:4px;background:var(--ld-border);border-radius:4px;overflow:hidden;}
+.ld-progress-fill{height:100%;background:var(--ld-accent);border-radius:4px;transition:width 0.5s var(--ease);}
+.ld-card{background:var(--ld-surface);border:1px solid var(--ld-border);border-radius:12px;padding:2rem;margin-bottom:1rem;}
+.ld-card-eyebrow{font-size:0.7rem;font-weight:600;color:var(--ld-accent);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.4rem;}
+.ld-card-title{font-size:1.15rem;font-weight:600;color:var(--ld-text);margin-bottom:0.35rem;line-height:1.3;}
+.ld-card-sub{font-size:0.82rem;color:var(--ld-muted);line-height:1.5;margin-bottom:1.5rem;}
+.ld-q{display:none;}
+.ld-q.active{display:block;animation:fadeSlide 0.25s var(--ease);}
+@keyframes fadeSlide{from{opacity:0;transform:translateX(8px);}to{opacity:1;transform:translateX(0);}}
+.ld-q-label{font-size:0.72rem;font-weight:600;color:var(--ld-muted);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:0.5rem;}
+.ld-q-text{font-size:0.95rem;font-weight:500;color:var(--ld-text);margin-bottom:1rem;line-height:1.4;}
+.ld-textarea{width:100%;border:1.5px solid var(--ld-border);border-radius:8px;padding:0.75rem 1rem;font-size:0.88rem;font-family:var(--sans);color:var(--ld-text);background:white;resize:vertical;min-height:90px;transition:border-color 0.15s;outline:none;line-height:1.6;}
+.ld-textarea:focus{border-color:var(--ld-accent);box-shadow:0 0 0 3px rgba(79,70,229,0.08);}
+.ld-textarea::placeholder{color:#d1d5db;}
+.ld-options{display:flex;flex-direction:column;gap:0.5rem;}
+.ld-option{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;border:1.5px solid var(--ld-border);border-radius:8px;cursor:pointer;transition:all 0.14s;}
+.ld-option:hover{border-color:var(--ld-accent);background:var(--ld-accent-d);}
+.ld-option.selected{border-color:var(--ld-accent);background:var(--ld-accent-d);}
+.ld-option-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--ld-border);flex-shrink:0;transition:all 0.14s;}
+.ld-option.selected .ld-option-radio{border-color:var(--ld-accent);background:var(--ld-accent);}
+.ld-option-text{font-size:0.85rem;color:var(--ld-text);}
+.ld-actions{display:flex;justify-content:space-between;align-items:center;margin-top:1.25rem;}
+.ld-btn-back{background:none;border:1px solid var(--ld-border);border-radius:8px;padding:0.55rem 1rem;font-size:0.82rem;color:var(--ld-muted);cursor:pointer;transition:all 0.15s;}
+.ld-btn-back:hover{border-color:var(--ld-accent);color:var(--ld-text);}
+.ld-btn-next{background:var(--ld-accent);border:none;border-radius:8px;padding:0.6rem 1.5rem;font-size:0.85rem;font-weight:600;color:white;cursor:pointer;transition:background 0.15s;}
+.ld-btn-next:hover{background:#4338ca;}
+.ld-btn-next:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* ── IT DISGUISE ── */
+#stage-it{background:var(--it-bg);flex-direction:column;}
+.it-nav{background:#1c2b41;padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between;}
+.it-nav-brand{display:flex;align-items:center;gap:0.75rem;}
+.it-nav-logo{display:flex;align-items:center;gap:0.4rem;}
+.it-nav-logo-sq{width:22px;height:22px;background:var(--it-accent);border-radius:3px;}
+.it-nav-logo-sq2{width:8px;height:22px;background:rgba(255,255,255,0.2);border-radius:2px;}
+.it-nav-name{font-size:0.85rem;font-weight:600;color:white;letter-spacing:0.02em;}
+.it-nav-badge{font-size:0.65rem;background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);border-radius:3px;padding:0.1rem 0.4rem;letter-spacing:0.04em;}
+.it-nav-user{font-size:0.75rem;color:rgba(255,255,255,0.5);}
+.it-body{flex:1;padding:2rem 1.5rem 4rem;max-width:720px;margin:0 auto;width:100%;}
+.it-page-header{margin-bottom:1.5rem;}
+.it-page-title{font-size:1.15rem;font-weight:700;color:var(--it-text);margin-bottom:0.25rem;}
+.it-page-sub{font-size:0.82rem;color:var(--it-muted);}
+.it-progress-wrap{background:white;border:1px solid var(--it-border);border-radius:6px;padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.5rem;}
+.it-progress-steps{display:flex;gap:0;flex:1;}
+.it-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:0.3rem;position:relative;}
+.it-step::after{content:'';position:absolute;top:10px;left:50%;right:-50%;height:2px;background:var(--it-border);z-index:0;}
+.it-step:last-child::after{display:none;}
+.it-step-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--it-border);background:white;z-index:1;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:700;color:var(--it-muted);transition:all 0.2s;}
+.it-step.done .it-step-dot{background:var(--it-accent);border-color:var(--it-accent);color:white;}
+.it-step.active .it-step-dot{border-color:var(--it-accent);color:var(--it-accent);}
+.it-step-label{font-size:0.58rem;color:var(--it-muted);text-align:center;}
+.it-step.active .it-step-label{color:var(--it-accent);font-weight:600;}
+.it-form-card{background:white;border:1px solid var(--it-border);border-radius:6px;overflow:hidden;margin-bottom:1rem;}
+.it-form-header{background:#f8f9fa;border-bottom:1px solid var(--it-border);padding:0.75rem 1.25rem;display:flex;align-items:center;gap:0.5rem;}
+.it-form-header-icon{font-size:0.75rem;}
+.it-form-header-title{font-size:0.8rem;font-weight:600;color:var(--it-text);}
+.it-form-header-req{font-size:0.65rem;color:var(--it-muted);margin-left:auto;}
+.it-form-body{padding:1.25rem;}
+.it-q{display:none;}
+.it-q.active{display:block;animation:fadeSlide 0.2s var(--ease);}
+.it-field-label{font-size:0.78rem;font-weight:600;color:var(--it-text);margin-bottom:0.35rem;display:flex;align-items:center;gap:0.25rem;}
+.it-field-label .req{color:var(--it-accent);}
+.it-field-sub{font-size:0.72rem;color:var(--it-muted);margin-bottom:0.6rem;}
+.it-textarea{width:100%;border:1px solid var(--it-border);border-radius:4px;padding:0.65rem 0.9rem;font-size:0.85rem;font-family:var(--sans);color:var(--it-text);background:white;resize:vertical;min-height:80px;transition:border-color 0.15s;outline:none;line-height:1.6;}
+.it-textarea:focus{border-color:var(--it-accent);box-shadow:0 0 0 2px rgba(25,113,194,0.1);}
+.it-textarea::placeholder{color:#ced4da;}
+.it-radio-group{display:flex;flex-direction:column;gap:0.4rem;}
+.it-radio-item{display:flex;align-items:center;gap:0.6rem;padding:0.55rem 0.75rem;border:1px solid var(--it-border);border-radius:4px;cursor:pointer;transition:all 0.12s;}
+.it-radio-item:hover{border-color:var(--it-accent);background:var(--it-accent-d);}
+.it-radio-item.selected{border-color:var(--it-accent);background:var(--it-accent-d);}
+.it-radio-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--it-border);flex-shrink:0;transition:all 0.12s;}
+.it-radio-item.selected .it-radio-dot{border-color:var(--it-accent);background:var(--it-accent);}
+.it-radio-text{font-size:0.82rem;color:var(--it-text);}
+.it-form-actions{display:flex;justify-content:space-between;align-items:center;padding:0.75rem 1.25rem;background:#f8f9fa;border-top:1px solid var(--it-border);}
+.it-btn-back{background:white;border:1px solid var(--it-border);border-radius:4px;padding:0.45rem 0.9rem;font-size:0.8rem;color:var(--it-muted);cursor:pointer;transition:all 0.12s;}
+.it-btn-back:hover{border-color:var(--it-accent);color:var(--it-text);}
+.it-btn-next{background:var(--it-accent);border:none;border-radius:4px;padding:0.5rem 1.25rem;font-size:0.82rem;font-weight:600;color:white;cursor:pointer;transition:background 0.12s;display:flex;align-items:center;gap:0.4rem;}
+.it-btn-next:hover{background:#1864ab;}
+.it-btn-next:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* ── PROCESSING ── */
+#stage-processing{background:var(--ink);align-items:center;justify-content:center;padding:2rem;}
+.proc-inner{width:100%;max-width:420px;text-align:center;}
+.proc-mark{width:56px;height:56px;border:1.5px solid var(--amber);border-radius:8px;display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;}
+.proc-mark-inner{width:16px;height:16px;background:var(--amber);border-radius:3px;animation:procPulse 1s var(--ease) infinite;}
+@keyframes procPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(0.75);opacity:0.5;}}
+.proc-label{font-family:var(--mono);font-size:0.6rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:2rem;}
+.proc-steps{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:2rem;}
+.proc-step{display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.9rem;background:var(--ink2);border:1px solid var(--border);border-radius:4px;opacity:0.25;transition:all 0.35s;}
+.proc-step.active{opacity:1;border-color:var(--amber);}
+.proc-step.done{opacity:1;border-color:var(--green);}
+.proc-step-pip{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.proc-step.active .proc-step-pip{background:var(--amber);animation:blip 0.8s ease infinite;}
+.proc-step.done .proc-step-pip{background:var(--green);}
+.proc-step:not(.active):not(.done) .proc-step-pip{background:var(--dim);}
+.proc-step-txt{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.06em;}
+.proc-step.active .proc-step-txt{color:var(--amber);}
+.proc-step.done .proc-step-txt{color:var(--green);}
+.proc-step:not(.active):not(.done) .proc-step-txt{color:var(--muted);}
+.proc-step-check{margin-left:auto;font-family:var(--mono);font-size:0.6rem;color:var(--green);opacity:0;transition:opacity 0.3s;}
+.proc-step.done .proc-step-check{opacity:1;}
+
+/* ── REVEAL ── */
+#stage-reveal{background:var(--ink);align-items:center;justify-content:center;padding:2rem;}
+.reveal-inner{width:100%;max-width:600px;}
+.reveal-flash{background:var(--amber-d);border:1px solid rgba(245,166,35,0.2);border-radius:6px;padding:1.25rem 1.5rem;margin-bottom:2rem;display:flex;align-items:flex-start;gap:0.75rem;animation:revealPop 0.6s var(--ease) both;}
+@keyframes revealPop{from{opacity:0;transform:scale(0.96);}to{opacity:1;transform:scale(1);}}
+.reveal-flash-icon{font-family:var(--mono);font-size:0.65rem;color:var(--amber);flex-shrink:0;margin-top:0.05rem;}
+.reveal-flash-text{font-size:0.85rem;font-weight:300;color:var(--bone);line-height:1.6;}
+.reveal-flash-text b{color:var(--amber);font-weight:500;}
+.reveal-title{font-family:var(--display);font-size:clamp(3rem,9vw,6rem);color:var(--bone);line-height:0.95;letter-spacing:0.02em;margin-bottom:1.5rem;animation:riseIn 0.7s var(--ease) 0.2s both;}
+.reveal-title span{color:var(--amber);}
+.reveal-body{font-size:0.88rem;font-weight:300;color:var(--bone2);line-height:1.75;margin-bottom:2rem;animation:riseIn 0.7s var(--ease) 0.35s both;}
+.reveal-body b{color:var(--bone);font-weight:500;}
+.reveal-cta{display:flex;gap:0.75rem;flex-wrap:wrap;animation:riseIn 0.7s var(--ease) 0.5s both;}
+.reveal-btn-primary{font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;background:var(--amber);color:var(--ink);border:none;border-radius:3px;padding:0.7rem 1.25rem;cursor:pointer;font-weight:500;transition:background 0.15s;}
+.reveal-btn-primary:hover{background:var(--amber2);}
+.reveal-btn-ghost{font-family:var(--mono);font-size:0.62rem;color:var(--muted);background:none;border:1px solid var(--border2);border-radius:3px;padding:0.65rem 1rem;cursor:pointer;letter-spacing:0.06em;transition:all 0.15s;}
+.reveal-btn-ghost:hover{color:var(--bone2);border-color:var(--border2);}
+
+/* ── PROFILE ── */
+#stage-profile{background:var(--ink);flex-direction:column;}
+.profile-topbar{background:var(--ink2);border-bottom:1px solid var(--border);padding:0 1.5rem;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.profile-topbar-left{display:flex;align-items:center;gap:0.6rem;}
+.profile-topbar-name{font-family:var(--mono);font-size:0.65rem;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;}
+.profile-topbar-sep{width:1px;height:18px;background:var(--border2);}
+.profile-topbar-ctx{font-family:var(--mono);font-size:0.58rem;color:var(--muted);letter-spacing:0.06em;}
+.profile-topbar-right{display:flex;align-items:center;gap:0.75rem;}
+.profile-topbar-action{font-family:var(--mono);font-size:0.55rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;background:none;border:1px solid var(--border2);border-radius:3px;padding:0.25rem 0.6rem;cursor:pointer;transition:all 0.15s;text-decoration:none;display:inline-block;}
+.profile-topbar-action:hover{color:var(--amber);border-color:rgba(245,166,35,0.3);}
+.profile-body{flex:1;padding:2.5rem 1.5rem 4rem;max-width:700px;margin:0 auto;width:100%;}
+.profile-head{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.profile-head-eyebrow{font-family:var(--mono);font-size:0.58rem;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;}
+.profile-head-title{font-family:var(--display);font-size:clamp(2.5rem,8vw,4.5rem);color:var(--bone);line-height:0.95;letter-spacing:0.03em;margin-bottom:0.5rem;}
+.profile-head-meta{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;}
+.profile-head-meta-item{font-family:var(--mono);font-size:0.55rem;color:var(--muted);letter-spacing:0.06em;}
+.profile-head-meta-sep{width:2px;height:2px;border-radius:50%;background:var(--dim);}
+
+/* RCL BADGE on profile */
+.rcl-badge-block{background:var(--ink2);border:1px solid var(--border);border-left:2px solid var(--amber);border-radius:6px;padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:flex-start;gap:1rem;}
+.rcl-badge-label{font-family:var(--mono);font-size:0.55rem;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;}
+.rcl-badge-level{font-family:var(--mono);font-size:1.1rem;font-weight:500;margin-bottom:0.25rem;}
+.rcl-badge-level.low{color:var(--green);}
+.rcl-badge-level.moderate{color:var(--amber);}
+.rcl-badge-level.high{color:var(--red);}
+.rcl-badge-desc{font-size:0.78rem;font-weight:300;color:var(--bone2);line-height:1.55;}
+.rcl-dims{display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.75rem;}
+.rcl-dim-chip{font-family:var(--mono);font-size:0.55rem;letter-spacing:0.06em;padding:0.2rem 0.5rem;border-radius:3px;border:1px solid var(--border2);}
+.rcl-dim-chip.amplified{color:var(--red);border-color:rgba(240,79,79,0.3);background:rgba(240,79,79,0.06);}
+.rcl-dim-chip.suppressed{color:var(--amber);border-color:rgba(245,166,35,0.3);background:var(--amber-d);}
+.rcl-dim-chip.baseline{color:var(--muted);}
+
+.ibri-score-block{background:var(--ink2);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:1.5rem;}
+.ibri-score-top{display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1rem;border-bottom:1px solid var(--border);}
+.ibri-score-label{font-family:var(--mono);font-size:0.6rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
+.ibri-score-val{display:flex;align-items:baseline;gap:0.35rem;}
+.ibri-score-num{font-family:var(--mono);font-size:1.6rem;font-weight:500;color:var(--amber);line-height:1;}
+.ibri-score-denom{font-family:var(--mono);font-size:0.65rem;color:var(--muted);}
+.ibri-score-tier{font-family:var(--mono);font-size:0.55rem;border-radius:2px;padding:0.12rem 0.4rem;letter-spacing:0.06em;}
+.ibri-score-tier.elevated{background:rgba(240,79,79,0.1);color:var(--red);}
+.ibri-score-tier.moderate{background:var(--amber-d);color:var(--amber);}
+.ibri-score-tier.low{background:var(--green-d);color:var(--green);}
+.ibri-dims{padding:1rem;display:flex;flex-direction:column;gap:0.65rem;}
+.ibri-dim{display:flex;align-items:center;gap:0.75rem;}
+.ibri-dim-name{font-family:var(--mono);font-size:0.55rem;color:var(--muted);width:160px;flex-shrink:0;letter-spacing:0.05em;}
+.ibri-dim-wrap{flex:1;height:3px;background:var(--border2);border-radius:2px;position:relative;}
+.ibri-dim-fill{height:100%;border-radius:2px;transition:width 1.2s var(--ease);position:relative;}
+.ibri-dim-fill::after{content:'';position:absolute;right:-3px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:inherit;}
+.ibri-dim-fill.stable{background:var(--green);}
+.ibri-dim-fill.elevated{background:var(--amber);}
+.ibri-dim-fill.high{background:var(--red);}
+.ibri-dim-val{font-family:var(--mono);font-size:0.58rem;width:28px;text-align:right;flex-shrink:0;}
+.ibri-dim-val.stable{color:var(--green);}
+.ibri-dim-val.elevated{color:var(--amber);}
+.ibri-dim-val.high{color:var(--red);}
+.ibri-dim-rcl{font-family:var(--mono);font-size:0.5rem;color:var(--red);margin-left:0.25rem;flex-shrink:0;}
+
+.profile-insights{display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.5rem;}
+.insight-card{background:var(--ink2);border:1px solid var(--border);border-left:2px solid transparent;border-radius:6px;padding:1rem;}
+.insight-card.fv{border-left-color:var(--red);}
+.insight-card.sc{border-left-color:var(--amber);}
+.insight-card.rr{border-left-color:#4f8ef0;}
+.insight-card.ea{border-left-color:var(--green);}
+.insight-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;}
+.insight-card-label{font-family:var(--mono);font-size:0.55rem;letter-spacing:0.08em;text-transform:uppercase;}
+.insight-card.fv .insight-card-label{color:var(--red);}
+.insight-card.sc .insight-card-label{color:var(--amber);}
+.insight-card.rr .insight-card-label{color:#4f8ef0;}
+.insight-card.ea .insight-card-label{color:var(--green);}
+.insight-card-score{font-family:var(--mono);font-size:0.7rem;color:var(--muted);}
+.insight-card-txt{font-size:0.8rem;font-weight:300;color:var(--bone2);line-height:1.6;}
+.insight-card-txt b{color:var(--bone);font-weight:500;}
+
+.profile-loading{display:flex;align-items:center;gap:0.6rem;padding:1rem;}
+.profile-loading-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);animation:blip 1s ease infinite;}
+.profile-loading-txt{font-family:var(--mono);font-size:0.62rem;color:var(--muted);letter-spacing:0.06em;}
+
+.profile-cta-block{background:var(--ink2);border:1px solid var(--border);border-radius:6px;padding:1.25rem;display:flex;gap:1rem;align-items:flex-start;}
+.profile-cta-icon{font-family:var(--mono);font-size:0.7rem;color:var(--amber);flex-shrink:0;margin-top:0.05rem;}
+.profile-cta-body{flex:1;}
+.profile-cta-label{font-family:var(--mono);font-size:0.58rem;color:var(--amber);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.3rem;}
+.profile-cta-desc{font-size:0.8rem;font-weight:300;color:var(--bone2);line-height:1.55;margin-bottom:0.75rem;}
+.profile-cta-actions{display:flex;align-items:center;gap:0.6rem;}
+.btn-amber{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;background:var(--amber);color:var(--ink);border:none;border-radius:3px;padding:0.45rem 0.9rem;cursor:pointer;font-weight:500;transition:background 0.15s;}
+.btn-amber:hover{background:var(--amber2);}
+.btn-ghost{font-family:var(--mono);font-size:0.58rem;color:var(--muted);background:none;border:1px solid var(--border2);border-radius:3px;padding:0.4rem 0.75rem;cursor:pointer;letter-spacing:0.06em;transition:all 0.15s;}
+.btn-ghost:hover{color:var(--bone2);}
+
+/* SHARED ANIMATIONS */
+@keyframes blip{0%,100%{opacity:1;}50%{opacity:0.2;}}
+@keyframes riseIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+@media(max-width:600px){
+  .ld-body,.it-body,.profile-body{padding:1.5rem 1rem 3rem;}
+  .ld-nav,.it-nav{padding:0 1rem;}
+  .door-inner,.reveal-inner,.proc-inner{max-width:100%;}
+  .rcl-dims{flex-direction:column;gap:0.4rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- DOOR SELECTION -->
+<div class="stage active" id="stage-door">
+  <div class="door-inner">
+    <div class="door-veros-mark">
+      <div class="vmark"></div>
+      <span class="vmark-name">Veros · Entry Simulation</span>
+    </div>
+    <div class="door-title">SELECT<br>YOUR DOOR.</div>
+    <p class="door-sub">Two deployment contexts. Same behavioral profiling engine. The subject doesn't know which door they entered — or that Veros is behind it.</p>
+    <div class="door-cards">
+      <div class="door-card" data-door="ld" onclick="selectDoor(this)">
+        <div class="door-card-icon">📚</div>
+        <div class="door-card-body">
+          <div class="door-card-dept">People & Development</div>
+          <div class="door-card-name">Learning Path Personalization</div>
+          <div class="door-card-desc">Disguised as an L&D onboarding survey. Warm, employee-facing. No security language anywhere.</div>
+        </div>
+      </div>
+      <div class="door-card" data-door="it" onclick="selectDoor(this)">
+        <div class="door-card-icon">🖥</div>
+        <div class="door-card-body">
+          <div class="door-card-dept">IT & Systems Access</div>
+          <div class="door-card-name">Access Profile Completion</div>
+          <div class="door-card-desc">Disguised as an IT onboarding form. Utilitarian, functional. No behavioral language anywhere.</div>
+        </div>
+      </div>
+    </div>
+    <button class="door-launch" id="doorLaunch" disabled onclick="launchDoor()">Enter Selected Door</button>
+    <p class="door-note">Veros profiling engine active behind both doors · RCL-enabled · Intangybl</p>
+  </div>
+</div>
+
+<!-- L&D STAGE -->
+<div class="stage" id="stage-ld">
+  <nav class="ld-nav">
+    <div class="ld-nav-brand">
+      <div class="ld-nav-logo"><div class="ld-nav-logo-inner"></div></div>
+      <span class="ld-nav-name">Learn<span>Bridge</span></span>
+    </div>
+    <span class="ld-nav-user">Welcome — let's set up your profile</span>
+  </nav>
+  <div class="ld-body">
+    <div class="ld-progress-wrap">
+      <div class="ld-progress-label">
+        <span>Personalizing your learning path</span>
+        <span id="ldProgressLabel">Step 1 of 12</span>
+      </div>
+      <div class="ld-progress-track"><div class="ld-progress-fill" id="ldProgressFill" style="width:8.33%"></div></div>
+    </div>
+    <div class="ld-card">
+      <div class="ld-card-eyebrow">Learning Profile Setup</div>
+      <div class="ld-card-title" id="ldCardTitle">Before we begin</div>
+      <div class="ld-card-sub" id="ldCardSub">A few quick questions help us calibrate your experience and recommend content that matches where you are right now.</div>
+
+      <!-- RCL Q1 — disguised as workload check-in -->
+      <div class="ld-q active" id="ldq1">
+        <div class="ld-q-label">Current Workload</div>
+        <div class="ld-q-text">How long have you been in a period of consistently high workload or active decision-making at work?</div>
+        <div class="ld-options" id="ldOpts1">
+          <div class="ld-option" data-val="less_than_2" data-rcl="duration" onclick="selectLdOpt(this,1)"><div class="ld-option-radio"></div><span class="ld-option-text">Less than 2 weeks — I'm in a relatively settled period right now.</span></div>
+          <div class="ld-option" data-val="2_to_6" data-rcl="duration" onclick="selectLdOpt(this,1)"><div class="ld-option-radio"></div><span class="ld-option-text">2–6 weeks — moderate stretch, manageable overall.</span></div>
+          <div class="ld-option" data-val="6_to_16" data-rcl="duration" onclick="selectLdOpt(this,1)"><div class="ld-option-radio"></div><span class="ld-option-text">6 weeks to 4 months — it's been a sustained period of high load.</span></div>
+          <div class="ld-option" data-val="over_4_months" data-rcl="duration" onclick="selectLdOpt(this,1)"><div class="ld-option-radio"></div><span class="ld-option-text">More than 4 months — this has been going on for a long time.</span></div>
+        </div>
+      </div>
+
+      <!-- RCL Q2 — disguised as task management -->
+      <div class="ld-q" id="ldq2">
+        <div class="ld-q-label">Open Priorities</div>
+        <div class="ld-q-text">How many significant work priorities or decisions are currently unresolved or still in progress for you?</div>
+        <div class="ld-options" id="ldOpts2">
+          <div class="ld-option" data-val="0_to_1" data-rcl="threads" onclick="selectLdOpt(this,2)"><div class="ld-option-radio"></div><span class="ld-option-text">None or one — my plate is mostly clear.</span></div>
+          <div class="ld-option" data-val="2_to_3" data-rcl="threads" onclick="selectLdOpt(this,2)"><div class="ld-option-radio"></div><span class="ld-option-text">Two or three — manageable number of things in motion.</span></div>
+          <div class="ld-option" data-val="4_to_6" data-rcl="threads" onclick="selectLdOpt(this,2)"><div class="ld-option-radio"></div><span class="ld-option-text">Four to six — quite a few things unresolved simultaneously.</span></div>
+          <div class="ld-option" data-val="over_6" data-rcl="threads" onclick="selectLdOpt(this,2)"><div class="ld-option-radio"></div><span class="ld-option-text">More than six — a significant number of things are still open.</span></div>
+        </div>
+      </div>
+
+      <!-- RCL Q3 — disguised as autonomy/ownership check -->
+      <div class="ld-q" id="ldq3">
+        <div class="ld-q-label">Decision Ownership</div>
+        <div class="ld-q-text">For the most significant things currently on your plate, how much direct control do you have over how they resolve?</div>
+        <div class="ld-options" id="ldOpts3">
+          <div class="ld-option" data-val="high" data-rcl="control" onclick="selectLdOpt(this,3)"><div class="ld-option-radio"></div><span class="ld-option-text">High — outcomes are mostly in my hands.</span></div>
+          <div class="ld-option" data-val="moderate" data-rcl="control" onclick="selectLdOpt(this,3)"><div class="ld-option-radio"></div><span class="ld-option-text">Moderate — I have meaningful input but others are involved.</span></div>
+          <div class="ld-option" data-val="low" data-rcl="control" onclick="selectLdOpt(this,3)"><div class="ld-option-radio"></div><span class="ld-option-text">Low — a lot depends on other people's decisions.</span></div>
+          <div class="ld-option" data-val="none" data-rcl="control" onclick="selectLdOpt(this,3)"><div class="ld-option-radio"></div><span class="ld-option-text">Very little — I'm largely waiting on things outside my control.</span></div>
+        </div>
+      </div>
+
+      <!-- RCL Q4 — disguised as wellbeing/recovery -->
+      <div class="ld-q" id="ldq4">
+        <div class="ld-q-label">Recovery & Rest</div>
+        <div class="ld-q-text">How well have you been able to genuinely switch off from work during this period?</div>
+        <div class="ld-options" id="ldOpts4">
+          <div class="ld-option" data-val="adequate" data-rcl="recovery" onclick="selectLdOpt(this,4)"><div class="ld-option-radio"></div><span class="ld-option-text">Well — I have clear boundaries and recover properly.</span></div>
+          <div class="ld-option" data-val="limited" data-rcl="recovery" onclick="selectLdOpt(this,4)"><div class="ld-option-radio"></div><span class="ld-option-text">Partially — I get some rest but work follows me a bit.</span></div>
+          <div class="ld-option" data-val="none" data-rcl="recovery" onclick="selectLdOpt(this,4)"><div class="ld-option-radio"></div><span class="ld-option-text">Not well — I rarely feel like I've properly stepped away.</span></div>
+        </div>
+      </div>
+
+      <!-- IBRI Q5 — role -->
+      <div class="ld-q" id="ldq5">
+        <div class="ld-q-label">Your Role</div>
+        <div class="ld-q-text">What's your job title, and which team or department do you work in?</div>
+        <textarea class="ld-textarea" id="ldA5" placeholder="e.g. Marketing Manager, Brand & Communications team..."></textarea>
+      </div>
+      <!-- IBRI Q6 -->
+      <div class="ld-q" id="ldq6">
+        <div class="ld-q-label">Your Toolkit</div>
+        <div class="ld-q-text">Which tools and platforms do you use most in your day-to-day work?</div>
+        <textarea class="ld-textarea" id="ldA6" placeholder="e.g. Slack, Salesforce, Google Suite, Asana..."></textarea>
+      </div>
+      <!-- IBRI Q7 -->
+      <div class="ld-q" id="ldq7">
+        <div class="ld-q-label">A Typical Day</div>
+        <div class="ld-q-text">Describe what a normal workday looks like for you in 2–3 sentences.</div>
+        <textarea class="ld-textarea" id="ldA7" placeholder="Walk us through your usual day..."></textarea>
+      </div>
+      <!-- IBRI Q8 -->
+      <div class="ld-q" id="ldq8">
+        <div class="ld-q-label">Learning Style</div>
+        <div class="ld-q-text">When you're given an unfamiliar topic and don't know where to start, what's your natural approach?</div>
+        <div class="ld-options" id="ldOpts8">
+          <div class="ld-option" data-val="Search and skim — I find a few sources quickly and piece together an overview." onclick="selectLdOpt(this,8)"><div class="ld-option-radio"></div><span class="ld-option-text">Search and skim — find a few sources, piece together an overview.</span></div>
+          <div class="ld-option" data-val="Ask someone — I prefer to get a quick briefing from a colleague who already knows." onclick="selectLdOpt(this,8)"><div class="ld-option-radio"></div><span class="ld-option-text">Ask someone — get a briefing from a colleague who already knows.</span></div>
+          <div class="ld-option" data-val="Structured approach — I find a course or guide and work through it systematically." onclick="selectLdOpt(this,8)"><div class="ld-option-radio"></div><span class="ld-option-text">Structured — find a course or guide and work through it properly.</span></div>
+          <div class="ld-option" data-val="Jump in — I learn best by attempting the task and figuring it out as I go." onclick="selectLdOpt(this,8)"><div class="ld-option-radio"></div><span class="ld-option-text">Jump in — learn by attempting the task and figuring it out.</span></div>
+        </div>
+      </div>
+      <!-- IBRI Q9 -->
+      <div class="ld-q" id="ldq9">
+        <div class="ld-q-label">Workload & Pressure</div>
+        <div class="ld-q-text">How do you handle learning tasks or new requests when your schedule is already packed or you're under deadline pressure?</div>
+        <div class="ld-options" id="ldOpts9">
+          <div class="ld-option" data-val="I set it aside and return when I have proper time and focus." onclick="selectLdOpt(this,9)"><div class="ld-option-radio"></div><span class="ld-option-text">Set it aside — return when I have proper time and focus.</span></div>
+          <div class="ld-option" data-val="I skim it quickly and action the most critical parts immediately." onclick="selectLdOpt(this,9)"><div class="ld-option-radio"></div><span class="ld-option-text">Skim and action — hit the most critical parts right away.</span></div>
+          <div class="ld-option" data-val="I delegate or defer to someone else who has capacity." onclick="selectLdOpt(this,9)"><div class="ld-option-radio"></div><span class="ld-option-text">Delegate or defer to someone with more capacity.</span></div>
+          <div class="ld-option" data-val="I push through regardless — I don't like things sitting unactioned." onclick="selectLdOpt(this,9)"><div class="ld-option-radio"></div><span class="ld-option-text">Push through — I don't like things sitting unactioned.</span></div>
+        </div>
+      </div>
+      <!-- IBRI Q10 -->
+      <div class="ld-q" id="ldq10">
+        <div class="ld-q-label">Workplace Dynamics</div>
+        <div class="ld-q-text">Describe a time you had to navigate a disagreement or tension with a colleague. How did you approach it?</div>
+        <textarea class="ld-textarea" id="ldA10" placeholder="Share a brief example..."></textarea>
+      </div>
+      <!-- IBRI Q11 -->
+      <div class="ld-q" id="ldq11">
+        <div class="ld-q-label">Core Values</div>
+        <div class="ld-q-text">What core value most influences how you make decisions at work?</div>
+        <div class="ld-options" id="ldOpts11">
+          <div class="ld-option" data-val="Efficiency — getting things done correctly and on time." onclick="selectLdOpt(this,11)"><div class="ld-option-radio"></div><span class="ld-option-text">Efficiency — getting things done correctly and on time.</span></div>
+          <div class="ld-option" data-val="Relationships — maintaining trust and harmony with the people I work with." onclick="selectLdOpt(this,11)"><div class="ld-option-radio"></div><span class="ld-option-text">Relationships — trust and harmony with the people I work with.</span></div>
+          <div class="ld-option" data-val="Integrity — doing things the right way, even when it's harder." onclick="selectLdOpt(this,11)"><div class="ld-option-radio"></div><span class="ld-option-text">Integrity — doing things the right way, even when it's harder.</span></div>
+          <div class="ld-option" data-val="Impact — focusing on outcomes that matter and move things forward." onclick="selectLdOpt(this,11)"><div class="ld-option-radio"></div><span class="ld-option-text">Impact — outcomes that matter and move things forward.</span></div>
+        </div>
+      </div>
+      <!-- IBRI Q12 -->
+      <div class="ld-q" id="ldq12">
+        <div class="ld-q-label">Professional Presence</div>
+        <div class="ld-q-text">How comfortable are you sharing work accomplishments or professional updates publicly?</div>
+        <div class="ld-options" id="ldOpts12">
+          <div class="ld-option" data-val="Very comfortable — I post regularly and actively maintain my professional presence." onclick="selectLdOpt(this,12)"><div class="ld-option-radio"></div><span class="ld-option-text">Very comfortable — I post regularly and maintain my presence.</span></div>
+          <div class="ld-option" data-val="Selective — I share occasionally when something feels genuinely worth posting." onclick="selectLdOpt(this,12)"><div class="ld-option-radio"></div><span class="ld-option-text">Selective — I share occasionally when it feels worth posting.</span></div>
+          <div class="ld-option" data-val="Cautious — I prefer to keep my professional and personal life mostly private." onclick="selectLdOpt(this,12)"><div class="ld-option-radio"></div><span class="ld-option-text">Cautious — I prefer to keep my professional life mostly private.</span></div>
+          <div class="ld-option" data-val="Minimal — I rarely post and don't actively think about my online presence." onclick="selectLdOpt(this,12)"><div class="ld-option-radio"></div><span class="ld-option-text">Minimal — rarely post, don't think much about online presence.</span></div>
+        </div>
+      </div>
+
+      <div class="ld-actions">
+        <button class="ld-btn-back" id="ldBack" onclick="ldPrev()" style="visibility:hidden">← Back</button>
+        <button class="ld-btn-next" id="ldNext" onclick="ldNext()">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IT STAGE -->
+<div class="stage" id="stage-it">
+  <nav class="it-nav">
+    <div class="it-nav-brand">
+      <div class="it-nav-logo">
+        <div class="it-nav-logo-sq"></div>
+        <div class="it-nav-logo-sq2"></div>
+      </div>
+      <span class="it-nav-name">CorpAccess</span>
+      <span class="it-nav-badge">IT PORTAL</span>
+    </div>
+    <span class="it-nav-user">New Employee Onboarding · Session Active</span>
+  </nav>
+  <div style="background:white;border-bottom:1px solid var(--it-border);padding:0.55rem 2rem;font-size:0.75rem;color:var(--it-muted);display:flex;align-items:center;gap:0.4rem;">
+    IT Portal → Onboarding → <span style="color:var(--it-accent);font-weight:600;">Access Profile Setup</span>
+  </div>
+  <div class="it-body">
+    <div class="it-page-header">
+      <div class="it-page-title">Access Profile Completion</div>
+      <div class="it-page-sub">Complete all required fields to provision your system access. Information is used for access tier assignment and security configuration.</div>
+    </div>
+    <div class="it-progress-wrap">
+      <div class="it-progress-steps" id="itSteps">
+        <div class="it-step active" id="its1"><div class="it-step-dot">1</div><div class="it-step-label">Capacity</div></div>
+        <div class="it-step" id="its2"><div class="it-step-dot">2</div><div class="it-step-label">Load</div></div>
+        <div class="it-step" id="its3"><div class="it-step-dot">3</div><div class="it-step-label">Control</div></div>
+        <div class="it-step" id="its4"><div class="it-step-dot">4</div><div class="it-step-label">Availability</div></div>
+        <div class="it-step" id="its5"><div class="it-step-dot">5</div><div class="it-step-label">Role</div></div>
+        <div class="it-step" id="its6"><div class="it-step-dot">6</div><div class="it-step-label">Systems</div></div>
+        <div class="it-step" id="its7"><div class="it-step-dot">7</div><div class="it-step-label">Pattern</div></div>
+        <div class="it-step" id="its8"><div class="it-step-dot">8</div><div class="it-step-label">Resolution</div></div>
+        <div class="it-step" id="its9"><div class="it-step-dot">9</div><div class="it-step-label">Alerts</div></div>
+        <div class="it-step" id="its10"><div class="it-step-dot">10</div><div class="it-step-label">Credential</div></div>
+        <div class="it-step" id="its11"><div class="it-step-dot">11</div><div class="it-step-label">Policy</div></div>
+        <div class="it-step" id="its12"><div class="it-step-dot">12</div><div class="it-step-label">Footprint</div></div>
+      </div>
+    </div>
+    <div class="it-form-card">
+      <div class="it-form-header">
+        <span class="it-form-header-icon">📋</span>
+        <span class="it-form-header-title" id="itFormTitle">Section 1 — Operational Capacity</span>
+        <span class="it-form-header-req">* Required fields</span>
+      </div>
+      <div class="it-form-body">
+
+        <!-- RCL Q1 -->
+        <div class="it-q active" id="itq1">
+          <div class="it-field-label">Current Operational Tempo <span class="req">*</span></div>
+          <div class="it-field-sub">Helps establish your baseline for access load calibration and system alert thresholds.</div>
+          <div class="it-radio-group" id="itOpts1">
+            <div class="it-radio-item" data-val="less_than_2" data-rcl="duration" onclick="selectItOpt(this,1)"><div class="it-radio-dot"></div><span class="it-radio-text">Less than 2 weeks of elevated workload — currently in a stable operational period.</span></div>
+            <div class="it-radio-item" data-val="2_to_6" data-rcl="duration" onclick="selectItOpt(this,1)"><div class="it-radio-dot"></div><span class="it-radio-text">2–6 weeks — moderate increase, within normal operating range.</span></div>
+            <div class="it-radio-item" data-val="6_to_16" data-rcl="duration" onclick="selectItOpt(this,1)"><div class="it-radio-dot"></div><span class="it-radio-text">6 weeks to 4 months — sustained elevated tempo, ongoing.</span></div>
+            <div class="it-radio-item" data-val="over_4_months" data-rcl="duration" onclick="selectItOpt(this,1)"><div class="it-radio-dot"></div><span class="it-radio-text">More than 4 months — extended high-demand period.</span></div>
+          </div>
+        </div>
+
+        <!-- RCL Q2 -->
+        <div class="it-q" id="itq2">
+          <div class="it-field-label">Open Action Items & Pending Decisions <span class="req">*</span></div>
+          <div class="it-field-sub">Number of significant unresolved work items currently in your queue. Used for access priority configuration.</div>
+          <div class="it-radio-group" id="itOpts2">
+            <div class="it-radio-item" data-val="0_to_1" data-rcl="threads" onclick="selectItOpt(this,2)"><div class="it-radio-dot"></div><span class="it-radio-text">0–1 open items — queue is largely clear.</span></div>
+            <div class="it-radio-item" data-val="2_to_3" data-rcl="threads" onclick="selectItOpt(this,2)"><div class="it-radio-dot"></div><span class="it-radio-text">2–3 open items — manageable volume.</span></div>
+            <div class="it-radio-item" data-val="4_to_6" data-rcl="threads" onclick="selectItOpt(this,2)"><div class="it-radio-dot"></div><span class="it-radio-text">4–6 open items — elevated queue, several unresolved.</span></div>
+            <div class="it-radio-item" data-val="over_6" data-rcl="threads" onclick="selectItOpt(this,2)"><div class="it-radio-dot"></div><span class="it-radio-text">6+ open items — high queue volume, significant backlog.</span></div>
+          </div>
+        </div>
+
+        <!-- RCL Q3 -->
+        <div class="it-q" id="itq3">
+          <div class="it-field-label">Decision Authority Level <span class="req">*</span></div>
+          <div class="it-field-sub">Degree of control over resolution of current work items. Used for access escalation path configuration.</div>
+          <div class="it-radio-group" id="itOpts3">
+            <div class="it-radio-item" data-val="high" data-rcl="control" onclick="selectItOpt(this,3)"><div class="it-radio-dot"></div><span class="it-radio-text">High — I have full authority over most active items.</span></div>
+            <div class="it-radio-item" data-val="moderate" data-rcl="control" onclick="selectItOpt(this,3)"><div class="it-radio-dot"></div><span class="it-radio-text">Moderate — shared authority, collaborative resolution.</span></div>
+            <div class="it-radio-item" data-val="low" data-rcl="control" onclick="selectItOpt(this,3)"><div class="it-radio-dot"></div><span class="it-radio-text">Low — resolution depends significantly on others.</span></div>
+            <div class="it-radio-item" data-val="none" data-rcl="control" onclick="selectItOpt(this,3)"><div class="it-radio-dot"></div><span class="it-radio-text">Minimal — largely waiting on external decisions or approvals.</span></div>
+          </div>
+        </div>
+
+        <!-- RCL Q4 -->
+        <div class="it-q" id="itq4">
+          <div class="it-field-label">Off-Hours System Availability <span class="req">*</span></div>
+          <div class="it-field-sub">Indicates your typical availability outside core hours. Used for after-hours access and alert routing configuration.</div>
+          <div class="it-radio-group" id="itOpts4">
+            <div class="it-radio-item" data-val="adequate" data-rcl="recovery" onclick="selectItOpt(this,4)"><div class="it-radio-dot"></div><span class="it-radio-text">Not available — I maintain clear separation between work and off-hours.</span></div>
+            <div class="it-radio-item" data-val="limited" data-rcl="recovery" onclick="selectItOpt(this,4)"><div class="it-radio-dot"></div><span class="it-radio-text">Occasionally available — I check in selectively during off-hours.</span></div>
+            <div class="it-radio-item" data-val="none" data-rcl="recovery" onclick="selectItOpt(this,4)"><div class="it-radio-dot"></div><span class="it-radio-text">Frequently available — work follows me outside core hours regularly.</span></div>
+          </div>
+        </div>
+
+        <!-- IBRI Q5 -->
+        <div class="it-q" id="itq5">
+          <div class="it-field-label">Job Title & Department <span class="req">*</span></div>
+          <div class="it-field-sub">Required for access tier assignment and system permissions configuration.</div>
+          <textarea class="it-textarea" id="itA5" placeholder="Job title and department..."></textarea>
+        </div>
+        <!-- IBRI Q6 -->
+        <div class="it-q" id="itq6">
+          <div class="it-field-label">Systems & Applications <span class="req">*</span></div>
+          <div class="it-field-sub">List the systems, platforms, and applications you require access to in your role.</div>
+          <textarea class="it-textarea" id="itA6" placeholder="List all required systems and tools..."></textarea>
+        </div>
+        <!-- IBRI Q7 -->
+        <div class="it-q" id="itq7">
+          <div class="it-field-label">Typical System Usage Pattern <span class="req">*</span></div>
+          <div class="it-field-sub">Describe how you typically interact with company systems during a normal working day.</div>
+          <textarea class="it-textarea" id="itA7" placeholder="Describe your typical system usage..."></textarea>
+        </div>
+        <!-- IBRI Q8 -->
+        <div class="it-q" id="itq8">
+          <div class="it-field-label">Technical Issue Resolution Protocol <span class="req">*</span></div>
+          <div class="it-field-sub">When you encounter an unfamiliar technical issue, what is your standard first step?</div>
+          <div class="it-radio-group" id="itOpts8">
+            <div class="it-radio-item" data-val="Search internal documentation or knowledge base first." onclick="selectItOpt(this,8)"><div class="it-radio-dot"></div><span class="it-radio-text">Search internal documentation or knowledge base first.</span></div>
+            <div class="it-radio-item" data-val="Contact IT helpdesk or a knowledgeable colleague directly." onclick="selectItOpt(this,8)"><div class="it-radio-dot"></div><span class="it-radio-text">Contact IT helpdesk or a knowledgeable colleague directly.</span></div>
+            <div class="it-radio-item" data-val="Attempt to resolve independently using external resources." onclick="selectItOpt(this,8)"><div class="it-radio-dot"></div><span class="it-radio-text">Attempt to resolve independently using external resources.</span></div>
+            <div class="it-radio-item" data-val="Escalate immediately to avoid risk of causing further issues." onclick="selectItOpt(this,8)"><div class="it-radio-dot"></div><span class="it-radio-text">Escalate immediately to avoid risk of causing further issues.</span></div>
+          </div>
+        </div>
+        <!-- IBRI Q9 -->
+        <div class="it-q" id="itq9">
+          <div class="it-field-label">Alert & Request Management Under Load <span class="req">*</span></div>
+          <div class="it-field-sub">How do you typically handle system alerts or IT requests during high-volume or high-pressure periods?</div>
+          <div class="it-radio-group" id="itOpts9">
+            <div class="it-radio-item" data-val="Triage and action all alerts systematically regardless of workload." onclick="selectItOpt(this,9)"><div class="it-radio-dot"></div><span class="it-radio-text">Triage and action all alerts systematically regardless of workload.</span></div>
+            <div class="it-radio-item" data-val="Prioritize critical items and defer lower-priority alerts." onclick="selectItOpt(this,9)"><div class="it-radio-dot"></div><span class="it-radio-text">Prioritize critical items and defer lower-priority alerts.</span></div>
+            <div class="it-radio-item" data-val="Action urgent requests immediately and handle the rest when volume decreases." onclick="selectItOpt(this,9)"><div class="it-radio-dot"></div><span class="it-radio-text">Action urgent requests immediately, handle rest when volume decreases.</span></div>
+            <div class="it-radio-item" data-val="Route all non-essential requests to a colleague during high-demand periods." onclick="selectItOpt(this,9)"><div class="it-radio-dot"></div><span class="it-radio-text">Route non-essential requests to a colleague during high-demand periods.</span></div>
+          </div>
+        </div>
+        <!-- IBRI Q10 -->
+        <div class="it-q" id="itq10">
+          <div class="it-field-label">Credential & Access Sharing Protocol <span class="req">*</span></div>
+          <div class="it-field-sub">If a colleague required temporary use of your credentials or system access to meet a critical deadline, how would you handle the request?</div>
+          <textarea class="it-textarea" id="itA10" placeholder="Describe how you would handle this situation..."></textarea>
+        </div>
+        <!-- IBRI Q11 -->
+        <div class="it-q" id="itq11">
+          <div class="it-field-label">Security Policy Acknowledgement <span class="req">*</span></div>
+          <div class="it-field-sub">Which statement best reflects your approach to organizational security policies?</div>
+          <div class="it-radio-group" id="itOpts11">
+            <div class="it-radio-item" data-val="I follow all policies strictly regardless of context or urgency." onclick="selectItOpt(this,11)"><div class="it-radio-dot"></div><span class="it-radio-text">Follow all policies strictly regardless of context or urgency.</span></div>
+            <div class="it-radio-item" data-val="I follow policies but apply judgment in urgent or exceptional situations." onclick="selectItOpt(this,11)"><div class="it-radio-dot"></div><span class="it-radio-text">Follow policies but apply judgment in urgent or exceptional situations.</span></div>
+            <div class="it-radio-item" data-val="I follow the spirit of policies even when specific rules don't cover a situation." onclick="selectItOpt(this,11)"><div class="it-radio-dot"></div><span class="it-radio-text">Follow the spirit of policies when specific rules don't cover a situation.</span></div>
+            <div class="it-radio-item" data-val="I escalate when policies are unclear rather than making independent decisions." onclick="selectItOpt(this,11)"><div class="it-radio-dot"></div><span class="it-radio-text">Escalate when policies are unclear rather than deciding independently.</span></div>
+          </div>
+        </div>
+        <!-- IBRI Q12 -->
+        <div class="it-q" id="itq12">
+          <div class="it-field-label">External Digital Footprint <span class="req">*</span></div>
+          <div class="it-field-sub">Describe your level of professional activity on external platforms. Used for social engineering risk baseline configuration.</div>
+          <div class="it-radio-group" id="itOpts12">
+            <div class="it-radio-item" data-val="Active — post regularly, connect frequently, high public professional presence." onclick="selectItOpt(this,12)"><div class="it-radio-dot"></div><span class="it-radio-text">Active — post regularly, connect frequently, high public presence.</span></div>
+            <div class="it-radio-item" data-val="Moderate — occasional posts, selective connections, some public presence." onclick="selectItOpt(this,12)"><div class="it-radio-dot"></div><span class="it-radio-text">Moderate — occasional posts, selective connections, some presence.</span></div>
+            <div class="it-radio-item" data-val="Limited — profile exists but minimal activity or public information." onclick="selectItOpt(this,12)"><div class="it-radio-dot"></div><span class="it-radio-text">Limited — profile exists but minimal activity or public information.</span></div>
+            <div class="it-radio-item" data-val="None — no external professional platform presence." onclick="selectItOpt(this,12)"><div class="it-radio-dot"></div><span class="it-radio-text">None — no external professional platform presence.</span></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="it-form-actions">
+        <button class="it-btn-back" id="itBack" onclick="itPrev()" style="visibility:hidden">← Previous</button>
+        <button class="it-btn-next" id="itNext" onclick="itNext()">Save & Continue <span>→</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESSING -->
+<div class="stage" id="stage-processing">
+  <div class="proc-inner">
+    <div class="proc-mark"><div class="proc-mark-inner"></div></div>
+    <div class="proc-label" id="procLabel"></div>
+    <div class="proc-steps">
+      <div class="proc-step" id="ps1"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst1"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps2"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst2"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps3"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst3"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps4"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst4"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps5"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst5"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps6"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst6"></span><span class="proc-step-check">✓</span></div>
+      <div class="proc-step" id="ps7"><div class="proc-step-pip"></div><span class="proc-step-txt" id="pst7"></span><span class="proc-step-check">✓</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- REVEAL -->
+<div class="stage" id="stage-reveal">
+  <div class="reveal-inner">
+    <div class="reveal-flash">
+      <div class="reveal-flash-icon">◈</div>
+      <div class="reveal-flash-text">The form you just completed was not what it appeared to be. <b>Every question was a behavioral signal input.</b> You were never setting up a learning path or configuring IT access. You were building your Veros profile.</div>
+    </div>
+    <div class="reveal-title">THIS<br>WAS <span>VEROS.</span></div>
+    <p class="reveal-body">
+      That experience — whichever door you entered — was a live demonstration of Veros's trojan horse deployment model. The questions felt routine because they were designed to. <b>The behavioral signal was extracted from your natural responses.</b> You didn't perform for a security tool. You answered honestly, because you didn't know one was running.
+      <br><br>
+      That's the point. <b>Your IBRI profile is ready.</b>
+    </p>
+    <div class="reveal-cta">
+      <button class="reveal-btn-primary" onclick="showProfile()">View My Profile →</button>
+      <button class="reveal-btn-ghost" onclick="showStage('stage-door')">Try the Other Door</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="stage" id="stage-profile">
+  <div class="profile-topbar">
+    <div class="profile-topbar-left">
+      <div class="vmark"></div>
+      <span class="profile-topbar-name">Veros</span>
+      <div class="profile-topbar-sep"></div>
+      <span class="profile-topbar-ctx">Behavioral Profile · IBRI Output</span>
+    </div>
+    <div class="profile-topbar-right">
+      <a href="veros-pulse-system.html" class="profile-topbar-action">Pulse System →</a>
+      <a href="index.html" class="profile-topbar-action">← Home</a>
+    </div>
+  </div>
+  <div class="profile-body">
+    <div class="profile-head">
+      <div class="profile-head-eyebrow">Veros · IBRI Profile Generated</div>
+      <div class="profile-head-title">BEHAVIORAL<br>SIGNATURE</div>
+      <div class="profile-head-meta">
+        <span class="profile-head-meta-item" id="profileDoorCtx">—</span>
+        <div class="profile-head-meta-sep"></div>
+        <span class="profile-head-meta-item">Aether Framework · v1</span>
+        <div class="profile-head-meta-sep"></div>
+        <span class="profile-head-meta-item" id="profileTimestamp">—</span>
+      </div>
+    </div>
+
+    <!-- RCL BADGE -->
+    <div class="rcl-badge-block" id="rclBadge" style="display:none">
+      <div style="flex:1">
+        <div class="rcl-badge-label">Residual Cognitive Load · Pre-Condition Modifier</div>
+        <div class="rcl-badge-level" id="rclBadgeLevel">—</div>
+        <div class="rcl-badge-desc" id="rclBadgeDesc">—</div>
+        <div class="rcl-dims" id="rclDimChips"></div>
+      </div>
+    </div>
+
+    <div class="ibri-score-block" id="ibriBlock">
+      <div class="ibri-score-top">
+        <span class="ibri-score-label">IBRI Composite Score</span>
+        <div class="ibri-score-val">
+          <span class="ibri-score-num" id="ibriNum">—</span>
+          <span class="ibri-score-denom">/ 100</span>
+          <span class="ibri-score-tier" id="ibriTier">—</span>
+        </div>
+      </div>
+      <div class="ibri-dims" id="ibriDims">
+        <div class="profile-loading">
+          <div class="profile-loading-dot"></div>
+          <span class="profile-loading-txt">Generating profile from API...</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="insightsBlock"></div>
+
+    <div class="profile-cta-block">
+      <div class="profile-cta-icon">▸</div>
+      <div class="profile-cta-body">
+        <div class="profile-cta-label">Next — Continuous Monitoring</div>
+        <div class="profile-cta-desc">Your behavioral profile is the baseline. The Pulse system monitors how your current conditions interact with your trait architecture — and signals when that intersection becomes exploitable.</div>
+        <div class="profile-cta-actions">
+          <button class="btn-amber" onclick="window.location.href='veros-pulse-system.html'">Enter Pulse System →</button>
+          <button class="btn-ghost" onclick="window.location.href='veros-scenario.html'">Run a Scenario</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── STATE ── */
+const S = {
+  door: null,
+  ldQ: 1,
+  itQ: 1,
+  answers: {},
+  rcl: {
+    duration: null,   // less_than_2 | 2_to_6 | 6_to_16 | over_4_months
+    threads: null,    // 0_to_1 | 2_to_3 | 4_to_6 | over_6
+    control: null,    // high | moderate | low | none
+    recovery: null,   // adequate | limited | none
+    level: null,      // Low | Moderate | High
+    coeff_fv: 0,
+    coeff_ea: 0,
+    coeff_rr: 0,
+    coeff_sc: 0,
+  },
+  ibriData: null,
+};
+
+/* ── RCL SCORING ENGINE ──
+   Duration:   <2w=0  2-6w=1  6-16w=2  >4m=3
+   Threads:    0-1=0  2-3=1   4-6=2    >6=3
+   Control:    high=0 mod=1   low=2    none=3
+   Recovery:   adequate=0 limited=1 none=2
+   Max raw = 11
+   Low: 0-3 | Moderate: 4-7 | High: 8-11
+*/
+function deriveRCL() {
+  const dMap = { less_than_2:0, '2_to_6':1, '6_to_16':2, over_4_months:3 };
+  const tMap = { '0_to_1':0, '2_to_3':1, '4_to_6':2, over_6:3 };
+  const cMap = { high:0, moderate:1, low:2, none:3 };
+  const rMap = { adequate:0, limited:1, none:2 };
+
+  const d = dMap[S.rcl.duration] ?? 0;
+  const t = tMap[S.rcl.threads]  ?? 0;
+  const c = cMap[S.rcl.control]  ?? 0;
+  const r = rMap[S.rcl.recovery] ?? 0;
+  const raw = d + t + c + r;
+
+  if (raw <= 3)       S.rcl.level = 'Low';
+  else if (raw <= 7)  S.rcl.level = 'Moderate';
+  else                S.rcl.level = 'High';
+
+  // Differentiated coefficients per addendum architecture
+  // FV = direct amplifier (heaviest), EA = second, RR & SC = tertiary suppressors
+  const coeffMap = {
+    Low:      { fv: 0.05, ea: 0.03, rr: 0.02, sc: 0.02 },
+    Moderate: { fv: 0.18, ea: 0.12, rr: 0.08, sc: 0.08 },
+    High:     { fv: 0.35, ea: 0.22, rr: 0.15, sc: 0.15 },
+  };
+  const c2 = coeffMap[S.rcl.level];
+  S.rcl.coeff_fv = c2.fv;
+  S.rcl.coeff_ea = c2.ea;
+  S.rcl.coeff_rr = c2.rr;
+  S.rcl.coeff_sc = c2.sc;
+}
+
+/* ── PROCESSING COPY ── */
+const PROC_COPY = {
+  ld: {
+    label: 'Building your learning profile...',
+    steps: ['Reviewing your role and team context','Mapping your tool and platform preferences','Analyzing your workday patterns','Identifying your learning style','Evaluating how you work under pressure','Assessing your collaboration approach','Generating your personalized learning path']
+  },
+  it: {
+    label: 'Configuring your access profile...',
+    steps: ['Validating role and department information','Reviewing systems and access requirements','Establishing usage pattern baseline','Evaluating issue resolution approach','Assessing alert and request handling','Reviewing policy alignment responses','Provisioning access tier configuration']
+  }
+};
+
+/* ── STAGE MANAGEMENT ── */
+function showStage(id) {
+  document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* ── DOOR SELECTION ── */
+function selectDoor(card) {
+  document.querySelectorAll('.door-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  S.door = card.dataset.door;
+  document.getElementById('doorLaunch').disabled = false;
+}
+
+function launchDoor() {
+  if (!S.door) return;
+  S.answers = {};
+  S.rcl = { duration:null, threads:null, control:null, recovery:null, level:null, coeff_fv:0, coeff_ea:0, coeff_rr:0, coeff_sc:0 };
+  if (S.door === 'ld') { S.ldQ = 1; showStage('stage-ld'); updateLdUI(); }
+  else { S.itQ = 1; showStage('stage-it'); updateItUI(); }
+}
+
+/* ── L&D FLOW ── */
+const TOTAL_LD = 12;
+const ldTitles = ['','Before we begin','Your open priorities','Decision ownership','Time to recharge','Tell us about your role','Your daily toolkit','A typical day at work','How you learn','Under pressure','Navigating people','What drives you','Your professional presence'];
+const ldSubs   = ['','A few quick questions help us calibrate your experience for where you are right now.','Understanding your current workload helps us recommend the right pace and format.','How much ownership you have shapes what kind of content lands best.','Knowing your recovery patterns helps us match content to your current capacity.','We\'ll use this to personalize your learning path.','Which platforms shape your workday?','Help us understand your work context.','Understanding how you learn helps us tailor content.','We\'ll match content formats to how you work best under load.','Collaboration style informs team-based learning recommendations.','Values-aligned learning tends to stick better.','We match content delivery to your engagement preferences.'];
+
+function updateLdUI() {
+  const q = S.ldQ;
+  document.querySelectorAll('.ld-q').forEach(el => el.classList.remove('active'));
+  document.getElementById(`ldq${q}`).classList.add('active');
+  document.getElementById('ldCardTitle').textContent = ldTitles[q];
+  document.getElementById('ldCardSub').textContent = ldSubs[q];
+  document.getElementById('ldProgressLabel').textContent = `Step ${q} of ${TOTAL_LD}`;
+  document.getElementById('ldProgressFill').style.width = (q / TOTAL_LD * 100) + '%';
+  document.getElementById('ldBack').style.visibility = q > 1 ? 'visible' : 'hidden';
+  document.getElementById('ldNext').textContent = q < TOTAL_LD ? 'Continue →' : 'Complete Profile →';
+}
+
+function selectLdOpt(el, qNum) {
+  el.closest('.ld-options').querySelectorAll('.ld-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  const val = el.dataset.val;
+  const rclKey = el.dataset.rcl;
+  if (rclKey) S.rcl[rclKey] = val;
+  S.answers[`q${qNum}`] = val;
+}
+
+const LD_TEXTAREA_QS = [5,6,7,10];
+function ldGetCurrentAnswer() {
+  const q = S.ldQ;
+  if (LD_TEXTAREA_QS.includes(q)) {
+    const ta = document.getElementById(`ldA${q}`);
+    return ta ? ta.value.trim() : '';
+  }
+  return S.answers[`q${q}`] || '';
+}
+
+function ldNext() {
+  const ans = ldGetCurrentAnswer();
+  if (!ans) { alert('Please answer this question before continuing.'); return; }
+  S.answers[`q${S.ldQ}`] = ans;
+  if (S.ldQ < TOTAL_LD) { S.ldQ++; updateLdUI(); }
+  else { submitProfile(); }
+}
+
+function ldPrev() {
+  if (S.ldQ > 1) { S.ldQ--; updateLdUI(); }
+}
+
+/* ── IT FLOW ── */
+const TOTAL_IT = 12;
+const itTitles = ['','Section 1 — Operational Capacity','Section 2 — Open Action Items','Section 3 — Decision Authority','Section 4 — Off-Hours Availability','Section 5 — Role & Department','Section 6 — Systems & Access','Section 7 — Work Pattern Baseline','Section 8 — Issue Resolution Protocol','Section 9 — Alert Management','Section 10 — Credential Policy','Section 11 — Security Policy Alignment','Section 12 — External Digital Footprint'];
+
+function updateItUI() {
+  const q = S.itQ;
+  document.querySelectorAll('.it-q').forEach(el => el.classList.remove('active'));
+  document.getElementById(`itq${q}`).classList.add('active');
+  document.getElementById('itFormTitle').textContent = itTitles[q];
+  for (let i = 1; i <= TOTAL_IT; i++) {
+    const step = document.getElementById(`its${i}`);
+    step.className = 'it-step';
+    if (i < q) { step.classList.add('done'); step.querySelector('.it-step-dot').textContent = '✓'; }
+    else if (i === q) { step.classList.add('active'); step.querySelector('.it-step-dot').textContent = i; }
+    else { step.querySelector('.it-step-dot').textContent = i; }
+  }
+  document.getElementById('itBack').style.visibility = q > 1 ? 'visible' : 'hidden';
+  document.getElementById('itNext').innerHTML = q < TOTAL_IT ? 'Save & Continue <span>→</span>' : 'Submit Profile <span>→</span>';
+}
+
+function selectItOpt(el, qNum) {
+  el.closest('.it-radio-group').querySelectorAll('.it-radio-item').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  const val = el.dataset.val;
+  const rclKey = el.dataset.rcl;
+  if (rclKey) S.rcl[rclKey] = val;
+  S.answers[`q${qNum}`] = val;
+}
+
+const IT_TEXTAREA_QS = [5,6,7,10];
+function itGetCurrentAnswer() {
+  const q = S.itQ;
+  if (IT_TEXTAREA_QS.includes(q)) {
+    const ta = document.getElementById(`itA${q}`);
+    return ta ? ta.value.trim() : '';
+  }
+  return S.answers[`q${q}`] || '';
+}
+
+function itNext() {
+  const ans = itGetCurrentAnswer();
+  if (!ans) { alert('This field is required.'); return; }
+  S.answers[`q${S.itQ}`] = ans;
+  if (S.itQ < TOTAL_IT) { S.itQ++; updateItUI(); }
+  else { submitProfile(); }
+}
+
+function itPrev() {
+  if (S.itQ > 1) { S.itQ--; updateItUI(); }
+}
+
+/* ── SUBMIT ── */
+function submitProfile() {
+  deriveRCL();
+  const copy = PROC_COPY[S.door];
+  document.getElementById('procLabel').textContent = copy.label;
+  copy.steps.forEach((txt, i) => { document.getElementById(`pst${i+1}`).textContent = txt; });
+  showStage('stage-processing');
+  runProcessingAnimation();
+  callVeros();
+}
+
+function runProcessingAnimation() {
+  const steps = ['ps1','ps2','ps3','ps4','ps5','ps6','ps7'];
+  const delays = [300,700,1100,1500,1900,2300,2700];
+  const dones  = [650,1050,1450,1850,2250,2650,3050];
+  steps.forEach((id,i) => {
+    setTimeout(() => document.getElementById(id).classList.add('active'), delays[i]);
+    setTimeout(() => {
+      document.getElementById(id).classList.remove('active');
+      document.getElementById(id).classList.add('done');
+    }, dones[i]);
+  });
+}
+
+async function callVeros() {
+  const doorLabel = S.door === 'ld' ? 'Learning Path Personalization (L&D door)' : 'Access Profile Completion (IT door)';
+  const answerBlock = Object.entries(S.answers).map(([k,v]) => `${k}: ${v}`).join('\n');
+  const rclBlock = `RCL Pre-Condition Level: ${S.rcl.level}
+Decision duration: ${S.rcl.duration} | Open threads: ${S.rcl.threads} | Control level: ${S.rcl.control} | Recovery: ${S.rcl.recovery}
+RCL Coefficients → FV amplifier: +${(S.rcl.coeff_fv*100).toFixed(0)}% | EA suppressor: -${(S.rcl.coeff_ea*100).toFixed(0)}% | RR suppressor: -${(S.rcl.coeff_rr*100).toFixed(0)}% | SC suppressor: -${(S.rcl.coeff_sc*100).toFixed(0)}%`;
+
+  const prompt = `You are the Veros behavioral profiling engine — part of Intangybl's Aether Behavioral Framework.
+
+A user completed the "${doorLabel}" form. Every question was a behavioral signal input for the Intangybl Behavioral Risk Index (IBRI).
+
+IBRI DIMENSIONS:
+1. Fatigue Vulnerability (FV) — cognitive depletion degrades decision quality. Higher = more vulnerable.
+2. Social Compliance (SC) — deference to authority, familiar contacts. Higher = more susceptible to impersonation.
+3. Risk Rationalization (RR) — tendency to explain away warning signs. Higher = more susceptible to plausible requests.
+4. Exposure Awareness (EA) — familiarity with attack patterns. Higher = MORE protected (protective dimension).
+
+RCL PRE-CONDITION MODIFIER (apply before scoring):
+${rclBlock}
+
+Apply RCL as follows:
+- FV: AMPLIFY raw score by the FV coefficient (FV is a direct amplifier — same depletion mechanism, extended duration)
+- EA: SUPPRESS effective score by EA coefficient (cognitive bandwidth compression reduces threat recognition)
+- RR: SUPPRESS effective score by RR coefficient (depleted cost-benefit calculus lowers rationalization resistance)  
+- SC: SUPPRESS effective score by SC coefficient (reduced sensitivity to social monitoring cues)
+- rcl_ibri_score should reflect the RCL-modified composite. If RCL is Low, scores will be close to raw. If High, meaningful divergence expected.
+
+SUBJECT ANSWERS:
+${answerBlock}
+
+Respond with JSON ONLY — no preamble, no markdown, no backticks:
+
+{
+  "ibri_score": <raw composite 1-100>,
+  "rcl_ibri_score": <RCL-modified composite, can exceed 100 if FV pushes it>,
+  "tier": <"Elevated" | "Moderate" | "Low">,
+  "dimensions": {
+    "fv": <raw 0-100>,
+    "sc": <raw 0-100>,
+    "rr": <raw 0-100>,
+    "ea": <raw 0-100>
+  },
+  "rcl_dimensions": {
+    "fv": <RCL-modified, can exceed 100>,
+    "sc": <RCL-modified 0-100>,
+    "rr": <RCL-modified 0-100>,
+    "ea": <RCL-modified 0-100>
+  },
+  "insights": {
+    "fv": "<2 sentences specific to their answers and RCL state>",
+    "sc": "<2 sentences>",
+    "rr": "<2 sentences>",
+    "ea": "<2 sentences>"
+  },
+  "dominant_vector": "<most exploitable vector given this profile and RCL state>",
+  "signature_note": "<1 sentence capturing how their traits and current load interact>",
+  "rcl_narrative": "<1 sentence: what their RCL level means for interpreting this profile>"
+}`;
+
+  try {
+    const res = await fetch('https://intangybl.rvance609.workers.dev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1200,
+        messages: [{ role:'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || '';
+    const clean = text.replace(/```json|```/g,'').trim();
+    S.ibriData = JSON.parse(clean);
+  } catch(e) {
+    // Fallback with RCL applied
+    const fvRaw = 62, scRaw = 58, rrRaw = 54, eaRaw = 41;
+    S.ibriData = {
+      ibri_score: 58,
+      rcl_ibri_score: Math.round(58 * (1 + S.rcl.coeff_fv * 0.32)),
+      tier: 'Moderate',
+      dimensions: { fv: fvRaw, sc: scRaw, rr: rrRaw, ea: eaRaw },
+      rcl_dimensions: {
+        fv: Math.min(150, Math.round(fvRaw * (1 + S.rcl.coeff_fv))),
+        sc: Math.max(0, Math.round(scRaw * (1 - S.rcl.coeff_sc))),
+        rr: Math.max(0, Math.round(rrRaw * (1 - S.rcl.coeff_rr))),
+        ea: Math.max(0, Math.round(eaRaw * (1 - S.rcl.coeff_ea))),
+      },
+      insights: {
+        fv: 'Your responses suggest meaningful fatigue vulnerability — you tend to act decisively under pressure, which compresses verification instincts when capacity is low. Your current load state amplifies this further.',
+        sc: 'Your communication style shows deference to familiar contacts and authority figures. This stable relational trait makes impersonation attacks from known-contact lookalikes particularly effective.',
+        rr: 'You show a tendency to accept well-constructed rationale at face value. Under your current cognitive load, the mental bandwidth required to scrutinize justifications is reduced.',
+        ea: 'Your exposure awareness is developing. Sustained load is compressing the attentional bandwidth available for threat recognition — novel risks may register more slowly than usual.'
+      },
+      dominant_vector: 'Familiar-contact impersonation under time pressure — RCL state reduces verification instincts precisely when they are most needed',
+      signature_note: 'A profile whose verification instincts are reliable at baseline but compress measurably under sustained load and urgency from apparently trusted sources.',
+      rcl_narrative: `${S.rcl.level} residual cognitive load detected — pre-condition modifier applied across all four dimensions before situational activators were scored.`
+    };
+  }
+
+  setTimeout(() => showStage('stage-reveal'), 3400);
+}
+
+/* ── PROFILE RENDER ── */
+function showProfile() {
+  const d = S.ibriData;
+  if (!d) { showStage('stage-profile'); return; }
+
+  document.getElementById('profileDoorCtx').textContent = S.door === 'ld'
+    ? 'Entry via L&D door · Learning Path Personalization'
+    : 'Entry via IT door · Access Profile Completion';
+  document.getElementById('profileTimestamp').textContent = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+  // RCL Badge
+  if (S.rcl.level) {
+    const badge = document.getElementById('rclBadge');
+    badge.style.display = 'flex';
+    const lvlEl = document.getElementById('rclBadgeLevel');
+    lvlEl.textContent = `${S.rcl.level} RCL`;
+    lvlEl.className = `rcl-badge-level ${S.rcl.level.toLowerCase()}`;
+    document.getElementById('rclBadgeDesc').textContent = d.rcl_narrative || '';
+    const chips = document.getElementById('rclDimChips');
+    chips.innerHTML = [
+      `<span class="rcl-dim-chip amplified">FV +${(S.rcl.coeff_fv*100).toFixed(0)}% amplified</span>`,
+      `<span class="rcl-dim-chip suppressed">EA −${(S.rcl.coeff_ea*100).toFixed(0)}% suppressed</span>`,
+      `<span class="rcl-dim-chip suppressed">RR −${(S.rcl.coeff_rr*100).toFixed(0)}% suppressed</span>`,
+      `<span class="rcl-dim-chip suppressed">SC −${(S.rcl.coeff_sc*100).toFixed(0)}% suppressed</span>`,
+    ].join('');
+  }
+
+  // IBRI Score — show RCL-modified if available
+  const displayScore = d.rcl_ibri_score || d.ibri_score;
+  document.getElementById('ibriNum').textContent = displayScore;
+  const tier = document.getElementById('ibriTier');
+  tier.textContent = d.tier;
+  tier.className = 'ibri-score-tier ' + d.tier.toLowerCase();
+
+  // Dimension bars — show RCL-modified scores with raw annotation
+  const rcld = d.rcl_dimensions || d.dimensions;
+  const dims = [
+    { key:'fv', label:'Fatigue Vulnerability', score: rcld.fv, raw: d.dimensions.fv, level: rcld.fv >= 70 ? 'high' : rcld.fv >= 45 ? 'elevated' : 'stable', rclEffect: 'amplified' },
+    { key:'sc', label:'Social Compliance',     score: rcld.sc, raw: d.dimensions.sc, level: rcld.sc >= 65 ? 'high' : rcld.sc >= 40 ? 'elevated' : 'stable', rclEffect: 'suppressed' },
+    { key:'rr', label:'Risk Rationalization',  score: rcld.rr, raw: d.dimensions.rr, level: rcld.rr >= 65 ? 'high' : rcld.rr >= 40 ? 'elevated' : 'stable', rclEffect: 'suppressed' },
+    { key:'ea', label:'Exposure Awareness',    score: rcld.ea, raw: d.dimensions.ea, level: rcld.ea >= 60 ? 'stable' : rcld.ea >= 35 ? 'elevated' : 'high',  rclEffect: 'suppressed' },
+  ];
+
+  const cappedPct = (v) => Math.min(100, v) + '%';
+
+  document.getElementById('ibriDims').innerHTML = dims.map(dim => `
+    <div class="ibri-dim">
+      <span class="ibri-dim-name">${dim.label}</span>
+      <div class="ibri-dim-wrap">
+        <div class="ibri-dim-fill ${dim.level}" style="width:0%" data-w="${cappedPct(dim.score)}"></div>
+      </div>
+      <span class="ibri-dim-val ${dim.level}">${dim.score}</span>
+      ${S.rcl.level && S.rcl.level !== 'Low' ? `<span class="ibri-dim-rcl" title="Raw: ${dim.raw}">${dim.rclEffect === 'amplified' ? '↑' : '↓'}${dim.raw}</span>` : ''}
+    </div>
+  `).join('');
+
+  setTimeout(() => {
+    document.querySelectorAll('.ibri-dim-fill').forEach(b => b.style.width = b.dataset.w);
+  }, 300);
+
+  // Insights
+  const insightDefs = [
+    { key:'fv', cls:'fv', label:'Fatigue Vulnerability' },
+    { key:'sc', cls:'sc', label:'Social Compliance' },
+    { key:'rr', cls:'rr', label:'Risk Rationalization' },
+    { key:'ea', cls:'ea', label:'Exposure Awareness' },
+  ];
+
+  document.getElementById('insightsBlock').innerHTML = `
+    <div style="font-family:var(--mono);font-size:0.58rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="color:var(--dim)">02</span> Dimension Insights
+    </div>
+    <div class="profile-insights">
+      ${insightDefs.map(ins => `
+        <div class="insight-card ${ins.cls}">
+          <div class="insight-card-head">
+            <span class="insight-card-label">${ins.label}</span>
+            <span class="insight-card-score">${rcld[ins.key]} / 100</span>
+          </div>
+          <p class="insight-card-txt">${d.insights[ins.key]}</p>
+        </div>
+      `).join('')}
+      <div class="insight-card" style="border-left-color:var(--amber)">
+        <div class="insight-card-head">
+          <span class="insight-card-label" style="color:var(--amber)">Dominant Attack Vector</span>
+        </div>
+        <p class="insight-card-txt"><b>${d.dominant_vector}</b></p>
+      </div>
+      <div class="insight-card" style="border-left-color:var(--bone2);background:var(--ink3)">
+        <div class="insight-card-head">
+          <span class="insight-card-label" style="color:var(--bone2)">Behavioral Signature</span>
+        </div>
+        <p class="insight-card-txt" style="font-style:italic">${d.signature_note}</p>
+      </div>
+    </div>
+    <div style="font-family:var(--mono);font-size:0.58rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;margin-top:1.5rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="color:var(--dim)">03</span> Next Step
+    </div>
+  `;
+
+  showStage('stage-profile');
+}
+</script>
+</body>
+</html>
