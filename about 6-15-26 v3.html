@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Intangybl was built by someone who understands behavioral risk from the inside. Not as a concept. As a condition." />
+  <title>About — Intangybl</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0d0d0d;
+      --ink2: #111111;
+      --amber: #c8922a;
+      --amber-light: #e0a93a;
+      --paper: #f0ebe0;
+      --muted: #666666;
+      --border: #1e1e1e;
+      --border2: #2a2a2a;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      background: rgba(13,13,13,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--mono); font-size: 0.65rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--paper); text-decoration: none;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono); font-size: 0.6rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--paper); }
+    .nav-cta {
+      font-family: var(--mono); font-size: 0.6rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--ink); background: var(--amber);
+      padding: 0.5rem 1.1rem; border-radius: 3px;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--amber-light); }
+
+    .page-header {
+      padding: 9rem 2.5rem 4rem;
+      max-width: 900px; margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-eyebrow {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1.5rem;
+    }
+    .page-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300; line-height: 1.2; color: var(--paper);
+      margin-bottom: 1rem;
+    }
+    .page-sub {
+      font-size: 1rem; color: var(--muted);
+      max-width: 520px; line-height: 1.7;
+    }
+
+    .content {
+      max-width: 900px; margin: 0 auto;
+    }
+
+    .act {
+      padding: 4rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .act-label {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1.5rem;
+    }
+    .act-title {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 300; color: var(--paper);
+      margin-bottom: 1.5rem;
+    }
+    .act-body {
+      font-size: 1rem; color: #a0a0a0;
+      line-height: 1.8; max-width: 600px;
+    }
+    .act-body p { margin-bottom: 1.3rem; }
+    .act-body p:last-child { margin-bottom: 0; }
+    .act-body strong { color: var(--paper); font-weight: 500; }
+    .act-body em { font-style: italic; color: var(--paper); }
+
+    /* Founder block */
+    .founder-block {
+      padding: 4rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+    .founder-title {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1.5rem;
+    }
+    .founder-name {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 300; color: var(--paper);
+      line-height: 1.15; margin-bottom: 1.5rem;
+    }
+    .founder-body {
+      font-size: 0.9rem; color: #888;
+      line-height: 1.8;
+    }
+    .founder-body p { margin-bottom: 1.2rem; }
+    .founder-body strong { color: var(--paper); font-weight: 500; }
+    .founder-body em { font-style: italic; color: var(--paper); }
+    .founder-creds { display: flex; flex-direction: column; gap: 1rem; }
+    .cred-row {
+      display: grid; grid-template-columns: 60px 1fr;
+      gap: 1rem; align-items: start;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .cred-row:last-child { border-bottom: none; }
+    .cred-key {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--amber); padding-top: 2px;
+    }
+    .cred-val {
+      font-family: var(--mono); font-size: 0.7rem;
+      color: var(--muted); line-height: 1.6;
+    }
+
+    /* Company block */
+    .company-block {
+      padding: 4rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .company-title {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1.5rem;
+    }
+    .company-name {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 300; color: var(--paper);
+      line-height: 1.15; margin-bottom: 1.5rem;
+    }
+    .company-body {
+      font-size: 0.95rem; color: #888;
+      line-height: 1.8; max-width: 600px; margin-bottom: 2.5rem;
+    }
+    .company-body p { margin-bottom: 1.2rem; }
+    .company-body strong { color: var(--paper); font-weight: 500; }
+    .company-body em { font-style: italic; color: var(--paper); }
+
+    .entity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .entity {
+      background: var(--ink2); padding: 1.5rem;
+    }
+    .entity-type {
+      font-family: var(--mono); font-size: 0.5rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.4rem;
+    }
+    .entity-name {
+      font-family: var(--mono); font-size: 0.75rem;
+      color: var(--amber); margin-bottom: 0.25rem;
+    }
+    .entity-sub {
+      font-family: var(--mono); font-size: 0.6rem;
+      color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .entity-desc {
+      font-size: 0.8rem; color: #666; line-height: 1.6;
+    }
+
+    /* Aether block */
+    .aether-block {
+      padding: 2rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--ink2);
+    }
+    .aether-label {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 0.75rem;
+    }
+    .aether-body {
+      font-family: var(--mono); font-size: 0.7rem;
+      color: var(--muted); line-height: 1.8; max-width: 680px;
+    }
+    .aether-body strong { color: #888; }
+
+    /* CTA block */
+    .cta-section {
+      padding: 4rem 2.5rem;
+      text-align: center;
+    }
+    .cta-label {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1rem;
+    }
+    .cta-headline {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 300; color: var(--paper);
+      margin-bottom: 0.75rem;
+    }
+    .cta-body {
+      font-size: 0.9rem; color: var(--muted);
+      margin-bottom: 2rem; line-height: 1.7;
+    }
+    .cta-actions {
+      display: flex; gap: 1.25rem;
+      align-items: center; justify-content: center; flex-wrap: wrap;
+    }
+    .btn-primary {
+      font-family: var(--mono); font-size: 0.65rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink); background: var(--amber);
+      padding: 0.75rem 1.5rem; border-radius: 3px;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .btn-primary:hover { background: var(--amber-light); }
+    .btn-secondary {
+      font-family: var(--mono); font-size: 0.65rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      border-bottom: 1px solid var(--border2); padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-secondary:hover { color: var(--paper); border-color: var(--muted); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2.5rem;
+      max-width: 900px; margin: 0 auto;
+    }
+    .footer-bottom {
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-copy {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.08em; color: #333;
+    }
+    .footer-quote {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.06em; color: #333; font-style: italic;
+    }
+
+    @media (max-width: 680px) {
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { display: none; }
+      .page-header, .act, .company-block, .founder-block,
+      .aether-block, .cta-section, footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .founder-block { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">Intangybl</a>
+    <ul class="nav-links">
+      <li><a href="index.html#ceiling">The Ceiling</a></li>
+      <li><a href="index.html#ibri">IBRI</a></li>
+      <li><a href="index.html#foundation">Foundation</a></li>
+      <li><a href="index.html#brief">Methodology</a></li>
+    </ul>
+    <a href="https://calendly.com/intangybl" target="_blank" rel="noopener" class="nav-cta">Request Access</a>
+  </nav>
+
+  <header class="page-header">
+    <p class="page-eyebrow">Intangybl · Philadelphia, PA</p>
+    <h1 class="page-title">About</h1>
+    <p class="page-sub">Intangybl was built by someone who understands behavioral risk from the inside. Not as a concept. As a condition.</p>
+  </header>
+
+  <div class="content">
+
+    <div class="act">
+      <p class="act-label">Act 01</p>
+      <h2 class="act-title">The Layoff</h2>
+      <div class="act-body">
+        <p>AVI-SPL was my first tech role — the result of a deliberate career pivot, not a casual entry. Which is what made the layoff land the way it did. It wasn't just losing a job. It was losing the proof point that the reinvention was working.</p>
+        <p>Most people treat a setback as a pause. They wait to reorient, let the result settle, need something to stabilize before they move. I noticed I didn't do that. The loss registered — and then the next question was already forming.</p>
+        <p><strong>That distance — between what happens and how long it owns you — became the first real data point. I just didn't have a name for it yet.</strong></p>
+      </div>
+    </div>
+
+    <div class="act">
+      <p class="act-label">Act 02</p>
+      <h2 class="act-title">Per Scholas</h2>
+      <div class="act-body">
+        <p>Per Scholas gave me the technical foundation — security practice, governance frameworks, penetration testing, CompTIA Security+, NIST CSF. The architecture of how organizations actually think about risk.</p>
+        <p>But what the program really built was a vantage point. I started seeing the distance between what security frameworks measure and what actually produces exposure. The frameworks were precise. The human element was being estimated. Nobody seemed bothered by that.</p>
+        <p><em>I was bothered by it. That's a specific kind of friction. It either fades or it turns into something.</em></p>
+      </div>
+    </div>
+
+    <div class="act">
+      <p class="act-label">Act 03</p>
+      <h2 class="act-title">The Rejection</h2>
+      <div class="act-body">
+        <p>I applied for an internship at Bentley Systems. The writing sample I submitted made a single argument: if you can build a behavioral model of a person, you can simulate exactly how they would be targeted — before an attacker does it for real.</p>
+        <p>I didn't get the internship.</p>
+        <p>I read the rejection and moved on faster than I expected to. Not because it didn't matter — because the idea in that document was already more interesting to me than the position had been. The door closed. The question stayed open.</p>
+        <p><em>That's the pattern, if you're paying attention. The outcome passes. What you actually care about doesn't.</em></p>
+      </div>
+    </div>
+
+    <div class="act">
+      <p class="act-label">Act 04</p>
+      <h2 class="act-title">Intangybl Is Built</h2>
+      <div class="act-body">
+        <p>So I built it. Not as a pivot, not as a consolation — as the only logical next move once I understood what I was actually looking at.</p>
+        <p>The security awareness training industry asks: what do people know? I ask a different question: <em>how are people structured to behave under the conditions that actually produce insider risk?</em> Those are not the same question. The distance between them is where Intangybl lives.</p>
+        <p>The IBRI measures four dimensions of behavioral exposure. Three of them are stable — unchanged by what anyone learns in a training cycle. They shift with conditions. Pressure, authority, cognitive load, rationalization under stress. The things that move people toward decisions they would otherwise never make.</p>
+        <p>I understand those dimensions. Not just as a researcher. As someone who has watched them operate — in high-stakes situations, in setbacks, in the moments where identity either holds or it doesn't.</p>
+        <p><strong>Veros exists because I kept asking what produces that difference. I haven't finished answering it.</strong></p>
+        <p style="font-family: var(--mono); font-size: 0.75rem; color: var(--muted); margin-top: 1rem;">Ronald V. Edwards II · Founder, Intangybl</p>
+      </div>
+    </div>
+
+    <!-- FOUNDER -->
+    <div class="founder-block">
+      <div>
+        <p class="founder-title">The Founder</p>
+        <h2 class="founder-name">Ronald<br />V.<br />Edwards II</h2>
+        <div class="founder-body">
+          <p>I'm Ronald V. Edwards II — CompTIA Security+-certified, founder of Intangybl, Inc., and right now, the whole operation. One person who identified the distance, built the methodology, deployed the platform, and is executing across every track simultaneously.</p>
+          <p>My background covers both ends of the problem: <strong>technical practice</strong> — penetration testing, Kali Linux, Python, cloud security architecture — and <strong>governance and risk frameworks</strong> — NIST CSF, COSO ERM, SEC cyber disclosure requirements, GDPR, NYDFS. That range is not incidental. It's what makes the IBRI possible: a methodology that has to hold up in a boardroom and in a lab at the same time.</p>
+          <p>I don't find it easy to talk about myself. What I find easy is the problem. The question of what actually moves people toward risk — not what they know, but what they're made of, what conditions activate, what holds under pressure and what doesn't. I've been turning that question over for long enough that it became a company.</p>
+          <p><em>That's the most honest version of how this started.</em></p>
+        </div>
+      </div>
+      <div class="founder-creds">
+        <div class="cred-row">
+          <span class="cred-key">Cert</span>
+          <span class="cred-val">CompTIA Security+ — Certified IT Security Analyst</span>
+        </div>
+        <div class="cred-row">
+          <span class="cred-key">Edu</span>
+          <span class="cred-val">Per Scholas — Philadelphia, PA · Technical foundation in security practice and governance</span>
+        </div>
+        <div class="cred-row">
+          <span class="cred-key">Gov</span>
+          <span class="cred-val">NIST CSF · COSO ERM · SEC Cyber Disclosure · GDPR · NYDFS</span>
+        </div>
+        <div class="cred-row">
+          <span class="cred-key">Tech</span>
+          <span class="cred-val">Penetration Testing · Kali Linux · Python · AWS KMS · Supabase · AES-256 · HKDF</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPANY -->
+    <div class="company-block">
+      <p class="company-title">The Company</p>
+      <h2 class="company-name">Intangybl,<br />Inc.</h2>
+      <div class="company-body">
+        <p>Intangybl is a Philadelphia-based behavioral risk intelligence company. Our primary buyer is the Chief Risk Officer — the executive whose mandate extends beyond what people know to how the organization is actually structured to behave.</p>
+        <p>The product is Veros. The methodology is the IBRI. The governing architecture is Aether. The scoring formula, dimensional weighting, and sector calibration framework are proprietary — available only under executed NDA.</p>
+        <p>What is available is the argument. <em>The security industry has a ceiling it has not named.</em> Intangybl has named it, measured it, and built an instrument for what lives above it.</p>
+      </div>
+
+      <div class="entity-grid">
+        <div class="entity">
+          <p class="entity-type">Company</p>
+          <p class="entity-name">INTANGYBL</p>
+          <p class="entity-sub">Behavioral Risk Intelligence</p>
+          <p class="entity-desc">Philadelphia, PA. Building instruments for the behavioral risk the industry has always measured around but never through.</p>
+        </div>
+        <div class="entity">
+          <p class="entity-type">Framework</p>
+          <p class="entity-name">AETHER</p>
+          <p class="entity-sub">Behavioral Framework</p>
+          <p class="entity-desc">The governing architecture that defines how behavioral data is structured, scored, and secured across the platform — ensuring scoring integrity and data handling protocol.</p>
+        </div>
+        <div class="entity">
+          <p class="entity-type">Platform · External</p>
+          <p class="entity-name">VEROS</p>
+          <p class="entity-sub">Behavioral Risk Platform</p>
+          <p class="entity-desc">The only external-facing product. Behavioral profiling and risk scoring — built on the IBRI, governed by Aether.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AETHER EXPLANATION -->
+    <div class="aether-block">
+      <p class="aether-label">On Aether</p>
+      <p class="aether-body"><strong>Aether</strong> is the governing architecture that defines how behavioral data is structured, scored, and secured across the platform — the layer beneath Veros that ensures scoring integrity and data handling protocol. It is not a product. It is the framework that makes the product defensible.</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <p class="cta-label">The Instrument Is Available</p>
+      <h2 class="cta-headline">If you are thinking about what comes after awareness training, this is where that conversation starts.</h2>
+      <p class="cta-body">Schedule a discovery call or request the methodology brief directly.</p>
+      <div class="cta-actions">
+        <a href="https://calendly.com/intangybl" target="_blank" rel="noopener" class="btn-primary">Schedule a Discovery Call</a>
+        <a href="mailto:ronald@intangybl.com?subject=Methodology Brief Request" class="btn-secondary">Request the methodology brief →</a>
+        <a href="index.html" class="btn-secondary">Return to Veros →</a>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Intangybl · All rights reserved · Philadelphia, PA</p>
+      <p class="footer-quote">"Traits don't change. The conditions that make them dangerous do."</p>
+    </div>
+  </footer>
+
+</body>
+</html>
