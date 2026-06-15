@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Field notes on behavioral risk, the limits of awareness training, and the science behind the IBRI. From the team at Intangybl." />
+  <title>Intangybl — Insights</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0d0d0d;
+      --ink2: #111111;
+      --amber: #c8922a;
+      --amber-light: #e0a93a;
+      --paper: #f0ebe0;
+      --muted: #666666;
+      --border: #1e1e1e;
+      --border2: #2a2a2a;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      background: rgba(13,13,13,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--mono); font-size: 0.65rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--paper); text-decoration: none;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono); font-size: 0.6rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--paper); }
+    .nav-cta {
+      font-family: var(--mono); font-size: 0.6rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--ink); background: var(--amber);
+      padding: 0.5rem 1.1rem; border-radius: 3px;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--amber-light); }
+
+    .page-header {
+      padding: 9rem 2.5rem 4rem;
+      max-width: 900px; margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-eyebrow {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1.5rem;
+    }
+    .page-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300; line-height: 1.2; color: var(--paper);
+      margin-bottom: 1rem;
+    }
+    .page-sub {
+      font-size: 1rem; color: var(--muted);
+      max-width: 520px; line-height: 1.7;
+    }
+
+    /* Articles */
+    .articles {
+      max-width: 900px; margin: 0 auto;
+    }
+
+    .article-card {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 2.5rem;
+      padding: 3rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .article-card:hover { background: var(--ink2); }
+
+    .article-meta { padding-top: 4px; }
+    .article-tag {
+      font-family: var(--mono); font-size: 0.5rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 0.5rem;
+    }
+    .article-date {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.08em; color: #444;
+    }
+
+    .article-content {}
+    .article-title {
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+      font-weight: 300; color: var(--paper);
+      line-height: 1.3; margin-bottom: 0.75rem;
+    }
+    .article-deck {
+      font-size: 0.9rem; color: var(--muted);
+      line-height: 1.7; margin-bottom: 1.25rem;
+      max-width: 520px;
+    }
+    .article-read {
+      font-family: var(--mono); font-size: 0.6rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    /* Subscribe block */
+    .subscribe-block {
+      max-width: 900px; margin: 0 auto;
+      padding: 4rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .subscribe-label {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1rem;
+    }
+    .subscribe-headline {
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      font-weight: 300; color: var(--paper);
+      line-height: 1.3; margin-bottom: 0.75rem;
+    }
+    .subscribe-body {
+      font-size: 0.9rem; color: var(--muted); line-height: 1.7;
+    }
+    .subscribe-action { text-align: right; }
+    .subscribe-action p {
+      font-family: var(--mono); font-size: 0.7rem;
+      color: #444; line-height: 1.6; margin-bottom: 1.5rem;
+    }
+    .btn-primary {
+      font-family: var(--mono); font-size: 0.65rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink); background: var(--amber);
+      padding: 0.75rem 1.5rem; border-radius: 3px;
+      text-decoration: none; transition: background 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--amber-light); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2.5rem;
+      max-width: 900px; margin: 0 auto;
+    }
+    .footer-top {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; flex-wrap: wrap; gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .footer-brand {
+      font-family: var(--mono); font-size: 0.65rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--paper); margin-bottom: 0.5rem;
+    }
+    .footer-tagline {
+      font-size: 0.8rem; color: var(--muted);
+      max-width: 280px; line-height: 1.6;
+    }
+    .footer-col-title {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 0.75rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 0.4rem; }
+    .footer-links a {
+      font-family: var(--mono); font-size: 0.6rem;
+      letter-spacing: 0.08em; color: var(--muted);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--paper); }
+    .footer-bottom {
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+      padding-top: 1.5rem; border-top: 1px solid var(--border);
+    }
+    .footer-copy {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.08em; color: #333;
+    }
+    .footer-quote {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.06em; color: #333; font-style: italic;
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { display: none; }
+      .page-header { padding: 6rem 1.25rem 3rem; }
+      .article-card { grid-template-columns: 1fr; gap: 1rem; padding: 2rem 1.25rem; }
+      .article-meta { display: flex; gap: 1.5rem; align-items: center; }
+      .subscribe-block { grid-template-columns: 1fr; gap: 2rem; padding: 3rem 1.25rem; }
+      .subscribe-action { text-align: left; }
+      footer { padding: 2rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">Intangybl</a>
+    <ul class="nav-links">
+      <li><a href="index.html#ceiling">The Ceiling</a></li>
+      <li><a href="index.html#ibri">IBRI</a></li>
+      <li><a href="index.html#foundation">Foundation</a></li>
+      <li><a href="index.html#brief">Methodology</a></li>
+      <li><a href="insights.html" style="color: var(--paper);">Insights</a></li>
+    </ul>
+    <a href="https://calendly.com/intangybl" target="_blank" rel="noopener" class="nav-cta">Open Veros</a>
+  </nav>
+
+  <header class="page-header">
+    <p class="page-eyebrow">Field Notes</p>
+    <h1 class="page-title">Insights</h1>
+    <p class="page-sub">Where behavioral science meets the limits of awareness training. Short reads on the IBRI, insider risk, and what the security industry still hasn't named.</p>
+  </header>
+
+  <div class="articles">
+
+    <!-- Article 01 — Live -->
+    <a href="insight-marcus-hill.html" class="article-card">
+      <div class="article-meta">
+        <p class="article-tag">Behavioral Risk</p>
+        <p class="article-date">June 2026</p>
+      </div>
+      <div class="article-content">
+        <h2 class="article-title">He Was Trying to Engineer the Climate. He Just Didn't Have an Instrument.</h2>
+        <p class="article-deck">A 29-year-old mailroom worker ran a one-man influence campaign from beside the office thermostat. Everyone laughed. They missed the blueprint — and the people running it well don't get fired. They get promoted.</p>
+        <p class="article-read">Read the note →</p>
+      </div>
+    </a>
+
+    <!-- Notify block — replaces the "in progress" placeholders -->
+  </div>
+
+  <!-- Subscribe -->
+  <div class="subscribe-block">
+    <div>
+      <p class="subscribe-label">Want These First?</p>
+      <h2 class="subscribe-headline">The next field note is in progress.</h2>
+      <p class="subscribe-body">Short, evidence-led reads on behavioral risk intelligence — the IBRI, insider risk patterns, and what the security industry still hasn't named. Tell us to add you and you'll get each one as it goes live.</p>
+    </div>
+    <div class="subscribe-action">
+      <p>No newsletter format. No cadence commitments.<br />One email when something worth reading is ready.</p>
+      <a href="mailto:ronald@intangybl.com?subject=Insights%20updates" class="btn-primary">Get the notes →</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-top">
+      <div>
+        <p class="footer-brand">Intangybl</p>
+        <p class="footer-tagline">Awareness training has a ceiling. The industry has not named it. Veros was built for what lives above it.</p>
+      </div>
+      <div>
+        <p class="footer-col-title">Veros</p>
+        <ul class="footer-links">
+          <li><a href="index.html#ceiling">The Ceiling</a></li>
+          <li><a href="index.html#ibri">IBRI Framework</a></li>
+          <li><a href="index.html#foundation">Academic Foundation</a></li>
+          <li><a href="index.html#brief">Methodology Brief</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Intangybl</p>
+        <ul class="footer-links">
+          <li><a href="about.html">About</a></li>
+          <li><a href="insights.html">Insights</a></li>
+          <li><a href="https://calendly.com/intangybl" target="_blank" rel="noopener">Schedule a Call</a></li>
+          <li><a href="mailto:ronald@intangybl.com">ronald@intangybl.com</a></li>
+          <li><a>Philadelphia, PA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Intangybl · All rights reserved · Philadelphia, PA</p>
+      <p class="footer-quote">"Traits don't change. The conditions that make them dangerous do."</p>
+    </div>
+  </footer>
+
+</body>
+</html>
