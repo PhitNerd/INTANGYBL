@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="In 1981, Kodak's own research told the company exactly what was coming and gave it a decade to prepare. This is what they spent that decade doing instead — and why having the data was never the problem." />
+  <title>The Ten-Year Warning — Intangybl Insights</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0d0d0d;
+      --ink2: #111111;
+      --amber: #c8922a;
+      --amber-light: #e0a93a;
+      --paper: #f0ebe0;
+      --muted: #666666;
+      --border: #1e1e1e;
+      --border2: #2a2a2a;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      background: rgba(13,13,13,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--mono); font-size: 0.65rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--paper); text-decoration: none;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono); font-size: 0.6rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--paper); }
+    .nav-cta {
+      font-family: var(--mono); font-size: 0.6rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--ink); background: var(--amber);
+      padding: 0.5rem 1.1rem; border-radius: 3px;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--amber-light); }
+
+    /* Article layout */
+    .article-wrapper {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 9rem 2.5rem 5rem;
+    }
+
+    .article-back {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-bottom: 3rem; transition: color 0.2s;
+    }
+    .article-back:hover { color: var(--paper); }
+
+    .article-tag {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1.5rem;
+    }
+
+    .article-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 300; line-height: 1.15;
+      color: var(--paper); margin-bottom: 0.75rem;
+    }
+
+    .article-subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-weight: 300; color: var(--muted);
+      line-height: 1.4; margin-bottom: 2rem;
+      font-style: italic;
+    }
+
+    .article-byline {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1.25rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
+    }
+    .byline-name {
+      font-family: var(--mono); font-size: 0.65rem;
+      letter-spacing: 0.1em; color: var(--paper);
+    }
+    .byline-role {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.08em; color: var(--muted);
+    }
+
+    /* Article body */
+    .article-body { color: #a8a8a8; font-size: 1rem; line-height: 1.85; }
+    .article-body p { margin-bottom: 1.5rem; }
+    .article-body p:last-child { margin-bottom: 0; }
+    .article-body strong { color: var(--paper); font-weight: 500; }
+    .article-body em { font-style: italic; color: var(--paper); }
+
+    .article-body h2 {
+      font-size: 1.1rem; font-weight: 400;
+      color: var(--paper); margin: 2.5rem 0 1rem;
+      font-family: var(--sans);
+    }
+
+    .article-body ul {
+      margin: 0 0 1.5rem 1.5rem;
+    }
+    .article-body ul li {
+      margin-bottom: 0.75rem; line-height: 1.7;
+    }
+    .article-body ul li strong { color: var(--paper); }
+
+    /* Article CTA */
+    .article-cta {
+      margin-top: 3rem;
+      padding: 2rem;
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--amber);
+      background: var(--ink2);
+    }
+    .article-cta-label {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 0.75rem;
+    }
+    .article-cta-body {
+      font-size: 0.9rem; color: var(--muted);
+      line-height: 1.7; margin-bottom: 1.25rem;
+    }
+    .article-cta-body strong { color: var(--paper); }
+    .article-cta-actions {
+      display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap;
+    }
+    .btn-primary {
+      font-family: var(--mono); font-size: 0.6rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink); background: var(--amber);
+      padding: 0.65rem 1.25rem; border-radius: 3px;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .btn-primary:hover { background: var(--amber-light); }
+    .btn-secondary {
+      font-family: var(--mono); font-size: 0.6rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      border-bottom: 1px solid var(--border2); padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-secondary:hover { color: var(--paper); border-color: var(--muted); }
+
+    .article-footer-nav {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2.5rem;
+      max-width: 900px; margin: 0 auto;
+    }
+    .footer-bottom {
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-copy {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.08em; color: #333;
+    }
+    .footer-quote {
+      font-family: var(--mono); font-size: 0.55rem;
+      letter-spacing: 0.06em; color: #333; font-style: italic;
+    }
+
+    @media (max-width: 1024px) and (min-width: 641px) {
+      .article-wrapper { padding: 7rem 2rem 4rem; }
+      footer { padding: 2.5rem 2rem; }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { display: none; }
+      .article-wrapper { padding: 6rem 1.25rem 4rem; }
+      footer { padding: 2rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">Intangybl</a>
+    <ul class="nav-links">
+      <li><a href="index.html#ceiling">Problem</a></li>
+      <li><a href="index.html#ibri">IBRI</a></li>
+      <li><a href="index.html#foundation">Research</a></li>
+      <li><a href="index.html#brief">Method</a></li>
+      <li><a href="insights.html">Insights</a></li>
+    </ul>
+    <a href="https://calendly.com/intangybl" target="_blank" rel="noopener" class="nav-cta">Request Access</a>
+  </nav>
+
+  <div class="article-wrapper">
+
+    <a href="insights.html" class="article-back">← Back to Insights</a>
+
+    <p class="article-tag">Behavioral Risk</p>
+    <h1 class="article-title">The Ten-Year Warning.</h1>
+    <p class="article-subtitle">They didn't fail to see it. They spent a decade proving it wrong.</p>
+
+    <div class="article-byline">
+      <div>
+        <p class="byline-name">Ronald V. Edwards II</p>
+        <p class="byline-role">Founder, Intangybl</p>
+      </div>
+    </div>
+
+    <div class="article-body">
+
+      <p>In 1981, Kodak's own head of market intelligence ran an extensive internal study, with the CEO's direct support, on the future of photography. The conclusion was specific: digital technology had the capability to fully replace Kodak's film business, and the company had roughly ten years to prepare for that transition.</p>
+
+      <p>Ten years is not "nobody saw it coming." Ten years is a runway. A dated, quantified warning, produced by the company's own research arm, delivered straight to the top.</p>
+
+      <p>Here's what Kodak did with the decade.</p>
+
+      <h2>The Study Nobody Disputed</h2>
+
+      <p>Nobody at Kodak argued with the data. That's the part worth sitting with. This wasn't a case of a warning getting buried, ignored, or dismissed as alarmist. The company's own engineers had built a working digital camera prototype years earlier. Its research labs kept extending the technology throughout the decade that followed. Kodak held some of the earliest and most valuable patents in digital imaging — proof the organization understood exactly what it was looking at.</p>
+
+      <p>The problem was never information. The problem was what accepting the information would have required them to do.</p>
+
+      <h2>The Ten-Year Trade</h2>
+
+      <p>Rather than using the runway to build a digital business that could stand on its own, Kodak spent it building digital products whose entire purpose was to protect film. Digital became a feature bolted onto the thing it was supposed to replace, never a replacement in its own right.</p>
+
+      <p>The clearest evidence of this is a single product: a digital camera system that still required customers to buy film and pay for prints, developed at a cost north of $500 million. It failed, for the most predictable reason imaginable — nobody could explain why a customer would want to pay for both. The system wasn't built to win the digital transition. It was built to make the digital transition feel optional a little longer.</p>
+
+      <p>A Kodak CEO would later describe the company's own posture toward the technology in blunt terms: for years, digital photography had been treated internally as a threat to be contained, not an opportunity to be built.</p>
+
+      <h2>What This Actually Was</h2>
+
+      <p>It's tempting to file this under corporate blindness. It wasn't blindness. Blindness would almost be a relief — an organization that simply didn't know. Kodak knew, on a specific timeline, with its own name on the research.</p>
+
+      <p>What Kodak was actually managing wasn't a technology gap. It was the cost of admission. To treat the study as true meant admitting that the business built over the prior century — the one that had made "Kodak moment" a phrase in the language — had a visible expiration date. Every year spent defending film instead of building digital was a year spent not having to say that out loud, to the board, to shareholders, to themselves.</p>
+
+      <p>That trade is rarely named honestly, in any organization. The cost of acting on a known risk is almost never the risk itself. It's what acting on it forces you to admit was true the whole time — and who has to answer for having known.</p>
+
+      <h2>The Part Most Case Studies Skip</h2>
+
+      <p>The usual telling of this story ends with "and then Kodak went bankrupt," as if the ten years in between were a fog of ignorance. They weren't. They were ten years of a specific, ongoing choice, repeated by multiple leadership teams, each one inheriting the same data and making a version of the same call.</p>
+
+      <p>That's the detail that should change how you read it. This wasn't one bad decision. It was a decade of a known risk being managed down to a comfortable size, quarter after quarter, by people who had every reason to know better and did it anyway — because the alternative meant being the executive who told the board the model was already obsolete.</p>
+
+      <p>The technology didn't catch Kodak off guard. The data was correct, on schedule, ten years out. What failed was the willingness to let a known number be true before the market made the decision for them.</p>
+
+    </div>
+
+    <!-- CTA -->
+    <div class="article-cta">
+      <p class="article-cta-label">The Instrument</p>
+      <p class="article-cta-body">Veros scores <strong>which conditions turn a known risk into a protected one</strong> — before the ten-year decade turns into the year the market makes the decision for you. Built on the Intangybl Behavioral Risk Index. If you're thinking about what your organization already knows and hasn't acted on, this is where that conversation starts.</p>
+      <div class="article-cta-actions">
+        <a href="https://calendly.com/intangybl" target="_blank" rel="noopener" class="btn-primary">Schedule a Discovery Call</a>
+        <a href="veros.html" class="btn-secondary">Open Veros →</a>
+      </div>
+    </div>
+
+    <div class="article-footer-nav">
+      <a href="insights.html" class="btn-secondary">← Back to Insights</a>
+      <p style="font-family: var(--mono); font-size: 0.55rem; color: #333;">Intangybl · Behavioral Risk Intelligence · intangybl.com</p>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Intangybl · All rights reserved · Philadelphia, PA</p>
+      <p class="footer-quote">"Traits don't change. The conditions that make them dangerous do."</p>
+    </div>
+  </footer>
+
+</body>
+</html>
