@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Veros Pulse System</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<meta name="theme-color" content="#0d0d0d" />
+<title>Veros Pulse System | Intangybl</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -414,7 +417,7 @@ body::after { content: ''; position: fixed; inset: 0; background-image: url("dat
         </div>
       </div>
       <p class="ibri-sidebar-note">
-        The <b>IBRI</b> is your behavioral risk score — a composite of four dimensions that measure how your traits and current state interact to create susceptibility to manipulation. It updates with every check-in.
+        The <b>IBRI</b> is your behavioral risk score, a composite of four dimensions that measure how your traits and current state interact to create susceptibility to manipulation. It updates with every check-in.
       </p>
     </div>
   </nav>
@@ -436,7 +439,7 @@ body::after { content: ''; position: fixed; inset: 0; background-image: url("dat
         <!-- PULSE EXPLAINER -->
         <div class="explain-block">
           <div class="explain-label">What is the Pulse Check-in?</div>
-          <p>Three questions, answered daily. Each one captures a different aspect of <b>Fatigue Vulnerability</b> — how cognitive depletion is affecting your decision-making right now.</p>
+          <p>Three questions, answered daily. Each one captures a different aspect of <b>Fatigue Vulnerability</b>: how cognitive depletion is affecting your decision-making right now.</p>
           <p>Fatigue doesn't just make you tired. It narrows attention, lowers skepticism, and makes you more likely to comply with requests you'd normally question. The Pulse tracks that in real time so the system knows when your risk window is open.</p>
         </div>
 
@@ -465,12 +468,12 @@ body::after { content: ''; position: fixed; inset: 0; background-image: url("dat
             <div class="pulse-q" id="pq2">
               <p class="pulse-q-text">Did anything feel urgent that wasn't planned?</p>
               <p class="pulse-q-tag">FV · URGENCY INTRUSION</p>
-              <p class="q-gloss">Tracks unplanned urgency — a key attack surface. Fatigued people process urgency as real, which is exactly what social engineering exploits.</p>
+              <p class="q-gloss">Tracks unplanned urgency, a key attack surface. Fatigued people process urgency as real, which is exactly what social engineering exploits.</p>
             </div>
             <div class="pulse-q" id="pq3">
               <p class="pulse-q-text">How much capacity do you have left right now?</p>
               <p class="pulse-q-tag">FV · RESIDUAL CAPACITY</p>
-              <p class="q-gloss">Your remaining mental bandwidth. Low capacity suppresses verification instincts — you're more likely to approve, comply, or click without checking.</p>
+              <p class="q-gloss">Your remaining mental bandwidth. Low capacity suppresses verification instincts. You're more likely to approve, comply, or click without checking.</p>
             </div>
             <!-- Ack kept in markup, never triggered in flow -->
             <div class="pulse-ack" id="pulseAck">
@@ -515,11 +518,11 @@ body::after { content: ''; position: fixed; inset: 0; background-image: url("dat
           <div class="legend">
             <div class="legend-item"><div class="legend-dot low"></div><span class="legend-txt">Within baseline</span></div>
             <div class="legend-item"><div class="legend-dot med"></div><span class="legend-txt">Mild elevation</span></div>
-            <div class="legend-item"><div class="legend-dot high"></div><span class="legend-txt">Threshold — high risk</span></div>
+            <div class="legend-item"><div class="legend-dot high"></div><span class="legend-txt">Threshold: high risk</span></div>
           </div>
           <div class="explain-block" style="margin-top: 0.6rem; margin-bottom: 0;">
             <div class="explain-label">Reading this chart</div>
-            <p>Each bar is your fatigue signal for that day, built from how your three check-in responses combined. <b>Baseline Drift</b> compares your recent average to your established baseline — a rising drift means your susceptibility window is opening and the system will flag it.</p>
+            <p>Each bar is your fatigue signal for that day, built from how your three check-in responses combined. <b>Baseline Drift</b> compares your recent average to your established baseline. A rising drift means your susceptibility window is opening and the system will flag it.</p>
           </div>
         </div>
 
@@ -539,7 +542,7 @@ body::after { content: ''; position: fixed; inset: 0; background-image: url("dat
       <!-- DRIFT ENGINE EXPLAINER -->
       <div class="explain-block">
         <div class="explain-label">What is the Drift Engine?</div>
-        <p>The Drift Engine watches for meaningful movement away from your behavioral baseline. A single elevated day is noise. A pattern across check-ins is signal. When fatigue scores shift consistently upward, your susceptibility rises — and the engine flags it before it becomes a problem.</p>
+        <p>The Drift Engine watches for meaningful movement away from your behavioral baseline. A single elevated day is noise. A pattern across check-ins is signal. When fatigue scores shift consistently upward, your susceptibility rises, and the engine flags it before it becomes a problem.</p>
         <p>It's the analytical layer between your daily check-in and your weekly briefing. It decides when current conditions are significant enough to warrant attention and action.</p>
       </div>
 
@@ -554,7 +557,7 @@ body::after { content: ''; position: fixed; inset: 0; background-image: url("dat
         </div>
         <div class="stat-card">
           <div class="stat-tip">?
-            <div class="stat-tooltip">Today's Fatigue Vulnerability score — your clarity, urgency exposure, and residual capacity combined into a single reading.</div>
+            <div class="stat-tooltip">Today's Fatigue Vulnerability score: your clarity, urgency exposure, and residual capacity combined into a single reading.</div>
           </div>
           <div class="stat-label">FV Score</div>
           <div class="stat-val amber" id="driftFV">—</div>
@@ -562,7 +565,7 @@ body::after { content: ''; position: fixed; inset: 0; background-image: url("dat
         </div>
         <div class="stat-card">
           <div class="stat-tip">?
-            <div class="stat-tooltip">How far your recent average has moved from your 30-day baseline. A positive delta means you're running hotter than normal — risk is elevated.</div>
+            <div class="stat-tooltip">How far your recent average has moved from your 30-day baseline. A positive delta means you're running hotter than normal. Risk is elevated.</div>
           </div>
           <div class="stat-label">Baseline Delta</div>
           <div class="stat-val amber" id="driftDelta">—</div>
@@ -865,7 +868,7 @@ function checkThreshold() {
   if (allElevated) {
     const avg = recent.reduce((a,b)=>a+b,0)/3;
     let body = avg >= 2.5
-      ? '<b>Sustained high fatigue detected across your last three check-ins.</b> This pattern is consistent with elevated susceptibility — particularly to time-pressure and authority vectors. Your briefing has been updated with specific watch items. A calibrated scenario is queued.'
+      ? '<b>Sustained high fatigue detected across your last three check-ins.</b> This pattern is consistent with elevated susceptibility, particularly to time-pressure and authority vectors. Your briefing has been updated with specific watch items. A calibrated scenario is queued.'
       : '<b>Moderate fatigue elevation detected across three consecutive check-ins.</b> Your baseline has shifted. Your briefing reflects the current conditions and includes targeted guidance for this week.';
     document.getElementById('thresholdBody').innerHTML = body;
     card.style.display = 'block';
@@ -885,40 +888,40 @@ function triggerBriefing() {
 
   if (fvRaw >= 2.5) {
     level = 'high'; signalLabel = 'Threshold · Significant Drift'; signalTag = 'FV + trend · 3-day';
-    signalBody = 'Five consecutive check-ins show <b>sustained high fatigue with simultaneous capacity depletion.</b> This is your highest-risk behavioral state — depleted capacity directly reduces the verification instincts that protect against social engineering.';
+    signalBody = 'Five consecutive check-ins show <b>sustained high fatigue with simultaneous capacity depletion.</b> This is your highest-risk behavioral state. Depleted capacity directly reduces the verification instincts that protect against social engineering.';
     watchItems = [
-      { text: '<b>Authority-based requests carry elevated risk this week.</b> When capacity is low, deference to perceived authority rises automatically. Treat any request from leadership or IT that requires immediate action as a verification trigger. <span class="watch-tag">FV × Social Compliance</span>' },
+      { text: '<b>Authority-based requests carry elevated risk this week.</b> When capacity is low, deference to perceived authority rises automatically. Treat any request from leadership or IT that requires immediate action as a verification trigger. <span class="watch-tag">FV × Situational Compliance</span>' },
       { text: '<b>Do not process high-stakes requests at end of day.</b> Your FV-03 readings suggest capacity depletion peaks late afternoon. Flag anything involving access, data, or financials for morning review.' },
       { text: '<b>Over-explained messages are a red flag, not reassurance.</b> When fatigued, a message that pre-answers your objections reads as credible. Slow down when a request feels unusually thorough. <span class="watch-tag">Risk Rationalization</span>' },
     ];
-    takeaway = 'This isn\'t a character flaw — it\'s physics. Sustained cognitive load degrades the exact instincts that protect against manipulation. The countermeasure isn\'t willpower. It\'s process: slow the moment down artificially until your instincts catch up.';
+    takeaway = 'This isn\'t a character flaw. It\'s physics. Sustained cognitive load degrades the exact instincts that protect against manipulation. The countermeasure isn\'t willpower. It\'s process: slow the moment down artificially until your instincts catch up.';
     cohortNote = 'Your team\'s <span>FV average is elevated this week</span>, consistent with the current project cycle. A department-level signal has been flagged for your security team.';
     showScenario = true;
   } else if (fvRaw >= 2.0) {
     level = 'elevated'; signalLabel = 'Elevated · Fatigue Vulnerability'; signalTag = 'FV dimensions · recent trend';
-    signalBody = 'Your check-ins this week showed <b>declining clarity and increased urgency intrusion.</b> Residual capacity is below your 30-day baseline. This pattern is consistent with mild susceptibility elevation — particularly to time-pressure and familiar-sender manipulation.';
+    signalBody = 'Your check-ins this week showed <b>declining clarity and increased urgency intrusion.</b> Residual capacity is below your 30-day baseline. This pattern is consistent with mild susceptibility elevation, particularly to time-pressure and familiar-sender manipulation.';
     watchItems = [
-      { text: '<b>Urgent requests from familiar contacts carry higher risk when you\'re fatigued.</b> Social compliance rises as capacity drops — you\'re more likely to act on a trusted-sender request without the usual verification. <span class="watch-tag">FV × Social Compliance</span>' },
+      { text: '<b>Urgent requests from familiar contacts carry higher risk when you\'re fatigued.</b> Situational compliance rises as capacity drops. You\'re more likely to act on a trusted-sender request without the usual verification. <span class="watch-tag">FV × Situational Compliance</span>' },
       { text: '<b>End-of-day communications asking for quick action.</b> Urgency intrusion peaked in your late-afternoon readings. BEC attack data consistently shows targeting within that window. Treat late-day asks as elevated risk.' },
     ];
-    takeaway = 'Urgency is a design choice by attackers, not a feature of the situation. When something feels time-sensitive and the cost of being wrong is high — that\'s the exact moment to pause, not accelerate.';
-    cohortNote = 'Your team\'s <span>FV cohort average rose this week</span>, consistent with current deadlines. You\'re not the outlier — the environment is uniformly more exploitable right now.';
+    takeaway = 'Urgency is a design choice by attackers, not a feature of the situation. When something feels time-sensitive and the cost of being wrong is high, that\'s the exact moment to pause, not accelerate.';
+    cohortNote = 'Your team\'s <span>FV cohort average rose this week</span>, consistent with current deadlines. You\'re not the outlier. The environment is uniformly more exploitable right now.';
     showScenario = true;
   } else {
     level = 'stable'; signalLabel = 'Stable · Within Baseline'; signalTag = 'All FV dimensions · 7-day';
     signalBody = 'Your pulse signals this week stayed within your established baseline across all three Fatigue Vulnerability sub-dimensions. <b>Clarity, urgency, and capacity readings were consistent.</b> No drift detected.';
     watchItems = [
       { text: '<b>Risk Rationalization is your highest active dimension.</b> Even when fatigue is low, a tendency to rationalize compliance remains. Watch for reasoning that starts with "it\'s probably fine." <span class="watch-tag">Risk Rationalization</span>' },
-      { text: '<b>Stable weeks can lower vigilance.</b> Extended periods without anomaly create a false sense of security. Treat stability as context to sharpen awareness — not as evidence that nothing is coming.' },
+      { text: '<b>Stable weeks can lower vigilance.</b> Extended periods without anomaly create a false sense of security. Treat stability as context to sharpen awareness, not as evidence that nothing is coming.' },
     ];
-    takeaway = 'A quiet week is good data, not a break from attention. Your most exploitable moments often follow extended periods of low vigilance — when instincts have been offline.';
+    takeaway = 'A quiet week is good data, not a break from attention. Your most exploitable moments often follow extended periods of low vigilance, when instincts have been offline.';
     cohortNote = 'Your team\'s <span>FV average is within normal range</span> this week. No cohort-level drift detected.';
     showScenario = false;
   }
 
   const dims = [
     { name:'Fatigue Vulnerability',   val: fvScore,                               level: fvScore >= 65 ? 'high' : fvScore >= 40 ? 'elevated' : 'stable' },
-    { name:'Social Compliance',       val: STATE.otherDims.socialCompliance,       level:'elevated' },
+    { name:'Situational Compliance',       val: STATE.otherDims.socialCompliance,       level:'elevated' },
     { name:'Risk Rationalization',    val: STATE.otherDims.riskRationalization,    level:'stable'   },
     { name:'Exposure Awareness',      val: STATE.otherDims.exposureAwareness,      level:'stable'   },
   ];
@@ -948,7 +951,7 @@ function triggerBriefing() {
 
     <div class="explain-block">
       <div class="explain-label">How to read your IBRI score</div>
-      <p>The four dimensions below are not equal — and higher isn't always worse. <b>Fatigue Vulnerability, Social Compliance, and Risk Rationalization</b> are risk dimensions: a higher score means higher susceptibility. <b>Exposure Awareness</b> is the opposite — it's protective. A higher EA score means you're more likely to recognize and resist an attack. Your composite IBRI score weights all four together.</p>
+      <p>The four dimensions below are not equal, and higher isn't always worse. <b>Fatigue Vulnerability, Situational Compliance, and Risk Rationalization</b> are risk dimensions: a higher score means higher susceptibility. <b>Exposure Awareness</b> is the opposite. It's protective. A higher EA score means you're more likely to recognize and resist an attack. Your composite IBRI score weights all four together.</p>
     </div>
 
     <div class="ibri-bar-block">
@@ -1015,7 +1018,7 @@ function triggerBriefing() {
         <span class="scenario-icon">▶</span>
         <div>
           <div class="scenario-lbl">Scenario Queued</div>
-          <p class="scenario-desc">A scenario has been calibrated to your current FV profile — timed to your highest-risk window. You've been briefed on what to watch for. That's the advantage.</p>
+          <p class="scenario-desc">A scenario has been calibrated to your current FV profile, timed to your highest-risk window. You've been briefed on what to watch for. That's the advantage.</p>
           <div class="scenario-actions">
             <button class="btn-primary" onclick="window.location.href='veros-scenario.html'">Accept scenario</button>
             <button class="btn-ghost">Skip this week</button>

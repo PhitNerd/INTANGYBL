@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /veros.html
+Disallow: /veros-scenario.html
+Disallow: /veros-pulse-system.html
+
+Sitemap: https://intangybl.com/sitemap.xml
