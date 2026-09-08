@@ -1,0 +1,17 @@
+{
+  "routes": [
+    { "route": "/worker/*", "statusCode": 404 },
+    { "route": "/.github/*", "statusCode": 404 },
+    { "route": "/demo/*", "redirect": "/veros.html", "statusCode": 301 }
+  ],
+  "responseOverrides": {
+    "404": { "rewrite": "/404.html", "statusCode": 404 }
+  },
+  "globalHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+  }
+}
