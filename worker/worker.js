@@ -148,7 +148,7 @@ export default {
         },
         body: JSON.stringify({
           model: env.MODEL || 'claude-sonnet-5',
-          max_tokens: 1000,
+          max_tokens: 4000,
           system: SYSTEM,
           messages: [{ role: 'user', content: userPrompt(door, answers) }],
         }),
@@ -158,14 +158,39 @@ export default {
     }
 
     if (!upstream.ok) {
-      return json({ error: 'Upstream error', status: upstream.status }, 502, cors);
+      let detail = '';
+      try { detail = (await upstream.text()).slice(0, 500); } catch {}
+      const diag = {
+        keyLength: (env.ANTHROPIC_API_KEY || '').length,
+        keyPrefix: (env.ANTHROPIC_API_KEY || '').slice(0, 10),
+        contentType: upstream.headers.get('content-type') || '',
+        requestId: upstream.headers.get('request-id') || upstream.headers.get('cf-ray') || '',
+      };
+      console.log('anthropic_error', upstream.status, detail, JSON.stringify(diag));
+      return json({ error: 'Upstream error', status: upstream.status, detail, diag }, 502, cors);
     }
 
     const data = await upstream.json();
     const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-    const clean = text.replace(/```json|```/g, '').trim();
-    let parsed;
-    try { parsed = JSON.parse(clean); } catch { return json({ error: 'Model returned non-JSON' }, 502, cors); }
+    let parsed = null;
+    const clean = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+    try {
+      parsed = JSON.parse(clean);
+    } catch {
+      const start = clean.indexOf('{');
+      const end = clean.lastIndexOf('}');
+      if (start !== -1 && end > start) {
+        try { parsed = JSON.parse(clean.slice(start, end + 1)); } catch {}
+      }
+    }
+    if (!parsed) {
+      return json({ error: 'Model returned non-JSON', head: text.slice(0, 200), tail: text.slice(-200) }, 502, {
+        ...cors,
+        'X-Diag-Stop': String(data.stop_reason || ''),
+        'X-Diag-Textlen': String(text.length),
+        'X-Diag-Blocks': String((data.content || []).map(b => b.type).join(',')),
+      });
+    }
     const profile = validateProfile(parsed);
     if (!profile) return json({ error: 'Model returned malformed profile' }, 502, cors);
 
